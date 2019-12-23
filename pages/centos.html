@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>centos镜像使用帮助</title>
+    <link rel="stylesheet" type="text/css" href="mirror.css" media="screen"/>
+</head>
+<body>
+
+<h1>centos镜像使用帮助</h1>
+
+<div id="mirror-data">
+    <h3>收录架构</h3>
+    <ul>
+        <li>i386</li>
+        <li>x86_64</li>
+    </ul>
+    <h3>收录版本</h3>
+    <ul>
+        <li>全部</li>
+    </ul>
+    <h3>更新时间</h3>
+    <p>每6小时更新一次</p>
+</div>
+<div class="hr">
+    <hr/>
+</div>
+<div id="mirror-usage">
+    <h3>使用说明</h3>
+    <p>首先备份/etc/yum.repos.d/CentOS-Base.repo</p>
+    <pre>
+mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</pre>
+    <p>根据对应的centos版本，编辑/etc/yum.repos.d/CentOS-Base.repo文件, 修改为对应内容。</p>
+    <p>最后运行以下命令生成缓存</p>
+    <pre>
+yum clean all
+yum makecache</pre>
+
+    <h4>CentOS 7</h4>
+    <pre>
+[base]
+name=CentOS-$releasever - Base
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/os/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+[updates]
+name=CentOS-$releasever - Updates
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/updates/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+[extras]
+name=CentOS-$releasever - Extras
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/extras/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+[centosplus]
+name=CentOS-$releasever - Plus
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/centosplus/$basearch/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7</pre>
+    <h4>CentOS 6</h4>
+    <pre>
+[base]
+name=CentOS-$releasever - Base
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/os/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+
+[updates]
+name=CentOS-$releasever - Updates
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/updates/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+
+[extras]
+name=CentOS-$releasever - Extras
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/extras/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+
+[centosplus]
+name=CentOS-$releasever - Plus
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/centosplus/$basearch/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+
+[contrib]
+name=CentOS-$releasever - Contrib
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/contrib/$basearch/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6</pre>
+    <h4>CentOS 5</h4>
+    <pre>
+[base]
+name=CentOS-$releasever - Base
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/os/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
+
+[updates]
+name=CentOS-$releasever - Updates
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/updates/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
+
+[extras]
+name=CentOS-$releasever - Extras
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/extras/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
+
+[addons]
+name=CentOS-$releasever - Addons
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/addons/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
+
+[centosplus]
+name=CentOS-$releasever - Plus
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/centosplus/$basearch/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
+
+[contrib]
+name=CentOS-$releasever - Contrib
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/contrib/$basearch/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5</pre>
+</div>
+
+</body>
+</html>
+

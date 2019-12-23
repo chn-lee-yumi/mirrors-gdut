@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>ubuntu镜像使用帮助</title>
+    <link rel="stylesheet" type="text/css" href="mirror.css" media="screen"/>
+</head>
+<body>
+
+<h1>ubuntu镜像使用帮助</h1>
+
+<div id="mirror-data">
+    <h3>收录架构</h3>
+    <ul>
+        <li>全部</li>
+    </ul>
+    <h3>收录版本</h3>
+    <ul>
+        <li>全部</li>
+    </ul>
+    <h3>更新时间</h3>
+    <p>每6小时更新一次</p>
+</div>
+<div class="hr">
+    <hr/>
+</div>
+<div id="mirror-usage">
+    <h3>使用说明</h3>
+    <!--<p>在修改源之前，请先执行： apt-get install apt-transport-https</p>-->
+    <p>这里以 bionic(18.04 LTS) 版本为例，编辑/etc/apt/sources.list文件, 修改为如下内容。（操作前请做好相应备份）</p>
+    <pre>
+deb http://mirrors.gdut.edu.cn/ubuntu/ bionic main restricted universe multiverse
+deb-src http://mirrors.gdut.edu.cn/ubuntu/ bionic main restricted universe multiverse
+deb http://mirrors.gdut.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse
+deb-src http://mirrors.gdut.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse
+deb http://mirrors.gdut.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse
+deb-src http://mirrors.gdut.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse
+deb http://mirrors.gdut.edu.cn/ubuntu/ bionic-security main restricted universe multiverse
+deb-src http://mirrors.gdut.edu.cn/ubuntu/ bionic-security main restricted universe multiverse
+# 预发布软件源，不建议启用
+# deb http://mirrors.gdut.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse
+# deb-src http://mirrors.gdut.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse</pre>
+    <p>如果使用其它版本，将对应的版本代号替换掉bionic即可。</p>
+    <p>如 16.04 LTS 版本代号为xenial，则其/etc/apt/sources.list文件内容如下：</p>
+    <pre>
+deb http://mirrors.gdut.edu.cn/ubuntu/ xenial main restricted universe multiverse
+deb-src http://mirrors.gdut.edu.cn/ubuntu/ xenial main restricted universe multiverse
+deb http://mirrors.gdut.edu.cn/ubuntu/ xenial-updates main restricted universe multiverse
+deb-src http://mirrors.gdut.edu.cn/ubuntu/ xenial-updates main restricted universe multiverse
+deb http://mirrors.gdut.edu.cn/ubuntu/ xenial-backports main restricted universe multiverse
+deb-src http://mirrors.gdut.edu.cn/ubuntu/ xenial-backports main restricted universe multiverse
+deb http://mirrors.gdut.edu.cn/ubuntu/ xenial-security main restricted universe multiverse
+deb-src http://mirrors.gdut.edu.cn/ubuntu/ xenial-security main restricted universe multiverse
+# 预发布软件源，不建议启用
+# deb http://mirrors.gdut.edu.cn/ubuntu/ xenial-proposed main restricted universe multiverse
+# deb-src http://mirrors.gdut.edu.cn/ubuntu/ xenial-proposed main restricted universe multiverse</pre>
+</div>
+
+</body>
+</html>

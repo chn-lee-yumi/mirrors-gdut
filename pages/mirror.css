@@ -1,0 +1,100 @@
+body{
+    font-size: .9em;
+    margin: 0px 40px;
+    font-family: "Lato", "Hiragino Sans GB", "Source Han Sans CN", "WenQuanYi Zen Hei", "WenQuanYi Micro Hei", "微软雅黑", sans-serif;
+}
+table th,td {
+    padding: 0em 0.6em;
+    height: 1.8em;
+}
+tr.even {
+    background:#ffb80008;
+}
+th {
+    text-align:left;
+    font-weight:normal;
+    background:#fff;
+    border-bottom:1px solid #a75e00;
+}
+.odd:hover,.even:hover{
+    background: #ffa5002e;
+    transition: 0.3s;
+}
+thead th{
+    background-color: rgba(255, 136, 0, 0.09);
+}
+tr{
+    height: 50px;
+}
+a {
+    color: #ce6a00;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+table {
+    width: 100vw;
+    border-left: 0px;
+    border-right: 0px;
+    float: left;
+    box-sizing: border-box;
+    //padding: 0  50px;
+}
+span {
+    margin-right: 20px;
+}
+#mirror-data, #mirror-usage, #mirror-links, #mirror-misc {
+    margin-top: 20px;
+    padding-bottom: 10px;
+}
+h1, h2, h3 {
+    color: #384452;
+    //font-size: 20px;
+    //line-height: 50px;
+    //height: 50px;
+    margin: 0;
+    //padding: 20px 50px;
+}
+.hr {
+    border-bottom: dashed #777 1px;
+    width: 60%;
+}
+.hr hr {
+    display: none;
+}
+#footer {
+    text-align: center;
+    margin-bottom: 10px;
+    padding: 20px 0 0 0;
+    clear: both;
+}
+#footer a {
+    color: #555;
+    margin: 0px 10px;
+    font-size: 0.9em;
+}
+pre {
+    font-family: monospace;
+    font-size: 110%;
+    border:1px solid #54d200;
+    background-color: #f9fff2;
+    margin: 0px;
+    padding: 10px;
+    width: 800px;
+    line-height: 150%;
+    overflow:auto;
+}
+p.answer {
+    text-indent: 20px;
+    margin-bottom: 30px;
+}
+#distro-table {
+    width: 100%;
+}
+#copyright {
+    color: #555;
+    margin: 0px 10px;
+    font-size: 0.8em;
+}
+

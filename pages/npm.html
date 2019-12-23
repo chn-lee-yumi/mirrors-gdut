@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+    <title>npm镜像使用帮助</title>
+    <link href="mirror.css" media="screen" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+
+<h1>npm镜像使用帮助</h1>
+<div id="mirror-usage">
+    <h3>使用说明</h3>
+    <p>proxy代理仓库。本站也支持https，如果npm使用http的源报错，可以尝试将url改成https。</p>
+    <h4>临时使用</h4>
+    <pre>npm --registry http://mirrors.gdut.edu.cn/nexus/repository/npm install express</pre>
+    <h4>持久使用</h4>
+    <pre>npm config set registry http://mirrors.gdut.edu.cn/nexus/repository/npm
+// 配置后可通过下面方式来验证是否成功
+npm config get registry
+// 或
+npm info express</pre>
+</div>
+</body>
+</html>

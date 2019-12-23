@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+    <title>maven镜像使用帮助</title>
+    <link href="mirror.css" media="screen" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+
+<h1>maven镜像使用帮助</h1>
+<div id="mirror-usage">
+    <h3>使用说明</h3>
+    <p>proxy代理仓库，不支持仓库搜索功能。</p>
+    <h4>一、在IntelliJ IDEA中使用</h4>
+        <p>在用户目录下的 .m2 文件夹中创建一个 settings.xml 文件，内容如下</p>
+    <pre>&lt;settings&gt;
+	&lt;mirrors&gt;
+	   &lt;mirror&gt;
+		&lt;id&gt;gdutnic&lt;/id&gt;
+		&lt;name&gt;gdutnic maven&lt;/name&gt;
+		&lt;url&gt;http://mirrors.gdut.edu.cn/nexus/repository/maven/&lt;/url&gt;
+		&lt;mirrorOf&gt;*&lt;/mirrorOf&gt;
+	  &lt;/mirror&gt;
+	&lt;/mirrors&gt;
+&lt;/settings&gt;</pre>
+        <p>打开 File - Settings</p>
+        <p>Build, Execution, Deployment -> Build Tools -> Maven</p>
+        <p>勾选 User settings file 后面的 Override，并指向前面的 settings.xml 文件</p>
+        <img src="maven.jpg">
+    <h4>二、在maven软件中使用</h4>
+        <p>以Maven 3.5.2为例：</p>
+        <p>打开maven配置文件</p>
+        <pre>./apache-maven-3.5.2/conf/settings.xml</pre>
+        <p>找到&lt;mirrors&gt;&lt;/mirrors&gt;标签节点</p>
+        <p>添加一个的mirror子节点：</p>
+
+    <pre>&lt;mirror&gt;
+    &lt;id&gt;nexus-gdut&lt;/id&gt;
+    &lt;mirrorOf&gt;*&lt;/mirrorOf&gt;
+    &lt;name&gt;Nexus gdut&lt;/name&gt;
+    &lt;url&gt;http://mirrors.gdut.edu.cn/nexus/repository/maven/&lt;/url&gt;
+&lt;/mirror&gt;
+</pre>
+
+    <h4>三、在maven项目pom中使用</h4>
+        <p>打开项目配置文件</p>
+        <pre>pom.xml</pre>
+        <p>添加或修改</p>
+    <pre>&lt;repositories&gt;
+    &lt;repository&gt;
+        &lt;id&gt;nexus-gdut&lt;/id&gt;
+        &lt;name&gt;Nexus gdut&lt;/name&gt;
+        &lt;url&gt;http://mirrors.gdut.edu.cn/nexus/repository/maven/&lt;/url&gt;
+        &lt;layout&gt;default&lt;/layout&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;false&lt;/enabled&gt;
+        &lt;/snapshots&gt;
+        &lt;releases&gt;
+            &lt;enabled&gt;true&lt;/enabled&gt;
+        &lt;/releases&gt;
+    &lt;/repository&gt;
+&lt;/repositories&gt;
+&lt;pluginRepositories&gt;
+    &lt;pluginRepository&gt;
+        &lt;id&gt;nexus-gdut&lt;/id&gt;
+        &lt;name&gt;Nexus gdut&lt;/name&gt;
+        &lt;url&gt;http://mirrors.gdut.edu.cn/nexus/repository/maven/&lt;/url&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;false&lt;/enabled&gt;
+        &lt;/snapshots&gt;
+        &lt;releases&gt;
+            &lt;enabled&gt;true&lt;/enabled&gt;
+        &lt;/releases&gt;
+    &lt;/pluginRepository&gt;
+&lt;/pluginRepositories&gt;
+</pre>
+        <p>执行maven update更新一下即可。</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>pypi镜像使用帮助</title>
+    <link rel="stylesheet" type="text/css" href="mirror.css" media="screen"/>
+</head>
+<body>
+
+<h1>pypi镜像使用帮助</h1>
+<div id="mirror-usage">
+    <h3>使用说明</h3>
+    <p>由于pypi镜像大小高达7TB+，故我们不进行全量镜像，而是进行缓存。回源站点为腾讯云开源镜像站。所有数据被请求过一次后即会缓存到服务器硬盘，缓存30天（对于会变动的文件，缓存时间为12小时）。</p>
+    <!--TODO：支持数据包搜索-->
+    <h4>临时使用</h4>
+    <pre>pip install --trusted-host mirrors.gdut.edu.cn -i http://mirrors.gdut.edu.cn/pypi/simple some-package</pre>
+    <p><strong>Linux/Unix中设为默认：</strong>添加或修改pip.conf（如果不存在，创建一个）</p>
+    <pre>~/.pip/pip.conf</pre>
+    <p>修改内容如下</p>
+    <pre>[global]
+index-url = http://mirrors.gdut.edu.cn/pypi/simple
+trusted-host = mirrors.gdut.edu.cn</pre>
+    <p><strong>Windows中设为默认：</strong></p>
+    <pre>%APPDATA%/pip/pip.ini</pre>
+    <p>1. 打开此电脑，在最上面的的文件夹窗口输入：%APPDATA%<br>2. 按回车跳转进入目录，并新建一个文件夹：pip<br>3. 创建文件：pip.ini</p>
+    <p>修改内容如下</p>
+    <pre>[global]
+index-url = http://mirrors.gdut.edu.cn/pypi/simple
+trusted-host = mirrors.gdut.edu.cn</pre>
+    <p><strong>设为默认通用方法：</strong></p>
+    <p>pip版本>=10.0.0可以执直接行命令进行设置：</p>
+    <pre>pip config set global.index-url http://mirrors.gdut.edu.cn/pypi/simple
+pip config set install.trusted-host mirrors.gdut.edu.cn</pre>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>epel镜像使用帮助</title>
+    <link rel="stylesheet" type="text/css" href="mirror.css" media="screen"/>
+</head>
+<body>
+
+<h1>epel镜像使用帮助</h1>
+
+<div id="mirror-data">
+    <h3>收录架构</h3>
+    <ul>
+        <li>全部</li>
+    </ul>
+    <h3>收录版本</h3>
+    <ul>
+        <li>全部</li>
+    </ul>
+    <h3>更新时间</h3>
+    <p>每6小时更新一次</p>
+</div>
+<div class="hr">
+    <hr/>
+</div>
+<div id="mirror-usage">
+    <h3>使用说明</h3>
+    <p>EPEL(Extra Packages for Enterprise Linux)是由Fedora Special Interest Group维护的Enterprise Linux（RHEL、CentOS）中经 常用到的包。</p>
+    <p>下面以CentOS 7为例讲解如何使用tuna的epel镜像。</p>
+    <p>首先从CentOS Extras这个源里安装epel-release：</p>
+    <pre>yum install epel-release</pre>
+    <p>修改/etc/yum.repos.d/epel.repo，将baseurl开头的行取消注释（删掉#），并注释mirrorlist 开头的行（在头部加一个#）。</p>
+    <p>接下来，把这个文件里的http://download.fedoraproject.org/pub替换成http://mirrors.gdut.edu.cn即可。</p>
+    <p>修改结果如下</p>
+    <pre>
+[epel]
+name=Extra Packages for Enterprise Linux 7 - $basearch
+baseurl=http://mirrors.gdut.edu.cn/epel/7/$basearch
+#mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch
+failovermethod=priority
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+
+[epel-debuginfo]
+name=Extra Packages for Enterprise Linux 7 - $basearch - Debug
+baseurl=http://mirrors.gdut.edu.cn/epel/7/$basearch/debug
+#mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-debug-7&arch=$basearch
+failovermethod=priority
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+gpgcheck=1
+
+[epel-source]
+name=Extra Packages for Enterprise Linux 7 - $basearch - Source
+baseurl=http://mirrors.gdut.edu.cn/epel/7/SRPMS
+#mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-source-7&arch=$basearch
+failovermethod=priority
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+gpgcheck=1
+    </pre>
+    <p>最后运行 yum update 。</p>
+</div>
+
+</body>
+</html>
+
