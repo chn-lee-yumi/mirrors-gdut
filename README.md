@@ -2,6 +2,8 @@
 
 http://mirrors.gdut.edu.cn/ 仅校园网可访问
 
+![screenshot](screenshot.png)
+
 # 架构
 
 Nginx提供web服务。
