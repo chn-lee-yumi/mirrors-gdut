@@ -29,6 +29,7 @@ under construction
 # New Mirror List
 
 |镜像|预估大小|文档|备注|
+|---|---|---|---|
 |kali|675GB|https://www.kali.org/docs/community/kali-linux-mirrors/ |目前采用缓存的方式，硬盘扩容后，根据热度考虑是否全量镜像|
 |kali-images|172GB|https://www.kali.org/docs/community/kali-linux-mirrors/ ||
 |gentoo|426G|待google||
