@@ -12,11 +12,11 @@
 <div id="mirror-data">
     <h3>收录架构</h3>
     <ul>
-        <li>全部</li>
+        <li>x86_64</li>
     </ul>
     <h3>收录版本</h3>
     <ul>
-        <li>全部</li>
+        <li>&gt;=7</li>
     </ul>
     <h3>更新时间</h3>
     <p>每6小时更新一次</p>
@@ -26,8 +26,8 @@
 </div>
 <div id="mirror-usage">
     <h3>使用说明</h3>
-    <p>EPEL(Extra Packages for Enterprise Linux)是由Fedora Special Interest Group维护的Enterprise Linux（RHEL、CentOS）中经 常用到的包。</p>
-    <p>下面以CentOS 7为例讲解如何使用tuna的epel镜像。</p>
+    <p>EPEL(Extra Packages for Enterprise Linux)是由Fedora Special Interest Group维护的Enterprise Linux（RHEL、CentOS）中经常用到的包。</p>
+    <p>下面以CentOS 7为例讲解如何使用epel镜像。</p>
     <p>首先从CentOS Extras这个源里安装epel-release：</p>
     <pre>yum install epel-release</pre>
     <p>修改/etc/yum.repos.d/epel.repo，将baseurl开头的行取消注释（删掉#），并注释mirrorlist 开头的行（在头部加一个#）。</p>
@@ -66,4 +66,3 @@ gpgcheck=1
 
 </body>
 </html>
-

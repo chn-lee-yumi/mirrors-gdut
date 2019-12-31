@@ -12,12 +12,11 @@
 <div id="mirror-data">
     <h3>收录架构</h3>
     <ul>
-        <li>i386</li>
         <li>x86_64</li>
     </ul>
     <h3>收录版本</h3>
     <ul>
-        <li>全部</li>
+        <li>&gt;=7</li>
     </ul>
     <h3>更新时间</h3>
     <p>每6小时更新一次</p>
@@ -62,80 +61,8 @@ baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/centosplus/$basearch/
 gpgcheck=1
 enabled=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7</pre>
-    <h4>CentOS 6</h4>
-    <pre>
-[base]
-name=CentOS-$releasever - Base
-baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/os/$basearch/
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
 
-[updates]
-name=CentOS-$releasever - Updates
-baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/updates/$basearch/
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
-
-[extras]
-name=CentOS-$releasever - Extras
-baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/extras/$basearch/
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
-
-[centosplus]
-name=CentOS-$releasever - Plus
-baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/centosplus/$basearch/
-gpgcheck=1
-enabled=0
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
-
-[contrib]
-name=CentOS-$releasever - Contrib
-baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/contrib/$basearch/
-gpgcheck=1
-enabled=0
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6</pre>
-    <h4>CentOS 5</h4>
-    <pre>
-[base]
-name=CentOS-$releasever - Base
-baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/os/$basearch/
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
-
-[updates]
-name=CentOS-$releasever - Updates
-baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/updates/$basearch/
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
-
-[extras]
-name=CentOS-$releasever - Extras
-baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/extras/$basearch/
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
-
-[addons]
-name=CentOS-$releasever - Addons
-baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/addons/$basearch/
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
-
-[centosplus]
-name=CentOS-$releasever - Plus
-baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/centosplus/$basearch/
-gpgcheck=1
-enabled=0
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
-
-[contrib]
-name=CentOS-$releasever - Contrib
-baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/contrib/$basearch/
-gpgcheck=1
-enabled=0
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5</pre>
 </div>
 
 </body>
 </html>
-

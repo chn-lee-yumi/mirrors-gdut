@@ -69,11 +69,11 @@ pypi_heat_url = os.popen("cat %s | awk '{print $7}' | sort | uniq -c | sort -nr 
 pypi_heat_url = pypi_heat_url.strip().split('\n')
 # anaconda
 anaconda_heat_url = os.popen(
-    "cat %s | grep 'GET /anaconda/' | awk '{print $7}' | sort | uniq -c | sort -nr | awk '{if($1>=%s) print $2}'" % (mirrors_full_log, 30)).read()
+    "cat %s | grep 'GET /anaconda/' | awk '{print $7}' | sort | uniq -c | sort -nr | awk '{if($1>=%s) print $2}'" % (mirrors_full_log, 80)).read()
 anaconda_heat_url = anaconda_heat_url.strip().split('\n')
 # kali
 kali_heat_url = os.popen(
-    "cat %s | grep 'GET /kali/' | awk '{print $7}' | sort | uniq -c | sort -nr | awk '{if($1>=%s) print $2}'" % (mirrors_full_log, 30)).read()
+    "cat %s | grep 'GET /kali/' | awk '{print $7}' | sort | uniq -c | sort -nr | awk '{if($1>=%s) print $2}'" % (mirrors_full_log, 7)).read()
 kali_heat_url = kali_heat_url.strip().split('\n')
 
 end_time = time.time()
@@ -95,7 +95,7 @@ sys.stdout.flush()
 # anaconda
 start_time = time.time()
 for url in anaconda_heat_url:
-    os.system('curl -o /dev/null --limit-rate %s http://mirrors.gdut.edu.cn/%s 2> /dev/null' % (SPEED_LIMITED, url))
+    os.system('curl -o /dev/null --limit-rate %s http://mirrors.gdut.edu.cn%s 2> /dev/null' % (SPEED_LIMITED, url))
 end_time = time.time()
 cost_time = int(end_time - start_time)
 print("anaconda预热用时: %.2f hours" % (cost_time / 60 / 60))
@@ -103,7 +103,7 @@ sys.stdout.flush()
 # kali
 start_time = time.time()
 for url in kali_heat_url:
-    os.system('curl -o /dev/null --limit-rate %s http://mirrors.gdut.edu.cn/%s 2> /dev/null' % (SPEED_LIMITED, url))
+    os.system('curl -o /dev/null --limit-rate %s http://mirrors.gdut.edu.cn%s 2> /dev/null' % (SPEED_LIMITED, url))
 end_time = time.time()
 cost_time = int(end_time - start_time)
 print("kali预热用时: %.2f hours" % (cost_time / 60 / 60))

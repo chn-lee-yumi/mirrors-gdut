@@ -25,3 +25,17 @@ under construction
 # 运维文档
 
 under construction
+
+# New Mirror List
+
+|镜像|预估大小|文档|备注|
+|kali|675GB|https://www.kali.org/docs/community/kali-linux-mirrors/ |目前采用缓存的方式，硬盘扩容后，根据热度考虑是否全量镜像|
+|kali-images|172GB|https://www.kali.org/docs/community/kali-linux-mirrors/ ||
+|gentoo|426G|待google||
+|freebsd|600G|https://www.freebsd.org/doc/en_US.ISO8859-1/articles/hubs/mirror-howto.html ||
+|freebsd-ports|534G|https://www.freebsd.org/doc/en_US.ISO8859-1/articles/hubs/mirror-howto.html ||
+|raspiberry|64G|待google||
+|raspbian|391G|待google||
+|openwrt|74G|待google||
+|lxc-images|待google|待google|如果上LXD集群，就考虑使用|
+|docker|缓存加速|参考 http://mirrors.ustc.edu.cn/help/dockerhub.html |需要子域名，以后发展好再考虑|

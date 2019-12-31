@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# 注意：建议预留200G空间作为更新缓存（因为是先下载新文件再删除旧文件的）
 PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/mirror/.local/bin:/home/mirror/bin
 LOCK_DIR=/tmp/mirror/lock
 SYNC_TIME_DIR=/home/mirror/sync_time
@@ -18,7 +17,7 @@ LOG_TIME=3
 #       --partial \
 #"
 # 我的多了--perms，网易的多了--timeout=10800 --partial
-COMMON_OPTIONS="-rlptHhv --delete-after --delay-updates --timeout=1200 --partial --delete-excluded"
+COMMON_OPTIONS="-rlptHhv --delete-after --delay-updates --timeout=1200 --partial --delete-excluded --ignore-errors"
 
 
 usage(){
@@ -61,31 +60,31 @@ echo "日志文件："${LOG_FILE}
 # 执行同步命令
 case $1 in
     archlinux)
-        rsync ${COMMON_OPTIONS} mirrors.neusoft.edu.cn::archlinux/ /mnt/mirror/archlinux | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} --exclude='iso/archboot/2016.08/' --exclude='iso/archboot/2016.12/' mirrors.neusoft.edu.cn::archlinux/ /mnt/mirror/archlinux | tee ${LOG_FILE}
         ;;
     archlinuxcn)
         rsync ${COMMON_OPTIONS} mirrors.tuna.tsinghua.edu.cn::archlinuxcn/ /mnt/mirror/archlinuxcn | tee ${LOG_FILE}
         ;;
     centos)
-        rsync ${COMMON_OPTIONS} mirrors.tuna.tsinghua.edu.cn::centos/ /mnt/mirror/centos | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} --exclude='6.10/*' --exclude='aarch64/' --exclude='ppc64/' --exclude='ppc64le/' --exclude='s390x/' mirrors.tuna.tsinghua.edu.cn::centos/ /mnt/mirror/centos | tee ${LOG_FILE}
         ;;
     debian)
-        ftpsync  # debian官网推荐的同步工具 /home/mirror/bin/ftpsync
+        ftpsync  # debian官网推荐的同步工具 /home/mirror/bin/ftpsync https://www.debian.org/mirror/ftpmirror
         ;;
     debian-cd)
-        rsync ${COMMON_OPTIONS} --include='i386/**.iso' --include='amd64/**.iso' --exclude='*.iso' mirrors.tuna.tsinghua.edu.cn::debian-cd/ /mnt/mirror/debian-cd > ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} --include='amd64/**.iso' --exclude='*.iso' mirrors.tuna.tsinghua.edu.cn::debian-cd/ /mnt/mirror/debian-cd | tee ${LOG_FILE}
         ;;
     elpa)
         rsync ${COMMON_OPTIONS} elpa.emacs-china.org::elpa/ /mnt/mirror/elpa/ | tee ${LOG_FILE}
         ;;
     epel)
-        rsync ${COMMON_OPTIONS} mirrors.tuna.tsinghua.edu.cn::epel/ /mnt/mirror/epel | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} --exclude='6/*' --exclude='aarch64/' --exclude='ppc64/' --exclude='ppc64le/' --exclude='s390x/' mirrors.tuna.tsinghua.edu.cn::epel/ /mnt/mirror/epel | tee ${LOG_FILE}
         ;;
     manjaro)
         rsync ${COMMON_OPTIONS} mirrors.ustc.edu.cn::repo/manjaro/ /mnt/mirror/manjaro/ | tee ${LOG_FILE}
         ;;
     manjaro-cd)
-        rsync ${COMMON_OPTIONS} mirrors.ustc.edu.cn::repo/manjaro-cd/ /mnt/mirror/manjaro-cd/ | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} --exclude='18.1.0*/' --exclude='18.1.1*/' --exclude='18.1.2*/' --exclude='z_release_archive/' mirrors.ustc.edu.cn::repo/manjaro-cd/ /mnt/mirror/manjaro-cd/ | tee ${LOG_FILE}
         ;;
     ubuntu)
         ~/ubuntu/archive.sh | tee ${LOG_FILE}
