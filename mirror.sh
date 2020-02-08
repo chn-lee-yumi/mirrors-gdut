@@ -16,7 +16,6 @@ LOG_TIME=3
 #       --timeout=10800 \
 #       --partial \
 #"
-# 我的多了--perms，网易的多了--timeout=10800 --partial
 COMMON_OPTIONS="-rlptHhv --delete-after --delay-updates --timeout=1200 --partial --delete-excluded --ignore-errors"
 
 
