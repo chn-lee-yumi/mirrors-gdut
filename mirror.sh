@@ -22,7 +22,7 @@ COMMON_OPTIONS="-rlptHhv --delete-after --delay-updates --timeout=1200 --partial
 usage(){
     echo Usage: $0 [mirror]
     echo Example: $0 debian
-    echo Supported mirrors: archlinux archlinuxcn centos debian debian-cd elpa epel manjaro manjaro-cd ubuntu ubuntu-releases
+    echo Supported mirrors: archlinux archlinuxcn centos debian debian-cd elpa epel manjaro manjaro-cd termux ubuntu ubuntu-releases
     exit 0
 }
 
@@ -84,6 +84,9 @@ case $1 in
         ;;
     manjaro-cd)
         rsync ${COMMON_OPTIONS} --exclude='18.1.0*/' --exclude='18.1.1*/' --exclude='18.1.2*/' --exclude='z_release_archive/' mirrors.ustc.edu.cn::repo/manjaro-cd/ /mnt/mirror/manjaro-cd/ | tee ${LOG_FILE}
+        ;;
+    termux)
+        rsync ${COMMON_OPTIONS} mirrors.tuna.tsinghua.edu.cn::termux/ /mnt/mirror/termux | tee ${LOG_FILE}
         ;;
     ubuntu)
         ~/ubuntu/archive.sh | tee ${LOG_FILE}
