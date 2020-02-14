@@ -1,3 +1,5 @@
+# crontab for user mirror
+
 0 0,6,12,18 * * *  /home/mirror/mirror.sh ubuntu
 20 0,6,12,18 * * *  /home/mirror/mirror.sh ubuntu-releases
 
@@ -8,6 +10,7 @@
 20 2,8,14,20 * * *  /home/mirror/mirror.sh debian-cd
 
 0 3,9,15,21 * * *  /home/mirror/mirror.sh elpa
+20 3,9,15,21 * * *  /home/mirror/mirror.sh termux
 
 0 4,10,16,22 * * *  /home/mirror/mirror.sh centos
 20 4,10,16,22 * * *  /home/mirror/mirror.sh epel

@@ -1,0 +1,17 @@
+# crontab for user root
+
+# 重启后限制网卡速度、同步时间
+@reboot sleep 5; . /etc/profile; /usr/bin/wondershaper -a ens192 -d 200000 -u 1000000; ntpdate ntp.ntsc.ac.cn > /tmp/ntp.log
+
+# 每小时同步一次时间
+0 * * * * /usr/sbin/ntpdate ntp.ntsc.ac.cn >> /tmp/ntp.log
+
+# 每天0点logrotate
+0 0 * * * /etc/logrotate
+
+# 每天9:30生成缓存统计数据(因nginx用户与mirror用户不一样，mirror无法读取缓存文件夹，故用root用户执行)
+30 9 * * * bash /home/mirror/mirror_cache_stat.sh >> /mnt/mirror/cache_stat.txt
+# 每天23:59发送当日统计
+59 23 * * * /bin/python3 /home/mirror/mirror_daily_summary.py > /mnt/mirror/daily_stat.txt
+# 每周日23:30发送磁盘数据
+30 23 * * 0  /bin/python3 /home/mirror/mirror_disk_summary.py
