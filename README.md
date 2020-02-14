@@ -39,3 +39,5 @@ under construction
 |raspbian|391G|待google||
 |lxc-images|待google|待google|如果上LXD集群，就考虑使用|
 |docker|缓存加速|参考 http://mirrors.ustc.edu.cn/help/dockerhub.html |需要子域名，以后发展好再考虑|
+|ros|431GB|http://wiki.ros.org/Mirrors||
+|fedora|1.13T|待google||
