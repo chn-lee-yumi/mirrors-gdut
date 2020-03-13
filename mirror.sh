@@ -79,6 +79,9 @@ case $1 in
     epel)
         rsync ${COMMON_OPTIONS} --exclude='6/*' --exclude='aarch64/' --exclude='ppc64/' --exclude='ppc64le/' --exclude='s390x/' mirrors.tuna.tsinghua.edu.cn::epel/ /mnt/mirror/epel | tee ${LOG_FILE}
         ;;
+    kali-images)
+        rsync ${COMMON_OPTIONS} --exclude='kali-2019.2/' --exclude='kali-2019.3/' mirrors.tuna.tsinghua.edu.cn::kali-images/ /mnt/mirror/kali-images | tee ${LOG_FILE}
+        ;;
     manjaro)
         rsync ${COMMON_OPTIONS} mirrors.ustc.edu.cn::repo/manjaro/ /mnt/mirror/manjaro/ | tee ${LOG_FILE}
         ;;

@@ -14,6 +14,7 @@
 
 0 4,10,16,22 * * *  /home/mirror/mirror.sh centos
 20 4,10,16,22 * * *  /home/mirror/mirror.sh epel
+40 4,10,16,22 * * *  /home/mirror/mirror.sh kali-images
 
 0 5,11,17,23 * * *  /home/mirror/mirror.sh archlinux
 20 5,11,17,23 * * *  /home/mirror/mirror.sh archlinuxcn
