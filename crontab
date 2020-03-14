@@ -2,15 +2,17 @@
 
 0 0,6,12,18 * * *  /home/mirror/mirror.sh ubuntu
 20 0,6,12,18 * * *  /home/mirror/mirror.sh ubuntu-releases
+40 0,6,12,18 * * *  /home/mirror/mirror.sh elpa
 
 0 1,7,13,19 * * *  /home/mirror/mirror.sh manjaro
 20 1,7,13,19 * * *  /home/mirror/mirror.sh manjaro-cd
+40 1,7,13,19 * * *  /home/mirror/mirror.sh termux
 
 0 2,8,14,20 * * *  /home/mirror/mirror.sh debian
 20 2,8,14,20 * * *  /home/mirror/mirror.sh debian-cd
 
-0 3,9,15,21 * * *  /home/mirror/mirror.sh elpa
-20 3,9,15,21 * * *  /home/mirror/mirror.sh termux
+0 3,9,15,21 * * *  /home/mirror/mirror.sh raspberrypi
+20 3,9,15,21 * * *  /home/mirror/mirror.sh raspbian
 
 0 4,10,16,22 * * *  /home/mirror/mirror.sh centos
 20 4,10,16,22 * * *  /home/mirror/mirror.sh epel

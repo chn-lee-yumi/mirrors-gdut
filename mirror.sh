@@ -16,13 +16,17 @@ LOG_TIME=3
 #       --timeout=10800 \
 #       --partial \
 #"
-COMMON_OPTIONS="-rlptHhv --delete-after --delay-updates --timeout=1200 --partial --delete-excluded --ignore-errors"
+COMMON_OPTIONS="-rlptHhv --delete-delay --delay-updates --timeout=1200 --partial --delete-excluded --ignore-errors"
 
 
 usage(){
-    echo Usage: $0 [mirror]
-    echo Example: $0 debian
-    echo Supported mirrors: archlinux archlinuxcn centos debian debian-cd elpa epel manjaro manjaro-cd termux ubuntu ubuntu-releases
+    cat << EOF
+Usage: $0 [mirror]
+Example: $0 debian
+Supported mirrors: archlinux archlinuxcn centos debian debian-cd
+                   elpa epel kali-images manjaro manjaro-cd
+                   raspberrypi raspbian termux ubuntu ubuntu-releases
+EOF
     exit 0
 }
 
@@ -59,37 +63,47 @@ echo "日志文件："${LOG_FILE}
 # 执行同步命令
 case $1 in
     archlinux)
-        rsync ${COMMON_OPTIONS} --exclude='iso/archboot/2016.08/' --exclude='iso/archboot/2016.12/' mirrors.neusoft.edu.cn::archlinux/ /mnt/mirror/archlinux | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} --exclude='iso/archboot/2016.08/' --exclude='iso/archboot/2016.12/' mirrors.neusoft.edu.cn::archlinux /mnt/mirror/archlinux | tee ${LOG_FILE}
         ;;
     archlinuxcn)
-        rsync ${COMMON_OPTIONS} mirrors.tuna.tsinghua.edu.cn::archlinuxcn/ /mnt/mirror/archlinuxcn | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} mirrors.tuna.tsinghua.edu.cn::archlinuxcn /mnt/mirror/archlinuxcn | tee ${LOG_FILE}
         ;;
     centos)
-        rsync ${COMMON_OPTIONS} --exclude='6.10/*' --exclude='aarch64/' --exclude='ppc64/' --exclude='ppc64le/' --exclude='s390x/' mirrors.tuna.tsinghua.edu.cn::centos/ /mnt/mirror/centos | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} --exclude='6.10/*' --exclude='aarch64/' --exclude='ppc64/' --exclude='ppc64le/' --exclude='s390x/' mirrors.tuna.tsinghua.edu.cn::centos /mnt/mirror/centos | tee ${LOG_FILE}
         ;;
     debian)
         ftpsync  # debian官网推荐的同步工具 /home/mirror/bin/ftpsync https://www.debian.org/mirror/ftpmirror
         ;;
     debian-cd)
-        rsync ${COMMON_OPTIONS} --include='amd64/**.iso' --exclude='*.iso' mirrors.tuna.tsinghua.edu.cn::debian-cd/ /mnt/mirror/debian-cd | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} --include='amd64/**.iso' --exclude='*.iso' mirrors.tuna.tsinghua.edu.cn::debian-cd /mnt/mirror/debian-cd | tee ${LOG_FILE}
         ;;
     elpa)
-        rsync ${COMMON_OPTIONS} elpa.emacs-china.org::elpa/ /mnt/mirror/elpa/ | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} elpa.emacs-china.org::elpa /mnt/mirror/elpa/ | tee ${LOG_FILE}
         ;;
     epel)
-        rsync ${COMMON_OPTIONS} --exclude='6/*' --exclude='aarch64/' --exclude='ppc64/' --exclude='ppc64le/' --exclude='s390x/' mirrors.tuna.tsinghua.edu.cn::epel/ /mnt/mirror/epel | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} --exclude='6/*' --exclude='aarch64/' --exclude='ppc64/' --exclude='ppc64le/' --exclude='s390x/' mirrors.tuna.tsinghua.edu.cn::epel /mnt/mirror/epel | tee ${LOG_FILE}
         ;;
     kali-images)
-        rsync ${COMMON_OPTIONS} --exclude='kali-2019.2/' --exclude='kali-2019.3/' mirrors.tuna.tsinghua.edu.cn::kali-images/ /mnt/mirror/kali-images | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} --exclude='kali-2019.2/' --exclude='kali-2019.3/' mirrors.tuna.tsinghua.edu.cn::kali-images /mnt/mirror/kali-images | tee ${LOG_FILE}
         ;;
     manjaro)
-        rsync ${COMMON_OPTIONS} mirrors.ustc.edu.cn::repo/manjaro/ /mnt/mirror/manjaro/ | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} mirrors.ustc.edu.cn::repo/manjaro /mnt/mirror/manjaro/ | tee ${LOG_FILE}
         ;;
     manjaro-cd)
-        rsync ${COMMON_OPTIONS} --exclude='18.1.0*/' --exclude='18.1.1*/' --exclude='18.1.2*/' --exclude='z_release_archive/' mirrors.ustc.edu.cn::repo/manjaro-cd/ /mnt/mirror/manjaro-cd/ | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} --exclude='18.1.0*/' --exclude='18.1.1*/' --exclude='18.1.2*/' --exclude='z_release_archive/' mirrors.ustc.edu.cn::repo/manjaro-cd /mnt/mirror/manjaro-cd/ | tee ${LOG_FILE}
+        ;;
+    raspberrypi)
+        # 仅支持ipv6，详见 http://archive.raspberrypi.org/README.txt
+        rsync ${COMMON_OPTIONS} --exclude='/html' apt-repo.raspberrypi.org::archive /mnt/mirror/raspberrypi | tee ${LOG_FILE}
+        ;;
+    raspbian)
+        # 采用官方脚本，文档见 http://www.raspbian.org/RaspbianMirrors
+        cd /mnt/mirror/raspbian/
+        python3 -u ~/raspbmirror.py --sourcepool /mnt/mirror/debian/pool --cleanup | tee ${LOG_FILE}
+        # rsync ${COMMON_OPTIONS} archive.raspbian.org::archive /mnt/mirror/raspbian | tee ${LOG_FILE}
         ;;
     termux)
-        rsync ${COMMON_OPTIONS} mirrors.tuna.tsinghua.edu.cn::termux/ /mnt/mirror/termux | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} mirrors.tuna.tsinghua.edu.cn::termux /mnt/mirror/termux | tee ${LOG_FILE}
         ;;
     ubuntu)
         ~/ubuntu/archive.sh | tee ${LOG_FILE}

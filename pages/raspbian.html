@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>raspbian镜像使用帮助</title>
+    <link rel="stylesheet" type="text/css" href="mirror.css" media="screen" />
+</head>
+<body>
+
+<h1>raspbian镜像使用帮助</h1>
+
+<div id="mirror-data">
+    <h3>收录架构</h3>
+     <ul>
+        <li>全部</li>
+     </ul>
+    <h3>收录版本</h3>
+     <ul>
+        <li>全部</li>
+     </ul>
+    <h3>更新时间</h3>
+    <p>每6小时更新一次</p>
+</div>
+<div class="hr"><hr /></div>
+<div id="mirror-usage">
+    <h3>Raspbian简介</h3>
+    <p>Raspbian 是专门用于 ARM 卡片式计算机 Raspberry Pi® “树莓派”的操作系统。</p>
+    <p>Raspbian 是树莓派的开发与维护机构 The Raspbeery Pi Foundation “树莓派基金会”，推荐用于树莓派的首选系统。</p>
+    <p>由于以下原因，Raspbian 需要单独组建软件仓库，而不能使用 Debian 的仓库：</p>
+    <ul>
+      <li>&nbsp;Debian下所有的软件包都需要用&nbsp;armhf&nbsp;重新编译。</li>
+      <li>&nbsp;树莓派有部分特有的软件包，例如&nbsp;BCM2835&nbsp;CPU&nbsp;的&nbsp;GPIO&nbsp;底层操作库。</li>
+      <li>&nbsp;树莓派用户倾向于探索、尝试最新的软件。这与&nbsp;Debian&nbsp;软件源的策略完全不同。</li>
+    </ul>
+    <h3>使用说明</h3>
+    <p>推荐同时修改<a target="_blank" href="raspberrypi.html" >raspberrypi源</a>。</p>
+    <p>根据对应的debian版本，编辑/etc/apt/sources.list文件, 修改为如下内容。（操作前请做好相应备份）</p>
+    <h4>buster</h4>
+    <pre>
+deb http://mirrors.gdut.edu.cn/raspbian/raspbian/ buster main non-free contrib
+deb-src http://mirrors.gdut.edu.cn/raspbian/raspbian/ buster main non-free contrib</pre>
+    <h4>stretch</h4>
+    <pre>
+deb http://mirrors.gdut.edu.cn/raspbian/raspbian/ stretch main non-free contrib
+deb-src http://mirrors.gdut.edu.cn/raspbian/raspbian/ stretch main non-free contrib</pre>
+    <h4>jessie</h4>
+    <pre>
+deb http://mirrors.gdut.edu.cn/raspbian/raspbian/ jessie main non-free contrib
+deb-src http://mirrors.gdut.edu.cn/raspbian/raspbian/ jessie main non-free contrib</pre>
+    <h4>wheezy</h4>
+    <pre>
+deb http://mirrors.gdut.edu.cn/raspbian/raspbian/ wheezy main non-free contrib
+deb-src http://mirrors.gdut.edu.cn/raspbian/raspbian/ wheezy main non-free contrib</pre>
+</div>
+
+</body></html>
