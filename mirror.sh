@@ -98,9 +98,10 @@ case $1 in
         ;;
     raspbian)
         # 采用官方脚本，文档见 http://www.raspbian.org/RaspbianMirrors
-        cd /mnt/mirror/raspbian/
-        python3 -u ~/raspbmirror.py --sourcepool /mnt/mirror/debian/pool --cleanup | tee ${LOG_FILE}
-        # rsync ${COMMON_OPTIONS} archive.raspbian.org::archive /mnt/mirror/raspbian | tee ${LOG_FILE}
+        # cd /mnt/mirror/raspbian/
+        # python3 -u ~/raspbmirror.py --sourcepool /mnt/mirror/debian/pool --cleanup | tee ${LOG_FILE}
+        # 官方脚本有bug，改用rsync
+        rsync ${COMMON_OPTIONS} archive.raspbian.org::archive /mnt/mirror/raspbian | tee ${LOG_FILE}
         ;;
     termux)
         rsync ${COMMON_OPTIONS} mirrors.tuna.tsinghua.edu.cn::termux /mnt/mirror/termux | tee ${LOG_FILE}
