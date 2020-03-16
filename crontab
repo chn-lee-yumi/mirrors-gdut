@@ -22,4 +22,4 @@
 20 5,11,17,23 * * *  /home/mirror/mirror.sh archlinuxcn
 
 
-0 4 * * *  cd /home/mirror/tmp; python3 /home/mirror/mirror_auto_cache.py
+0 4 * * *  cd /home/mirror/tmp; python3 /home/mirror/mirror_auto_cache.py > /tmp/mirror_auto_cache.log
