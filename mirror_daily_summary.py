@@ -63,8 +63,8 @@ for mirror in mirror_list:
                         user_list.add(line_tmp[-1].strip('"'))
         summary[mirror_name]['users'] = len(user_list)
 
-for mirror in summary:
-    msg += mirror + ': %s人 %.2fMB\n' % (summary[mirror]['users'], summary[mirror]['traffic'])
+        # 总结文字
+        msg += mirror_name + ': %s人 %.2fMB\n' % (summary[mirror_name]['users'], summary[mirror_name]['traffic'])
 
 # 计算总人数（ip）
 msg += '===用户分布===\n'
