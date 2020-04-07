@@ -3,7 +3,7 @@ from mod_weixin import *
 
 msg = "[磁盘统计]\n"
 
-space_used = os.popen('cd /mnt/mirror/ && du -BG -d 1 ./ | sort -k2 | grep -v 0G').read()
+space_used = os.popen('cd /mnt/mirror/ && du -BG -d 1 ./ | sort -k2 | grep -v \ 0G').read()
 msg += '===镜像占用===\n'
 msg += space_used
 
