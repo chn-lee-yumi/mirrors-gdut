@@ -84,7 +84,7 @@ for mirror in mirror_list:
         else:  # 非缓存镜像（保存在服务器硬盘）
             try:
                 with open('/home/mirror/sync_time/' + mirror_name, 'r') as f:
-                    sync_time = f.read()
+                    sync_time = f.read().strip()
             except FileNotFoundError:
                 sync_time = '从未同步'
             if os.path.isfile('/tmp/mirror/lock/' + mirror_name + '.lock'):
