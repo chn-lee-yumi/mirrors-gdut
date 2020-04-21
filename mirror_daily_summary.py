@@ -1,10 +1,12 @@
 import glob
 import os
+import re
 from mod_weixin import *
 
 location_info = [
     ('数据中心(97段)', '222.200.97.'),
     ('数据中心(98段)', '222.200.98.'),
+    ('数据中心(118段)', '222.200.118.'),
     ('值班室(99段)', '222.200.99.'),
     ('大学城教工宿舍', '10.11.'),
     ('工一', '10.21.23.'),  # 掩码具体不知,10.21
@@ -15,6 +17,14 @@ location_info = [
 ]
 
 ACCESS_LOG = '/var/log/nginx/access.log'
+
+
+def is_ip(str):
+    p = re.compile('^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$')
+    if p.match(str):
+        return True
+    else:
+        return False
 
 
 def check_ip_location(ip):
@@ -60,7 +70,9 @@ for mirror in mirror_list:
                             continue
                         user_list.add(line_tmp[0])
                     else:  # 使用了代理
-                        user_list.add(line_tmp[-1].strip('"'))
+                        user_ip = line_tmp[-1].strip('"').split(',')[-1].strip()
+                        if is_ip(user_ip):
+                            user_list.add(user_ip)
         summary[mirror_name]['users'] = len(user_list)
 
         # 总结文字
@@ -78,7 +90,9 @@ with open(ACCESS_LOG, 'r') as f:
                 continue
             user_ip_list.add(line_tmp[0])
         else:  # 使用了代理
-            user_ip_list.add(line_tmp[-1].strip('"'))
+            user_ip = line_tmp[-1].strip('"').split(',')[-1]
+            if is_ip(user_ip):
+                user_list.add(user_ip)
 user_total = len(user_ip_list)
 msg += '总人数：%d\n' % user_total
 
