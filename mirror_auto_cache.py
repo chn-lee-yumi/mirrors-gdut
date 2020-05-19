@@ -2,6 +2,8 @@
 自动缓存预热脚本
 由于清华源每天三点多才出log，所以这个脚本由crontab在凌晨4点执行，crontab里面一定要先cd到/home/mirror/tmp/
 思路：下载清华镜像站的log，然后统计出热门的URL，预先进行下载
+提取后缀名：cat tmp_mirror_log_full_pypi.log | awk '{print $7}' | grep -Po '[^.]*$' | grep -v / | sort | uniq -c | sort -n
+TODO: 可能会卡死，需要修复这个问题
 """
 
 import requests
@@ -10,7 +12,7 @@ import time
 import os
 import sys
 
-SPEED_LIMITED = '600M'  # 回源带宽限速，避免打爆回源带宽，具体速度需要实测（1M=1MB/s=8Mbps）TODO:缓存过的限速没有意义
+# SPEED_LIMITED = '600M'  # 回源带宽限速，避免打爆回源带宽，具体速度需要实测（1M=1MB/s=8Mbps）TODO:缓存过的限速没有意义
 # MIN_DOWNLOAD_TIMES = 50  # 最小下载次数，达到这个次数的文件将被预热 已禁用，不同源不同热度
 
 date = (date.today() + timedelta(days=-2)).strftime("%Y%m%d")
@@ -65,16 +67,19 @@ start_time = time.time()
 print("计算访问量……")
 sys.stdout.flush()
 # pypi
-pypi_heat_url = os.popen("cat %s | awk '{print $7}' | sort | uniq -c | sort -nr | awk '{if($1>=%s) print $2}'" % (pypi_full_log, 30)).read()
+pypi_heat_url = os.popen("cat %s | awk '{print $7}' | grep -E '\.whl$|\.gz$|\.egg$' | sort | uniq -c | awk '{if($1>=%s) print $2}'" % (pypi_full_log, 30)).read()
 pypi_heat_url = pypi_heat_url.strip().split('\n')
+print("pypi链接数：%d" % len(pypi_heat_url))
 # anaconda
 anaconda_heat_url = os.popen(
-    "cat %s | grep 'GET /anaconda/' | awk '{print $7}' | sort | uniq -c | sort -nr | awk '{if($1>=%s) print $2}'" % (mirrors_full_log, 80)).read()
+    "cat %s | grep 'GET /anaconda/' | awk '{print $7}' | grep -E '\.json$|\.exe$|\.bz2$|\.conda$|\.sh$|\.pkg$' | sort | uniq -c | awk '{if($1>=%s) print $2}'" % (mirrors_full_log, 80)).read()
 anaconda_heat_url = anaconda_heat_url.strip().split('\n')
+print("anaconda链接数：%d" % len(anaconda_heat_url))
 # kali
 kali_heat_url = os.popen(
-    "cat %s | grep 'GET /kali/' | awk '{print $7}' | sort | uniq -c | sort -nr | awk '{if($1>=%s) print $2}'" % (mirrors_full_log, 7)).read()
+    "cat %s | grep 'GET /kali/' | awk '{print $7}' | grep -E '\.deb$|\.gz$' | sort | uniq -c | awk '{if($1>=%s) print $2}'" % (mirrors_full_log, 8)).read()
 kali_heat_url = kali_heat_url.strip().split('\n')
+print("kail链接数：%d" % len(kali_heat_url))
 
 end_time = time.time()
 cost_time = int(end_time - start_time)
@@ -87,7 +92,7 @@ sys.stdout.flush()
 # pypi
 start_time = time.time()
 for url in pypi_heat_url:
-    os.system('curl -o /dev/null --limit-rate %s http://mirrors.gdut.edu.cn/pypi%s 2> /dev/null' % (SPEED_LIMITED, url))
+    os.system('curl -I http://mirrors.gdut.edu.cn/pypi%s -o/dev/null 2>/dev/null' % url)
 end_time = time.time()
 cost_time = int(end_time - start_time)
 print("pypi预热用时: %.2f hours" % (cost_time / 60 / 60))
@@ -95,7 +100,7 @@ sys.stdout.flush()
 # anaconda
 start_time = time.time()
 for url in anaconda_heat_url:
-    os.system('curl -o /dev/null --limit-rate %s http://mirrors.gdut.edu.cn%s 2> /dev/null' % (SPEED_LIMITED, url))
+    os.system('curl -I http://mirrors.gdut.edu.cn%s -o/dev/null 2>/dev/null' % url)
 end_time = time.time()
 cost_time = int(end_time - start_time)
 print("anaconda预热用时: %.2f hours" % (cost_time / 60 / 60))
@@ -103,7 +108,7 @@ sys.stdout.flush()
 # kali
 start_time = time.time()
 for url in kali_heat_url:
-    os.system('curl -o /dev/null --limit-rate %s http://mirrors.gdut.edu.cn%s 2> /dev/null' % (SPEED_LIMITED, url))
+    os.system('curl -I http://mirrors.gdut.edu.cn%s -o/dev/null 2>/dev/null' % url)
 end_time = time.time()
 cost_time = int(end_time - start_time)
 print("kali预热用时: %.2f hours" % (cost_time / 60 / 60))
