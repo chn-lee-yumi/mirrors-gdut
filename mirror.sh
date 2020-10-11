@@ -87,10 +87,10 @@ case $1 in
         rsync ${COMMON_OPTIONS} --exclude='kali-2019.2/' --exclude='kali-2019.3/' --exclude='kali-2019.4/' --exclude='kali-2020.1/' --exclude='kali-2020.1b/' --exclude='kali-2020.2/' mirrors.tuna.tsinghua.edu.cn::kali-images /mnt/mirror/kali-images | tee ${LOG_FILE}
         ;;
     manjaro)
-        rsync ${COMMON_OPTIONS} mirrors.ustc.edu.cn::repo/manjaro/ /mnt/mirror/manjaro/ | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} rsync.mirrors.ustc.edu.cn::repo/manjaro/ /mnt/mirror/manjaro/ | tee ${LOG_FILE}
         ;;
     manjaro-cd)
-        rsync ${COMMON_OPTIONS} --exclude='z_release_archive/' mirrors.ustc.edu.cn::repo/manjaro-cd/ /mnt/mirror/manjaro-cd/ | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} --exclude='z_release_archive/' rsync.mirrors.ustc.edu.cn::repo/manjaro-cd/ /mnt/mirror/manjaro-cd/ | tee ${LOG_FILE}
         ;;
     raspberrypi)
         # 仅支持ipv6，详见 http://archive.raspberrypi.org/README.txt
