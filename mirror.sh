@@ -105,6 +105,8 @@ case $1 in
         ;;
     termux)
         rsync ${COMMON_OPTIONS} mirrors.tuna.tsinghua.edu.cn::termux /mnt/mirror/termux | tee ${LOG_FILE}
+        # termux默认是termux-packages-24
+        ln -s /mnt/mirror/termux/termux-packages-24/dist /mnt/mirror/termux/dist
         ;;
     ubuntu)
         ~/ubuntu/archive.sh | tee ${LOG_FILE}
