@@ -66,7 +66,7 @@ html = HEADER
 odd_or_even = 'odd'
 
 mirror_list = sorted(glob.glob('/mnt/mirror/*'))
-cdn_mirror_list = ['pypi', 'anaconda', 'maven', 'npm', 'kali']
+cdn_mirror_list = ['pypi', 'anaconda', 'maven', 'npm', 'kali', 'ubuntu-ports']
 ignore_dir = ['static']
 
 for mirror in mirror_list:
