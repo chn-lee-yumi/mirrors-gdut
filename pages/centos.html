@@ -12,11 +12,11 @@
 <div id="mirror-data">
     <h3>收录架构</h3>
     <ul>
-        <li>x86_64</li>
+        <li>全部</li>
     </ul>
     <h3>收录版本</h3>
     <ul>
-        <li>&gt;=7</li>
+        <li>全部</li>
     </ul>
     <h3>更新时间</h3>
     <p>每6小时更新一次</p>
@@ -29,13 +29,13 @@
     <p>首先备份/etc/yum.repos.d/CentOS-Base.repo</p>
     <pre>
 mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</pre>
-    <p>根据对应的centos版本，编辑/etc/yum.repos.d/CentOS-Base.repo文件, 修改为对应内容。</p>
+    <p>根据对应的centos版本，编辑/etc/yum.repos.d/CentOS-Base.repo文件, 修改为对应内容。（详见后面配置参考）</p>
     <p>最后运行以下命令生成缓存</p>
     <pre>
 yum clean all
 yum makecache</pre>
-
-    <h4>CentOS 7</h4>
+    <h3>配置参考</h3>
+    <p>如果是 CentOS 7 ，则把/etc/yum.repos.d/CentOS-Base.repo修改为下面的内容：</p>
     <pre>
 [base]
 name=CentOS-$releasever - Base
@@ -61,7 +61,42 @@ baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/centosplus/$basearch/
 gpgcheck=1
 enabled=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7</pre>
+    <p>如果是 CentOS 8 ，则把/etc/yum.repos.d/CentOS-Base.repo修改为下面的内容：</p>
+    <pre>
+[BaseOS]
+name=CentOS-$releasever - Base
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/BaseOS/$basearch/os/
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial
 
+[AppStream]
+name=CentOS-$releasever - AppStream
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/AppStream/$basearch/os/
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial
+
+[PowerTools]
+name=CentOS-$releasever - PowerTools
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/PowerTools/$basearch/os/
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial
+
+[extras]
+name=CentOS-$releasever - Extras
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/extras/$basearch/os/
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial
+
+[centosplus]
+name=CentOS-$releasever - Plus
+baseurl=http://mirrors.gdut.edu.cn/centos/$releasever/centosplus/$basearch/os/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial</pre>
 </div>
 
 </body>
