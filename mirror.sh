@@ -135,5 +135,5 @@ rm -f ${LOCK_FILE}
 python3 /home/mirror/mirror_index.py
 
 # 清空LOG_TIME*24小时前的日志
-find ${LOG_DIR}/* -mtime ${LOG_TIME} -name '*log*' -delete
-find ${LOG_DIR}/* -mtime ${LOG_TIME} -name 'rsync-ftpsync.*' -delete
+find ${LOG_DIR}/* -mtime +${LOG_TIME} -name '*log*' -delete
+find ${LOG_DIR}/* -mtime +${LOG_TIME} -name 'rsync-ftpsync.*' -delete
