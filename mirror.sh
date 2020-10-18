@@ -75,7 +75,7 @@ case $1 in
         ftpsync  # debian官网推荐的同步工具 /home/mirror/bin/ftpsync https://www.debian.org/mirror/ftpmirror
         ;;
     debian-cd)
-        rsync ${COMMON_OPTIONS} --include='amd64/**.iso' --exclude='*.iso' mirrors.tuna.tsinghua.edu.cn::debian-cd /mnt/mirror/debian-cd | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} --include='amd64/**.iso' --exclude='*.iso' --exclude='source/tar/**' mirrors.tuna.tsinghua.edu.cn::debian-cd /mnt/mirror/debian-cd | tee ${LOG_FILE}
         ;;
     elpa)
         rsync ${COMMON_OPTIONS} elpa.emacs-china.org::elpa /mnt/mirror/elpa/ | tee ${LOG_FILE}
