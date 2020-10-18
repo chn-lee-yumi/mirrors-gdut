@@ -84,7 +84,7 @@ case $1 in
         rsync ${COMMON_OPTIONS} --exclude='6/*' --exclude='SRPMS/' --exclude='aarch64/' --exclude='ppc64/' --exclude='ppc64le/' --exclude='s390x/' mirrors.tuna.tsinghua.edu.cn::epel /mnt/mirror/epel | tee ${LOG_FILE}
         ;;
     kali-images)
-        rsync ${COMMON_OPTIONS} --exclude='kali-2019.2/' --exclude='kali-2019.3/' --exclude='kali-2019.4/' --exclude='kali-2020.1/' --exclude='kali-2020.1b/' --exclude='kali-2020.2/' mirrors.tuna.tsinghua.edu.cn::kali-images /mnt/mirror/kali-images | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} --include='*amd64.iso' --exclude='*.iso' --exclude='kali-2019.2/' --exclude='kali-2019.3/' --exclude='kali-2019.4/' --exclude='kali-2020.1/' --exclude='kali-2020.1b/' --exclude='kali-2020.2/' mirrors.tuna.tsinghua.edu.cn::kali-images /mnt/mirror/kali-images | tee ${LOG_FILE}
         ;;
     manjaro)
         rsync ${COMMON_OPTIONS} rsync.mirrors.ustc.edu.cn::repo/manjaro/ /mnt/mirror/manjaro/ | tee ${LOG_FILE}
