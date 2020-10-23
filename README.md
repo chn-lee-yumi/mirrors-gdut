@@ -61,7 +61,6 @@ under construction
 
 |镜像|预估大小|文档|备注|
 |---|---|---|---|
-|gentoo|426G|待google||
 |freebsd|600G|https://www.freebsd.org/doc/en_US.ISO8859-1/articles/hubs/mirror-howto.html ||
 |freebsd-ports|534G|https://www.freebsd.org/doc/en_US.ISO8859-1/articles/hubs/mirror-howto.html ||
 |lxc-images|待google|待google|如果上LXD集群，就考虑使用|

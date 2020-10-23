@@ -24,7 +24,7 @@ usage(){
 Usage: $0 [mirror]
 Example: $0 debian
 Supported mirrors: archlinux archlinuxcn centos debian debian-cd
-                   elpa epel kali-images manjaro manjaro-cd
+                   elpa epel gentoo kali-images manjaro manjaro-cd
                    raspberrypi raspbian termux ubuntu ubuntu-releases
 EOF
     exit 0
@@ -82,6 +82,10 @@ case $1 in
         ;;
     epel)
         rsync ${COMMON_OPTIONS} --exclude='6/*' --exclude='SRPMS/' --exclude='aarch64/' --exclude='ppc64/' --exclude='ppc64le/' --exclude='s390x/' mirrors.tuna.tsinghua.edu.cn::epel /mnt/mirror/epel | tee ${LOG_FILE}
+        ;;
+    gentoo)
+        # 官方文档 https://wiki.gentoo.org/wiki/Project:Infrastructure/Mirrors/Source
+        rsync ${COMMON_OPTIONS} --exclude='/releases/historical' --exclude='/distfiles/**' --exclude='**/alpha'  --exclude='**/bsd' --exclude='**/hppa' --exclude='**/ia64' --exclude='**/m68k' --exclude='**/mips' --exclude='**/ppc' --exclude='**/prefix' --exclude='**/s390' --exclude='**/sh' --exclude='**/sparc' masterdistfiles.gentoo.org::gentoo /mnt/mirror/gentoo | tee ${LOG_FILE}
         ;;
     kali-images)
         rsync ${COMMON_OPTIONS} --include='*amd64.iso' --exclude='*.iso' --exclude='kali-2019.2/' --exclude='kali-2019.3/' --exclude='kali-2019.4/' --exclude='kali-2020.1/' --exclude='kali-2020.1b/' --exclude='kali-2020.2/' mirrors.tuna.tsinghua.edu.cn::kali-images /mnt/mirror/kali-images | tee ${LOG_FILE}

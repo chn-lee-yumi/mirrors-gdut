@@ -10,6 +10,7 @@
 
 0 2,8,14,20 * * *  /home/mirror/mirror.sh debian
 20 2,8,14,20 * * *  /home/mirror/mirror.sh debian-cd
+40 2,8,14,20 * * *  /home/mirror/mirror.sh gentoo
 
 0 3,9,15,21 * * *  /home/mirror/mirror.sh raspberrypi
 20 3,9,15,21 * * *  /home/mirror/mirror.sh raspbian

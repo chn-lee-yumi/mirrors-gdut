@@ -85,6 +85,11 @@ ubuntu_ports_heat_url = os.popen(
     "cat %s | grep 'GET /ubuntu-ports/' | awk '{print $7}' | grep -E '\.deb$|\.gz$' | sort | uniq -c | awk '{if($1>=%s) print $2}'" % (mirrors_full_log, 10)).read()
 ubuntu_ports_heat_url = ubuntu_ports_heat_url.strip().split('\n')
 print("ubuntu-ports链接数：%d" % len(ubuntu_ports_heat_url))
+# gentoo
+gentoo_heat_url = os.popen(
+    "cat %s | grep 'GET /gentoo/distfiles/' | awk '{print $7}' | sort | uniq -c | awk '{if($1>=%s) print $2}'" % (mirrors_full_log, 10)).read()
+gentoo_heat_url = gentoo_heat_url.strip().split('\n')
+print("gentoo链接数：%d" % len(gentoo_heat_url))
 
 end_time = time.time()
 cost_time = int(end_time - start_time)
@@ -124,6 +129,14 @@ for url in ubuntu_ports_heat_url:
 end_time = time.time()
 cost_time = int(end_time - start_time)
 print("ubuntu-ports预热用时: %.2f hours" % (cost_time / 60 / 60))
+sys.stdout.flush()
+# gentoo
+start_time = time.time()
+for url in gentoo_heat_url:
+    os.system('curl -I http://mirrors.gdut.edu.cn%s -o/dev/null 2>/dev/null' % url)
+end_time = time.time()
+cost_time = int(end_time - start_time)
+print("gentoo预热用时: %.2f hours" % (cost_time / 60 / 60))
 sys.stdout.flush()
 
 # 删除垃圾
