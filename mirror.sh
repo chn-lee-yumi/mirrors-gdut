@@ -63,7 +63,7 @@ echo "日志文件："${LOG_FILE}
 # 执行同步命令
 case $1 in
     archlinux)
-        rsync ${COMMON_OPTIONS} --exclude='iso/archboot/2016.08/' --exclude='iso/archboot/2016.12/' mirrors.neusoft.edu.cn::archlinux /mnt/mirror/archlinux | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} --exclude='iso/archboot/2016.08/' --exclude='iso/archboot/2016.12/' --exclude='iso/archboot/2018.06/' mirrors.tuna.tsinghua.edu.cn::archlinux /mnt/mirror/archlinux | tee ${LOG_FILE}
         ;;
     archlinuxcn)
         rsync ${COMMON_OPTIONS} mirrors.tuna.tsinghua.edu.cn::archlinuxcn /mnt/mirror/archlinuxcn | tee ${LOG_FILE}
