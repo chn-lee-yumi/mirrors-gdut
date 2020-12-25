@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>centos-vault镜像使用帮助</title>
+    <link rel="stylesheet" type="text/css" href="mirror.css" media="screen"/>
+</head>
+<body>
+
+<h1>centos-vault镜像使用帮助</h1>
+<div id="mirror-usage">
+    <div id="mirror-data">
+        <h3>收录架构</h3>
+        <ul>
+            <li>全部</li>
+        </ul>
+        <h3>收录版本</h3>
+        <ul>
+            <li>全部</li>
+        </ul>
+        <h3>更新时间</h3>
+        <p>由于centos-vault镜像占用空间大，并且访问数量少，所以我们只进行缓存，所有文件缓存30天。</p>
+    </div>
+    <div class="hr"><hr /></div>
+    <h3>使用说明</h3>
+    <p>这是储存centos过时版本的仓库。</p>
+    <p>首先备份/etc/yum.repos.d/CentOS-Base.repo</p>
+    <pre>
+mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</pre>
+    <p>根据对应的centos版本，编辑/etc/yum.repos.d/CentOS-Base.repo文件, 修改为对应内容。（详见后面配置参考）</p>
+    <p>最后运行以下命令生成缓存</p>
+    <pre>
+yum clean all
+yum makecache</pre>
+    <h3>配置参考</h3>
+    <p>如果是 CentOS 6 ，则把/etc/yum.repos.d/CentOS-Base.repo修改为下面的内容：</p>
+    <pre>
+[base]
+name=CentOS-$releasever - Base
+baseurl=http://mirrors.gdut.edu.cn/centos-vault/$releasever/os/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+
+[updates]
+name=CentOS-$releasever - Updates
+baseurl=http://mirrors.gdut.edu.cn/centos-vault/$releasever/updates/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+
+[extras]
+name=CentOS-$releasever - Extras
+baseurl=http://mirrors.gdut.edu.cn/centos-vault/$releasever/extras/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+
+[centosplus]
+name=CentOS-$releasever - Plus
+baseurl=http://mirrors.gdut.edu.cn/centos-vault/$releasever/centosplus/$basearch/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6</pre>
+</div>  
+
+</body>
+</html>
