@@ -4,6 +4,8 @@ http://mirrors.gdut.edu.cn/ 仅校园网可访问
 
 ![screenshot](screenshot.png)
 
+交流群：`VVZIbnZxVHZ2Sm80T1RNM09USTVORFVLCg==`
+
 # 架构
 
 Nginx提供web服务。
@@ -65,5 +67,4 @@ under construction
 |freebsd-ports|534G|https://www.freebsd.org/doc/en_US.ISO8859-1/articles/hubs/mirror-howto.html ||
 |lxc-images|待google|待google|如果上LXD集群，就考虑使用|
 |docker|缓存加速|参考 http://mirrors.ustc.edu.cn/help/dockerhub.html |需要子域名，以后发展好再考虑|
-|ros|431GB|http://wiki.ros.org/Mirrors||
 |fedora|1.13T|待google||
