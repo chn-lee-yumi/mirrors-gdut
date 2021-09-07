@@ -103,7 +103,7 @@ case $1 in
         ;;
     kali-images)
         # 上游：清华镜像
-        rsync ${COMMON_OPTIONS} --include='*amd64.iso' --exclude='*.iso' --exclude='kali-2019.2/' --exclude='kali-2019.3/' --exclude='kali-2019.4/' --exclude='kali-2020.1/' --exclude='kali-2020.1b/' --exclude='kali-2020.2/' mirrors.tuna.tsinghua.edu.cn::kali-images /mnt/mirror/kali-images | tee ${LOG_FILE}
+        rsync ${COMMON_OPTIONS} --include='*amd64.iso' --exclude='*.iso' --exclude='kali-2020.3/' --exclude='kali-2020.4/' --exclude='kali-2021.1/' mirrors.tuna.tsinghua.edu.cn::kali-images /mnt/mirror/kali-images | tee ${LOG_FILE}
         ;;
     manjaro)
         # 上游：中科大镜像
