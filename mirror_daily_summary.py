@@ -16,7 +16,7 @@ location_info = [
     ('大学城无线', '10.37.'),
 ]
 
-ACCESS_LOG = '/var/log/nginx/access.log'
+ACCESS_LOG = '/usr/local/nginx/logs/access.log'
 
 
 def is_ip(str):
