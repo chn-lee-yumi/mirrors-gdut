@@ -29,6 +29,7 @@ mkdir /home/mirror/tmp
 mkdir /home/mirror/bin
 mkdir /home/mirror/etc
 mkdir /home/mirror/nginx_cache
+mkdir /home/mirror/nexus
 cp archvsync/bin/* bin
 cp mirrors-gdut/etc/ftpsync.conf etc
 cp mirrors-gdut/pages/* /mnt/mirror/
@@ -74,7 +75,7 @@ nginx -s reload
 
 ```shell
 docker pull nginx:latest
-docker run --name nginx -p 80:80 \
+docker run --name nginx -p 80:80 --restart always \
   -v /home/mirror/mirrors-gdut/nginx_conf/nginx.conf:/etc/nginx/nginx.conf:ro \
   -v /home/mirror/mirrors-gdut/nginx_conf/cache_2h.conf:/etc/nginx/cache_2h.conf:ro \
   -v /home/mirror/mirrors-gdut/nginx_conf/cache_30d.conf:/etc/nginx/cache_30d.conf:ro \
@@ -82,6 +83,15 @@ docker run --name nginx -p 80:80 \
   -v /home/mirror/mirrors-gdut/nginx_conf/proxy_pass_tsinghua.conf:/etc/nginx/proxy_pass_tsinghua.conf:ro \
   -v /home/mirror/mirrors-gdut/nginx_conf/proxy_pass_ustc.conf:/etc/nginx/proxy_pass_ustc.conf:ro \
   -v /mnt/mirror:/mnt/mirror:ro -d nginx:latest
+```
+
+## Nexus安装
+
+使用docker：
+
+```bash
+docker pull sonatype/nexus3
+docker run -d -p 8081:8081 --restart always -v /home/mirror/nexus:/nexus-data --name nexus sonatype/nexus3
 ```
 
 # 运维文档
