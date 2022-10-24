@@ -16,17 +16,32 @@ Nginx提供web服务。
 
 缓存使用Nginx自带的proxy_cache模块。
 
-# 文件目录说明
+# 部署文档
 
-under construction
+## 环境配置
 
-# 脚本说明
+创建名为`mirror`的用户，将存储盘挂载到`/mnt/mirror`并设置权限。切换到`mirror`用户，在家目录下执行：
 
-under construction
+```shell
+git clone https://github.com/chn-lee-yumi/mirrors-gdut.git
+git clone https://salsa.debian.org/mirror-team/archvsync.git  # 用于debian的同步
+mkdir /home/mirror/tmp
+mkdir /home/mirror/bin
+mkdir /home/mirror/etc
+mkdir /home/mirror/nginx_cache
+cp archvsync/bin/* bin
+cp mirrors-gdut/etc/ftpsync.conf etc
+cp mirrors-gdut/pages/* /mnt/mirror/
 
-# 运维文档
+cat /home/mirror/mirrors-gdut/crontab
+crontab -e  # 将上面cat的内容复制粘贴进来，然后保存
+```
 
-## Nginx编译
+然后坐等一两天等镜像同步完成。
+
+## 安装Nginx
+
+### 编译安装
 
 为了监控流量，我们加入了nginx-module-vts模块，因此需要手动编译Nginx。如果不需要此模块，可以注释`nginx.conf`中的对应配置（配置文件中写明需要nginx-module-vts的部分）。
 
@@ -42,6 +57,34 @@ git clone https://github.com/vozlt/nginx-module-vts.git
 make
 make install
 ```
+
+拷贝并加载配置：
+
+```shell
+cp /home/mirror/mirrors-gdut/nginx_conf/* /usr/local/nginx/conf/
+nginx -t
+nginx -s reload
+```
+
+现在应该可以访问了。
+
+### Docker镜像
+
+暂时没找到支持nginx-module-vts模块的镜像。
+
+```shell
+docker pull nginx:latest
+docker run --name nginx -p 80:80 \
+  -v /home/mirror/mirrors-gdut/nginx_conf/nginx.conf:/etc/nginx/nginx.conf:ro \
+  -v /home/mirror/mirrors-gdut/nginx_conf/cache_2h.conf:/etc/nginx/cache_2h.conf:ro \
+  -v /home/mirror/mirrors-gdut/nginx_conf/cache_30d.conf:/etc/nginx/cache_30d.conf:ro \
+  -v /home/mirror/mirrors-gdut/nginx_conf/proxy_pass_aliyun.conf:/etc/nginx/proxy_pass_aliyun.conf:ro \
+  -v /home/mirror/mirrors-gdut/nginx_conf/proxy_pass_tsinghua.conf:/etc/nginx/proxy_pass_tsinghua.conf:ro \
+  -v /home/mirror/mirrors-gdut/nginx_conf/proxy_pass_ustc.conf:/etc/nginx/proxy_pass_ustc.conf:ro \
+  -v /mnt/mirror:/mnt/mirror:ro -d nginx:latest
+```
+
+# 运维文档
 
 ## 新增一个源的步骤
 
@@ -65,6 +108,5 @@ under construction
 |---|---|---|---|
 |freebsd|600G|https://www.freebsd.org/doc/en_US.ISO8859-1/articles/hubs/mirror-howto.html ||
 |freebsd-ports|534G|https://www.freebsd.org/doc/en_US.ISO8859-1/articles/hubs/mirror-howto.html ||
-|lxc-images|待google|待google|如果上LXD集群，就考虑使用|
 |docker|缓存加速|参考 http://mirrors.ustc.edu.cn/help/dockerhub.html |需要子域名，以后发展好再考虑|
 |fedora|1.13T|待google||
