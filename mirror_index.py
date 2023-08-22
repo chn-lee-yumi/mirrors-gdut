@@ -19,9 +19,13 @@ HEADER = """
 
 <body>
 
-<h1>广东工业大学开源镜像站</h1>
+<!--<h1>广东工业大学开源镜像站</h1> -->
+<header>
+    <!--<h1 class="fade-in">广东工业大学开源镜像站</h1>-->
+    <h1 class="fade-in"><img src="https://dl.gdutnic.com/static/wiki/网管队Logo/学校Logo.png" width="35" height="35"/>&nbsp;广东工业大学开源镜像站</h1>
+</header>
 
-<table id="distro-table" cellpadding="0" cellspacing="0">
+<table id="distro-table" cellpadding="0" cellspacing="0" class="fade-in">
     <colgroup>
         <col width="25%"/>
         <col width="25%"/>
@@ -30,10 +34,10 @@ HEADER = """
     </colgroup>
     <thead>
         <tr>
-            <th>镜像名</th>
-            <th>同步时间</th>
-            <th>同步状态</th>
-            <th>使用帮助</th>
+            <th>💽镜像名</th>
+            <th>🔄同步时间</th>
+            <th>ℹ️同步状态</th>
+            <th>💡使用帮助</th>
         </tr>
     </thead>
     <tbody>
@@ -41,10 +45,10 @@ HEADER = """
 
 SECTION_TEMPLATE = Template("""
         <tr class="${odd_or_even}">
-            <td><a href="/${mirror_name}/">${mirror_name}/</a></td>
+            <td>💿 <a href="/${mirror_name}/">${mirror_name}/</a></td>
             <td>${sync_time}</td>
             <td>${sync_status}</td>
-            <td><a href="/${mirror_name}.html">${mirror_name}使用帮助</a></td>
+            <td>📖 <a href="/${mirror_name}.html">${mirror_name}使用帮助</a></td>
         </tr>
 """)
 
@@ -52,12 +56,16 @@ FOOTER = """
     </tbody>
 </table>
 <!--<p>根据相关法律法规，本站不对欧盟用户提供服务。<p>-->
-<div id="footer">
-    <a target="_blank" href="http://www.gdut.edu.cn/">广东工业大学首页</a>
-    <a target="_blank" href="help.html">使用帮助</a>
-    <a href="mailto:stunic@gdut.edu.cn">联系我们</a>
+<div id="footer" class="fade-in" >
+    🏠<a target="_blank" href="http://www.gdut.edu.cn/">广东工业大学首页</a>
+    &nbsp;|&nbsp;
+    ❓<a target="_blank" href="help.html">使用帮助</a>
+    &nbsp;|&nbsp;
+    📮<a href="mailto:stunic@gdut.edu.cn">联系我们</a>
+    &nbsp;|&nbsp;
+    🟢<a target="_blank" href="status.html">当前状态</a>
 </div>
-
+<script type="text/javascript" src="mirror.js"></script>
 </body>
 </html>
 """
@@ -66,8 +74,8 @@ html = HEADER
 odd_or_even = 'odd'
 
 mirror_list = sorted(glob.glob('/mnt/mirror/*'))
-cdn_mirror_list = ['pypi', 'centos-vault', 'anaconda', 'maven', 'npm', 'kali', 'ubuntu-ports', 'freebsd-pkg']
-ignore_dir = ['static']
+cdn_mirror_list = ['pypi', 'centos-vault', 'anaconda', 'maven', 'npm', 'kali', 'ubuntu-ports', 'freebsd-pkg', 'docker']
+ignore_dir = ['static', 'font']
 
 for mirror in mirror_list:
     if os.path.isdir(mirror):
@@ -79,18 +87,18 @@ for mirror in mirror_list:
 
         # 判断镜像是否缓存镜像
         if mirror_name in cdn_mirror_list:  # 缓存镜像（nginx反向代理）
-            sync_time = '-'
-            sync_status = '缓存加速'
+            sync_time = '⛔️'
+            sync_status = '⏩️缓存加速'
         else:  # 非缓存镜像（保存在服务器硬盘）
             try:
                 with open('/home/mirror/sync_time/' + mirror_name, 'r') as f:
-                    sync_time = f.read().strip()
+                    sync_time = "⏱️ " + f.read().strip()
             except FileNotFoundError:
-                sync_time = '从未同步'
+                sync_time = '❌从未同步'
             if os.path.isfile('/tmp/mirror/lock/' + mirror_name + '.lock'):
-                sync_status = '同步中'
+                sync_status = '▶️同步中'
             else:
-                sync_status = '同步完成'
+                sync_status = '✅同步完成'
 
         # 组合成一行的HTML
         html += SECTION_TEMPLATE.substitute(odd_or_even=odd_or_even, mirror_name=mirror_name, sync_time=sync_time, sync_status=sync_status)
