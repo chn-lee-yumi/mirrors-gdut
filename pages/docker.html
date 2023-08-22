@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+    <title>Docker镜像使用帮助</title>
+    <link href="mirror.css" media="screen" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+
+<h1>Docker镜像使用帮助</h1>
+<div id="mirror-usage">
+    <h3>使用说明</h3>
+    <p>基于 Harbor 实现的容器镜像代理仓库，支持搜索已经缓存下来的镜像。</p>
+    <h4>1. 对于使用 Docker-Hub 镜像仓库</h4>
+    <pre>docker pull registry.gdut.edu.cn/docker/google/pause:latest
+# 如果是官方镜像或者单级存储则加上默认的库名称library即可
+docekr pull registry.gdut.edu.cn/docker/library/nginx:latest</pre>
+    <h4>2. 对于使用阿里云 Docker 镜像仓库</h4>
+    <pre>docker pull registry.gdut.edu.cn/aliyun/portainer/portainer-ce:latest
+# 如果是官方镜像或者单级存储则加上默认的库名称library即可
+docekr pull registry.gdut.edu.cn/aliyun/library/java:latest</pre>
+    <h4>3. 对于使用 GitHub Packages 镜像仓库</h4>
+    <pre>docker pull registry.gdut.edu.cn/ghcr.io/hay-kot/homebox:latest
+# 如果是官方镜像或者单级存储则加上默认的库名称library即可
+docekr pull registry.gdut.edu.cn/ghcr.io/library/test:latest</pre>
+    <h4>4. 对于使用 Quay.io 镜像仓库</h4>
+    <pre>docker pull registry.gdut.edu.cn/quay.io/coreos/flannel:v0.15.1
+# 如果是官方镜像或者单级存储则加上默认的库名称library即可
+docekr pull registry.gdut.edu.cn/quay.io/library/test:latest</pre>
+</div>
+<script type="text/javascript" src="mirror.js"></script>
+</body>
+</html>
