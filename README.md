@@ -94,6 +94,181 @@ docker pull sonatype/nexus3
 docker run -d -p 8081:8081 --restart always -v /home/mirror/nexus:/nexus-data --name nexus sonatype/nexus3
 ```
 
+## Harbor安装
+
+> 由于 Harbor 需要使用一个独立的域名，因此我们申请了一个新的域名 `registry.gdut.edu.cn` 专门用于 Harbor 镜像缓存
+
+使用docker:
+
+### 0. 预先准备
+
+Docker，DockerCompose，wget，curl 需要先自行安装
+
+### 1. 下载安装包并配置
+
+下载harbor 安装包
+
+```bash
+wget -c https://github.com/goharbor/harbor/releases/download/v2.8.0/harbor-offline-installer-v2.8.0.tgz
+tar xvf harbor-offline-installer-v2.7.0.tgz  -C /harbor && cd /harbor
+cp harbor.yml.tmpl harbor.yml && gedit harbor.yml
+```
+
+配置 `harbor.yml` 文件
+
+```yaml
+...
+#配置harbor服务节点的域名(注意域名要符合规范，否则在docker中会无法解析为地址)
+hostname: registry.gdut.edu.cn
+#配置http访问的端口，可以自定义配置。
+http
+  port: 80 　　
+https
+  port: 443　
+  #https访问时的证书路径
+  certificate: ...
+  #访问时证书私钥路径
+  private_key: ...
+...
+#通过http访问web页面的密码，用户名默认 admin。
+harbor_admin_password: Harbor12345 　　
+#harbor 数据库的密码。
+database
+  password: Harbor12345
+...
+#harbor 数据存放的路径。
+data_volume: /home/harbor
+...　
+```
+
+### 2. 生成证书（如果是通过http访问，则不需要生成证书，但是配置文件harbor.yml中需要把https的相关配置注释掉，当然你也可以直接使用公共证书）
+
+生成 CA 证书秘钥：`ca.key`
+
+```bash
+mkdir cert && cd cert
+openssl genrsa -out ca.key 4096
+```
+
+生成 CA 证书：`ca.crt`
+
+```bash
+openssl req -x509 -new -nodes -sha512 -days 3650 \
+ -subj "/C=CN/ST=Beijing/L=Beijing/O=example/OU=Personal/CN=ubuntu-two.com" \
+ -key ca.key \
+ -out ca.crt
+```
+生成服务器证书秘钥：`registry.gdut.edu.cn.key`
+
+```bash
+openssl genrsa -out registry.gdut.edu.cn.key 4096
+```
+
+生成服务器证书签名：`registry.gdut.edu.cn.csr`
+
+```bash
+openssl req -sha512 -new \
+    -subj "/C=CN/ST=Beijing/L=Beijing/O=example/OU=Personal/CN=ubuntu-two.com" \
+    -key registry.gdut.edu.cn.key \
+    -out registry.gdut.edu.cn.csr
+```
+
+生成　x509 v3 扩展文件：`v3.ext`
+
+> 进行ssl验证的主机地址和域名必须在下面的alt_names中设置，否则主机无法通过认证
+
+```bash
+cat > v3.ext <<-EOF
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+[alt_names]
+DNS.1=registry.gdut
+DNS.2=registry.gdut.edu.cn
+DNS.3=registry.gdut.edu.cn
+EOF
+```
+
+使用 `v3.ext` 文件为Harbor主机生成证书：`registry.gdut.edu.cn.crt`
+
+```bash
+openssl x509 -req -sha512 -days 3650 \
+    -extfile v3.ext \
+    -CA ca.crt -CAkey ca.key -CAcreateserial \
+    -in registry.gdut.edu.cn.csr \
+    -out registry.gdut.edu.cn.crt
+```
+
+### 3. 进行安装
+
+在解压目录 `/harbor` 下执行命令进行安装
+
+```bash
+./install.sh 
+```
+
+如果使用公共证书则不需要执行以下步骤
+
+生成docker的认证文件：将证书文件 `.crt` 转换为docker的 `.cert` 文件
+
+```bash
+openssl x509 -inform PEM -in registry.gdut.edu.cn.crt -out registry.gdut.edu.cn.cert
+```
+
+将ca证书和服务器证书文件复制到docker证书文件夹中。如果其他主机上docker需要访问harbor服务，也需要将证书文件复制到其他节点对应的docker证书文件夹中,并重新配置docker。
+
+```bash
+mkdir -p /etc/docker/certs.d
+mkdir -p /etc/docker/certs.d/ubuntu-two.com
+cp ubuntu-two.com.cert /etc/docker/certs.d/ubuntu-two.com/
+cp ubuntu-two.com.key /etc/docker/certs.d/ubuntu-two.com/
+cp ca.crt /etc/docker/certs.d/ubuntu-two.com/
+```
+ 在docker的配置文件 `/etc/docker/daemon.json` 添加如下配置，然后重启docker：`systemctl restart docker`。
+
+```json
+"insecure-registries": ["registry.gdut.edu.cn"]
+```
+
+### 4. 创建harbor服务，使开机时随docker服务一起启动（可选）
+
+在 `/etc/systemd/system/` 下创建 `harbor.service` 文件
+
+```bash
+vim /etc/systemd/system/harbor.service
+```
+
+添加下面内容
+
+```bash
+[Unit]
+Description=Harbor
+After=docker.service systemd-networkd.service systemd-resolved.service
+Requires=docker.service
+Documentation=https://github.com/goharbor/harbor
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=5
+ExecStart=/usr/local/bin/docker-compose -f /harbor/docker-compose.yml up
+ExecStop=/usr/local/bin/docker-compose -f /harbor/docker-compose.yml down
+
+[Install]
+WantedBy=multi-user.target
+```
+
+设置为开机启动：
+
+```bash
+chmod +x harbor.service
+systemctl enable harbor.service
+systemctl start harbor.service
+systemctl status harbor.service
+```
+
 # 运维文档
 
 ## 新增一个源的步骤
