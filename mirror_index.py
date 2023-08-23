@@ -46,7 +46,7 @@ HEADER = """
 SECTION_TEMPLATE = Template("""
         <tr class="${odd_or_even}">
             <td>💿 <a href="/${mirror_name}/">${mirror_name}/</a></td>
-            <td>${sync_time}</td>
+            <td><code>${sync_time}</code></td>
             <td>${sync_status}</td>
             <td>📖 <a href="/${mirror_name}.html">${mirror_name}使用帮助</a></td>
         </tr>
@@ -94,7 +94,7 @@ for mirror in mirror_list:
                 with open('/home/mirror/sync_time/' + mirror_name, 'r') as f:
                     sync_time = "⏱️ " + f.read().strip()
             except FileNotFoundError:
-                sync_time = '❌从未同步'
+                sync_time = '❌ 从未同步'
             if os.path.isfile('/tmp/mirror/lock/' + mirror_name + '.lock'):
                 sync_status = '▶️同步中'
             else:
