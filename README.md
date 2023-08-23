@@ -94,6 +94,12 @@ docker pull sonatype/nexus3
 docker run -d -p 8081:8081 --restart always -v /home/mirror/nexus:/nexus-data --name nexus sonatype/nexus3
 ```
 
+使用Kubernetes：
+
+可以参考如下文件：
+
+[nexus_k8s_deploy_chart.yaml](nexus_k8s_deploy_chart.yaml)
+
 ## Harbor安装
 
 > 由于 Harbor 需要使用一个独立的域名，因此我们申请了一个新的域名 `registry.gdut.edu.cn` 专门用于 Harbor 镜像缓存
@@ -268,6 +274,12 @@ systemctl enable harbor.service
 systemctl start harbor.service
 systemctl status harbor.service
 ```
+
+使用Kubernetes：
+
+可以参考如下文件：
+
+[harbor_k8s_deploy_chart.yaml](harbor_k8s_deploy_chart.yaml)
 
 # 运维文档
 
