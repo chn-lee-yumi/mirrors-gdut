@@ -87,14 +87,14 @@ docker run --name nginx -p 80:80 --restart always \
 
 ## Nexus安装
 
-使用docker：
+**使用docker：**
 
 ```bash
 docker pull sonatype/nexus3
 docker run -d -p 8081:8081 --restart always -v /home/mirror/nexus:/nexus-data --name nexus sonatype/nexus3
 ```
 
-使用Kubernetes：
+**使用Kubernetes：**
 
 可以参考如下文件：
 
@@ -104,7 +104,7 @@ docker run -d -p 8081:8081 --restart always -v /home/mirror/nexus:/nexus-data --
 
 > 由于 Harbor 需要使用一个独立的域名，因此我们申请了一个新的域名 `registry.gdut.edu.cn` 专门用于 Harbor 镜像缓存
 
-使用docker:
+**使用docker：**
 
 ### 0. 预先准备
 
@@ -275,7 +275,7 @@ systemctl start harbor.service
 systemctl status harbor.service
 ```
 
-使用Kubernetes：
+**使用Kubernetes：**
 
 可以参考如下文件：
 
@@ -307,3 +307,4 @@ under construction
 |freebsd-ports|534G|https://www.freebsd.org/doc/en_US.ISO8859-1/articles/hubs/mirror-howto.html ||
 |docker|缓存加速|参考 https://github.com/goharbor/harbor |已经拿到新的域名，可以开始部署|
 |fedora|1.13T|待google||
+
