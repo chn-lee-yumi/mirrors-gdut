@@ -1,0 +1,90 @@
+# cat nexus3/nexus3.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: nexus
+  name: nexus
+  namespace: gdut-mirrors
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: nexus
+  template:
+    metadata:
+      labels:
+        k8s-app: nexus
+      name: nexus
+      namespace: gdut-mirrors
+    spec:
+      nodeName: nic-tech-03
+      containers:
+      - name: nexus
+        image: sonatype/nexus3:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 8081
+            name: web
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8081
+          initialDelaySeconds: 540
+          periodSeconds: 30
+          failureThreshold: 6
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8081
+          initialDelaySeconds: 540
+          periodSeconds: 30
+          failureThreshold: 6
+        resources:
+          limits:
+            cpu: 4000m
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+        volumeMounts:
+        - name: nexus-data
+          mountPath: /nexus-data
+      volumes:
+        - name: nexus-data
+          persistentVolumeClaim:
+            claimName: nexus-data-pvc
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nexus-data-pvc
+  namespace: gdut-mirrors
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: "nfs-client-02"
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nexus
+  namespace: gdut-mirrors
+  labels:
+    k8s-app: nexus
+spec:
+  selector:
+    k8s-app: nexus
+  type: NodePort
+  ports:
+    - name: web
+      protocol: TCP
+      port: 8081
+      targetPort: 8081
+      nodePort: 30005
