@@ -154,7 +154,7 @@ openssl genrsa -out ca.key 4096
 
 ```bash
 openssl req -x509 -new -nodes -sha512 -days 3650 \
- -subj "/C=CN/ST=Beijing/L=Beijing/O=example/OU=Personal/CN=ubuntu-two.com" \
+ -subj "/C=CN/ST=Beijing/L=Beijing/O=example/OU=Personal/CN=registry.gdut.edu.cn" \
  -key ca.key \
  -out ca.crt
 ```
@@ -168,7 +168,7 @@ openssl genrsa -out registry.gdut.edu.cn.key 4096
 
 ```bash
 openssl req -sha512 -new \
-    -subj "/C=CN/ST=Beijing/L=Beijing/O=example/OU=Personal/CN=ubuntu-two.com" \
+    -subj "/C=CN/ST=Beijing/L=Beijing/O=example/OU=Personal/CN=registry.gdut.edu.cn" \
     -key registry.gdut.edu.cn.key \
     -out registry.gdut.edu.cn.csr
 ```
@@ -221,10 +221,10 @@ openssl x509 -inform PEM -in registry.gdut.edu.cn.crt -out registry.gdut.edu.cn.
 
 ```bash
 mkdir -p /etc/docker/certs.d
-mkdir -p /etc/docker/certs.d/ubuntu-two.com
-cp ubuntu-two.com.cert /etc/docker/certs.d/ubuntu-two.com/
-cp ubuntu-two.com.key /etc/docker/certs.d/ubuntu-two.com/
-cp ca.crt /etc/docker/certs.d/ubuntu-two.com/
+mkdir -p /etc/docker/certs.d/registry.gdut.edu.cn
+cp registry.gdut.edu.cn.cert /etc/docker/certs.d/registry.gdut.edu.cn/
+cp registry.gdut.edu.cn.key /etc/docker/certs.d/registry.gdut.edu.cn/
+cp ca.crt /etc/docker/certs.d/registry.gdut.edu.cn/
 ```
  在docker的配置文件 `/etc/docker/daemon.json` 添加如下配置，然后重启docker：`systemctl restart docker`。
 
