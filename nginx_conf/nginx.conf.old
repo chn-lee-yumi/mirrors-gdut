@@ -1,0 +1,421 @@
+user mirror;
+worker_processes auto;
+error_log logs/error.log;
+pid logs/nginx.pid;
+
+# Load dynamic modules. See /usr/share/nginx/README.dynamic.
+include /usr/share/nginx/modules/*.conf;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  logs/access.log  main;
+
+    sendfile            on;
+    tcp_nopush          on;
+    tcp_nodelay         on;
+    keepalive_timeout   65;
+    types_hash_max_size 2048;
+
+    include             /usr/local/nginx/conf/mime.types;
+    default_type        application/octet-stream;
+
+    # 缓存目录所在磁盘大小为148G，下面所有配置加起来不能超过这个数（建议再小一点，留些空间，所以这里定最大可用空间之和为120G）
+    # anaconda 缓存【自动预热】
+    proxy_cache_path /home/mirror/nginx_cache/anaconda levels=2:2 keys_zone=cache_anaconda:2m max_size=40G inactive=30d use_temp_path=off;
+    # centos （非x86_64）缓存
+    proxy_cache_path /home/mirror/nginx_cache/centos levels=2:2 keys_zone=cache_centos:1m max_size=5G inactive=30d use_temp_path=off;
+    # centos-vault 缓存
+    proxy_cache_path /home/mirror/nginx_cache/centos-vault levels=2:2 keys_zone=cache_centos_vault:1m max_size=5G inactive=30d use_temp_path=off;
+    # debian （非amd64）缓存
+    proxy_cache_path /home/mirror/nginx_cache/debian levels=2:2 keys_zone=cache_debian:1m max_size=5G inactive=30d use_temp_path=off;
+    # epel （非x86_64）缓存
+    proxy_cache_path /home/mirror/nginx_cache/epel levels=2:2 keys_zone=cache_epel:1m max_size=5G inactive=30d use_temp_path=off;
+    # freebsd-pkg 缓存
+    proxy_cache_path /home/mirror/nginx_cache/freebsd-pkg levels=2:2 keys_zone=cache_freebsd_pkg:2m max_size=10G inactive=2h use_temp_path=off;
+    # gentoo （distfiles）缓存【自动预热】
+    proxy_cache_path /home/mirror/nginx_cache/gentoo levels=2:2 keys_zone=cache_gentoo:4m max_size=20G inactive=30d use_temp_path=off;
+    # kali 缓存【自动预热】
+    proxy_cache_path /home/mirror/nginx_cache/kali levels=2:2 keys_zone=cache_kali:2m max_size=10G inactive=30d use_temp_path=off;
+    # pypi 缓存【自动预热】
+    proxy_cache_path /home/mirror/nginx_cache/pypi levels=2:2 keys_zone=cache_pypi:2m max_size=40G inactive=30d use_temp_path=off;
+    # ubuntu （i386）缓存
+    proxy_cache_path /home/mirror/nginx_cache/ubuntu levels=2:2 keys_zone=cache_ubuntu:1m max_size=5G inactive=30d use_temp_path=off;
+    # ubuntu-ports 缓存【自动预热】
+    proxy_cache_path /home/mirror/nginx_cache/ubuntu-ports levels=2:2 keys_zone=cache_ubuntu_ports:4m max_size=20G inactive=30d use_temp_path=off;
+
+    # upstream 上游服务器（回源服务器/源站）
+    # 清华
+    upstream tuna_tsinghua {
+        server mirrors4.tuna.tsinghua.edu.cn:443;
+    }
+    # 清华ipv6（速度比ipv4快）
+    #upstream tuna_tsinghua_ipv6 {
+    #    server mirrors6.tuna.tsinghua.edu.cn:443;
+    #}
+    # 中科大
+    upstream ustc {
+        server cernet.mirrors.ustc.edu.cn:443;
+    }
+    # 阿里云
+    upstream aliyun {
+        server mirrors.aliyun.com:443;
+    }
+    # Nexus（自己搭的）
+    upstream nexus {
+        server 127.0.0.1:8081;
+    }
+
+    # 开启流量监控（需要nginx-module-vts）
+    # vhost_traffic_status_zone;
+
+    server {
+        listen       80 default_server;
+        listen       443 default_server ssl;
+        listen       [::]:80 default_server;
+        listen       [::]:443 default_server ssl;
+        server_name  _; # 允许任何域名指向（不过https是*.gdut.edu.cn的证书）
+        root         /mnt/mirror;
+
+        # HTTPS 配置
+        ssl_certificate /usr/local/nginx/cert/-.gdut.edu.cn_chain.crt;
+        ssl_certificate_key /usr/local/nginx/cert/-.gdut.edu.cn.key;
+        ssl_session_cache shared:SSL:1m;
+        ssl_prefer_server_ciphers on;
+        ssl_protocols TLSv1.2 TLSv1.1 TLSv1;
+        ssl_ciphers ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS;
+
+        # 允许列目录
+        autoindex on;
+        autoindex_localtime on;
+        autoindex_exact_size on;
+        charset utf-8;
+
+        # location 匹配顺序： 精确匹配（=） > 普通匹配（非/结尾的完整路径） > 常规字符串开头（^~） > 正则（~区分大小写 ~*不区分大小写 匹配成功就停止匹配） > 最长字符串（会遍历location再进行判断）
+
+        # 最后匹配，没有匹配到缓存URL的就访问本地文件
+        location / {
+
+        }
+
+        ##############################
+        # 主页配置
+        ##############################
+
+        # mirrors.gdut.edu.cn主页强制跳转https（使用ip或其它域名则不强制跳转）
+        location = / {
+            set $scheme_host "${scheme}://${host}";
+            if ( $scheme_host = "http://mirrors.gdut.edu.cn" ){
+                return 301 https://mirrors.gdut.edu.cn/;
+            }
+        }
+
+        ##############################
+        # centos 配置（非x86_64没有同步）
+        ##############################
+
+        # 检测到文件不存在则反代到清华
+        location /centos/ {
+            try_files $uri $uri/ @centos_tuna_tsinghua;
+        }
+
+        # 清华的所有文件缓存30天
+        location @centos_tuna_tsinghua {
+            include proxy_pass_tsinghua.conf;
+            proxy_cache cache_centos;
+            include cache_30d.conf;
+        }
+
+        ##############################
+        # centos-vault 配置
+        ##############################
+
+        # 反代到清华，所有文件缓存30天
+        location /centos-vault/ {
+            include proxy_pass_tsinghua.conf;
+            proxy_cache cache_centos_vault;
+            include cache_30d.conf;
+        }
+
+        ##############################
+        # debian 配置（非amd64没有同步）
+        ##############################
+
+        # 检测到文件不存在则反代到清华
+        location /debian/ {
+            try_files $uri $uri/ @debian_tuna_tsinghua;
+        }
+
+        location ~ /debian/.*/(Packages|Packages.gz|InRelease|Release|Release.gpg|Contents-.*.gz) {
+            try_files $uri @debian_2h_tuna_tsinghua;
+        }
+
+        # 清华缓存 30天
+        location @debian_tuna_tsinghua {
+            include proxy_pass_tsinghua.conf;
+            proxy_cache cache_debian;
+            include cache_30d.conf;
+        }
+
+        # 清华缓存 2小时
+        location @debian_2h_tuna_tsinghua {
+            include proxy_pass_tsinghua.conf;
+            proxy_cache cache_debian;
+            include cache_2h.conf;
+        }
+
+        ##############################
+        # epel 配置（非x86_64没有同步）
+        ##############################
+
+        # 检测到文件不存在则反代到清华
+        location /epel/ {
+            try_files $uri $uri/ @epel_tuna_tsinghua;
+        }
+
+        location ~ /epel/.*/repodata/.* {
+            try_files $uri $uri/ @epel_2h_tuna_tsinghua;
+        }
+
+        location @epel_tuna_tsinghua {
+            include proxy_pass_tsinghua.conf;
+            proxy_cache cache_epel;
+            include cache_30d.conf;
+        }
+
+        location @epel_2h_tuna_tsinghua {
+            include proxy_pass_tsinghua.conf;
+            proxy_cache cache_epel;
+            include cache_2h.conf;
+        }
+
+        ##############################
+        # freebsd-pkg 缓存配置
+        ##############################
+
+        # 全部缓存2小时（freebsd-pkg，更新软件包不改文件名，不讲武德，好自为之！）
+        location /freebsd-pkg/ {
+            include proxy_pass_ustc.conf;
+            proxy_cache cache_freebsd_pkg;
+            include cache_2h.conf;
+        }
+
+        ##############################
+        # gentoo 配置（distfiles没有同步）
+        ##############################
+
+        # 检测到文件不存在则反代到清华
+        location /gentoo/ {
+            try_files $uri $uri/ @gentoo_tuna_tsinghua;
+        }
+        location /gentoo/distfiles {
+            include proxy_pass_tsinghua.conf;
+            proxy_cache cache_gentoo;
+            include cache_30d.conf;
+        }
+        location @gentoo_tuna_tsinghua {
+            include proxy_pass_tsinghua.conf;
+            proxy_cache cache_gentoo;
+            include cache_30d.conf;
+        }
+
+        ##############################
+        # ubuntu 配置（i386没有同步）
+        ##############################
+
+        # 检测到文件不存在则反代到清华
+        location /ubuntu/ {
+            try_files $uri $uri/ @ubuntu_tuna_tsinghua;
+        }
+
+        location ~ /ubuntu/.*/(Packages|Packages.gz|InRelease|Release|Release.gpg|Contents-.*.gz) {
+            try_files $uri @ubuntu_2h_tuna_tsinghua;
+        }
+
+        location @ubuntu_tuna_tsinghua {
+            include proxy_pass_tsinghua.conf;
+            proxy_cache cache_ubuntu;
+            include cache_30d.conf;
+        }
+
+        location @ubuntu_2h_tuna_tsinghua {
+            include proxy_pass_tsinghua.conf;
+            proxy_cache cache_ubuntu;
+            include cache_2h.conf;
+        }
+
+        ##############################
+        # pypi 缓存配置（不分片）
+        ##############################
+
+        # 普通文件 缓存30天
+        location /pypi/ {
+            include proxy_pass_aliyun.conf;
+            proxy_cache cache_pypi;
+            include cache_30d.conf;
+        }
+
+        # 根目录 缓存2小时
+        location = /pypi/ {
+            include proxy_pass_aliyun.conf;
+            proxy_cache cache_pypi;
+            include cache_2h.conf;
+        }
+
+        # 目录、failed_packages.txt 缓存2小时
+        location ~ /pypi/($|.*/$|last-modified) {
+            include proxy_pass_aliyun.conf;
+            proxy_cache cache_pypi;
+            include cache_2h.conf;
+        }
+
+        ##############################
+        # anaconda 缓存配置（不分片）
+        ##############################
+
+        # 普通文件 缓存30天
+        location /anaconda/ {
+            include proxy_pass_tsinghua.conf;
+            proxy_cache cache_anaconda;
+            #proxy_cache_key $uri$slice_range; # 开启分片
+            proxy_cache_key $uri;
+            proxy_cache_revalidate on;
+            proxy_cache_lock on;
+            proxy_cache_valid 200 30d;
+            proxy_cache_valid any 2h;
+            add_header mirror-cache "$upstream_cache_status";
+        }
+
+        # 目录、failed_packages.txt 缓存2小时 且缓存参数（针对目录排序功能）
+        location ~ /anaconda/($|.*/$|failed_packages.txt) {
+            include proxy_pass_tsinghua.conf;
+            proxy_cache cache_anaconda;
+            #proxy_cache_key $uri; # 不缓存参数
+            proxy_cache_key $request_uri; # 缓存参数（需求是/anaconda/archive/的目录排序功能）
+            proxy_cache_revalidate on;
+            proxy_cache_lock on;
+            proxy_cache_valid 200 2h;
+            proxy_cache_valid any 1m;
+            add_header mirror-cache "$upstream_cache_status";
+        }
+
+        # repodata.json、repodata.json.bz2、current_repodata.json 缓存2小时
+        location ~ /anaconda/.*/(repodata.json|repodata.json.bz2|current_repodata.json)$ {
+            include proxy_pass_tsinghua.conf;
+            proxy_cache cache_anaconda;
+            include cache_2h.conf;
+        }
+
+        ##############################
+        # kali 缓存配置（不分片）
+        ##############################
+
+        # 普通文件 缓存30天
+        location /kali/ {
+            include proxy_pass_tsinghua.conf;
+            proxy_cache cache_kali;
+            include cache_30d.conf;
+        }
+
+        # 目录 缓存2小时
+        location ~ /kali/($|.*/$) {
+            include proxy_pass_tsinghua.conf;
+            proxy_cache cache_kali;
+            include cache_2h.conf;
+        }
+
+        # Packages、InRelease等文件 缓存2小时
+        location ~ /kali/.*/(Packages|Packages.gz|InRelease|Release|Release.gpg|Contents-.*.gz) {
+            include proxy_pass_tsinghua.conf;
+            proxy_cache cache_kali;
+            include cache_2h.conf;
+        }
+
+        ##############################
+        # ubuntu-ports 缓存配置（不分片）
+        ##############################
+
+        # 普通文件 缓存30天
+        location /ubuntu-ports/ {
+            include proxy_pass_tsinghua.conf;
+            proxy_cache cache_ubuntu_ports;
+            include cache_30d.conf;
+        }
+
+        # 目录 缓存2小时
+        location ~ /ubuntu-ports/($|.*/$) {
+            include proxy_pass_tsinghua.conf;
+            proxy_cache cache_ubuntu_ports;
+            include cache_2h.conf;
+        }
+
+        # Packages、InRelease等文件 缓存2小时
+        location ~ /ubuntu-ports/.*/(Packages|Packages.gz|InRelease|Release|Release.gpg|Contents-.*.gz) {
+            include proxy_pass_tsinghua.conf;
+            proxy_cache cache_ubuntu_ports;
+            include cache_2h.conf;
+        }
+
+        ##############################
+        # nexus 反代
+        ##############################
+
+        # nexus
+        location /nexus/ {
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_pass http://nexus/;
+            proxy_connect_timeout       3000;
+            proxy_send_timeout          3000;
+            proxy_read_timeout          3000;
+            send_timeout                3000;
+        }
+
+        location /repository/ {
+            # proxy_redirect off;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_pass http://nexus/repository/;
+        }
+
+        # maven
+        location /maven/ {
+            rewrite ^/(.*) /nexus/#browse/browse:maven-public permanent;
+        }
+
+        # npm
+        location /npm/ {
+            rewrite ^/(.*) /nexus/#browse/browse:npm permanent;
+        }
+
+        ##############################
+        # 性能监控
+        ##############################
+
+        location /nginx-status {
+            allow 222.200.97.0/24;
+            deny all;
+            stub_status on;
+            access_log off;
+        }
+
+        # 下面这项需要nginx-module-vts
+        #location /status {
+        #    allow 222.200.97.0/24;
+        #    deny all;
+        #    vhost_traffic_status_display;
+        #    vhost_traffic_status_display_format html;
+        #    access_log off;
+        #}
+
+    }
+
+}

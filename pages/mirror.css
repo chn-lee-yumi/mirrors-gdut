@@ -1,100 +1,177 @@
-body{
-    font-size: .9em;
-    margin: 0px 40px;
-    font-family: "Lato", "Hiragino Sans GB", "Source Han Sans CN", "WenQuanYi Zen Hei", "WenQuanYi Micro Hei", "微软雅黑", sans-serif;
+/* 设置字体 */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap');
+@font-face{
+    font-family: 'MyriadPro';
+    src: url('./font/MyriadPro-Regular.otf');
 }
-table th,td {
-    padding: 0em 0.6em;
-    height: 1.8em;
+@font-face{
+    font-family: 'MyriadPro';
+    src: url('./font/MyriadPro-Bold.otf');
+    font-weight: bold;
 }
-tr.even {
-    background:#ffb80008;
+@font-face {
+    font-family: "SFMono";
+    src: url('../font/SFMono-Bold-1.otf');
+    font-weight: bold;
 }
+@font-face {
+    font-family: "SFMono";
+    src: url('../font/SFMono-Medium-8.otf');
+    font-weight: medium;
+}
+@font-face {
+    font-family: "SFMono";
+    src: url('../font/SFMono-Regular-10.otf');
+}
+@font-face {
+    font-family: "SFMono";
+    src: url('../font/SFMono-Light-5.otf');
+    font-weight: light;
+}
+
+
+code {
+    font-family: "Fira Code", Consolas, Menlo, Monaco, "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", monospace;
+}
+
+pre {
+    font-family: "Fira Code", Consolas, Menlo, Monaco, "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", monospace;
+    border: 1px solid black; /* 添加黑色边框 */
+    border-radius: 10px; /* 添加圆角 */
+    background-color: rgba(128, 128, 128, 0.1); /* 设置灰色背景 */
+    padding: 10px; /* 添加内边距，使内容与边框之间有一些间距 */
+    white-space: pre-wrap;  
+}
+
+/* updated-mirror.css */
+body {
+    font-family: "MyriadPro", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.image-container {
+    width: 20px;
+    height: 15px;
+}
+
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    padding: 20px 0;
+}
+
+h1 {
+    color: #971943;
+    margin-bottom: 20px;
+    font-size: 36px;
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 20px;
+    background-color: #fff;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 20px; /* Add padding here */
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
 th {
-    text-align:left;
-    font-weight:normal;
-    background:#fff;
-    border-bottom:1px solid #a75e00;
+    background-color: #f5f5f5;
+    font-weight: bold;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
-.odd:hover,.even:hover{
-    background: #ffa5002e;
-    transition: 0.3s;
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
 }
-thead th{
-    background-color: rgba(255, 136, 0, 0.09);
+
+tr:hover {
+    background-color: #e0e0e0;
+    transition: background-color 0.3s;
 }
-tr{
-    height: 50px;
-}
+
 a {
-    color: #ce6a00;
+    color: #007bff;
     text-decoration: none;
+    transition: color 0.3s;
 }
+
 a:hover {
     text-decoration: underline;
+    color: #0056b3;
 }
-table {
-    width: 100vw;
-    border-left: 0px;
-    border-right: 0px;
-    float: left;
-    box-sizing: border-box;
-    //padding: 0  50px;
-}
-span {
-    margin-right: 20px;
-}
-#mirror-data, #mirror-usage, #mirror-links, #mirror-misc {
-    margin-top: 20px;
-    padding-bottom: 10px;
-}
-h1, h2, h3 {
-    color: #384452;
-    //font-size: 20px;
-    //line-height: 50px;
-    //height: 50px;
-    margin: 0;
-    //padding: 20px 50px;
-}
-.hr {
-    border-bottom: dashed #777 1px;
-    width: 60%;
-}
-.hr hr {
-    display: none;
-}
+
 #footer {
     text-align: center;
-    margin-bottom: 10px;
-    padding: 20px 0 0 0;
-    clear: both;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
 }
+
 #footer a {
     color: #555;
-    margin: 0px 10px;
-    font-size: 0.9em;
+    margin: 0 10px;
+    font-size: 14px;
 }
-pre {
-    font-family: monospace;
-    font-size: 110%;
-    border:1px solid #54d200;
-    background-color: #f9fff2;
-    margin: 0px;
-    padding: 10px;
-    width: 800px;
-    line-height: 150%;
-    overflow:auto;
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
-p.answer {
-    text-indent: 20px;
-    margin-bottom: 30px;
+
+.fade-in {
+    animation: fadeIn 1s ease-in-out;
 }
-#distro-table {
-    width: 100%;
+
+/* Dark theme */
+.dark-theme {
+    background-color: #222;
+    color: #fff;
 }
-#copyright {
-    color: #555;
-    margin: 0px 10px;
-    font-size: 0.8em;
+
+.dark-theme table {
+    background-color: #333;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.dark-theme th {
+    background-color: #444;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.dark-theme tr:nth-child(even) {
+    background-color: #444;
+}
+
+.dark-theme tr:hover {
+    background-color: #555;
+}
+
+.dark-theme a {
+    color: #bb86fc;
 }
 
