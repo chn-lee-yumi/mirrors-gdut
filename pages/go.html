@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+    <title>golang镜像使用帮助</title>
+    <link href="mirror.css" media="screen" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+
+<h1>golang镜像使用帮助</h1>
+<div id="mirror-usage">
+    <h3>使用说明</h3>
+    <p>proxy代理仓库。本站也支持https。</p>
+    <h4>临时使用</h4>
+    <pre>export GO111MODULE=on
+export GOPROXY=http://mirrors.gdut.edu.cn/repository/go/
+export GOSUMDB=off</pre>
+    <h4>持久使用</h4>
+    编辑 <code>~/.bash_profile</code> 文件,在末尾添加如下配置:
+    <pre>export GO111MODULE=on
+export GOPROXY=http://mirrors.gdut.edu.cn/repository/go/
+export GOSUMDB=off</pre>
+    配置完成后执行<code>source ~/.bash_profile</code>即可刷新配置
+</div>
+<script type="text/javascript" src="mirror.js"></script>
+</body>
+</html>
