@@ -19,16 +19,26 @@ docekr pull registry.gdut.edu.cn/docker/library/nginx:latest</pre>
     <pre>docker pull registry.gdut.edu.cn/aliyun/portainer/portainer-ce:latest
 # 如果是官方镜像或者单级存储则加上默认的库名称library即可
 docekr pull registry.gdut.edu.cn/aliyun/library/java:latest</pre>
-    <h4>3. 对于使用 GitHub Packages 镜像仓库</h4>
+    由于阿里云代理仓库的时效性问题,这里不建议在此使用<code>latest</code>标签拉取镜像
+    <h4>3. 对于使用 GitHub Container Registry (ghcr.io) 镜像仓库</h4>
     <pre>docker pull registry.gdut.edu.cn/ghcr.io/hay-kot/homebox:latest
 # 如果是官方镜像或者单级存储则加上默认的库名称library即可
 docekr pull registry.gdut.edu.cn/ghcr.io/library/test:latest</pre>
-    <h4>4. 对于使用 Quay.io 镜像仓库</h4>
+    <h4>4. 对于使用 RedHat Quay.io (quay.io) 镜像仓库</h4>
     <pre>docker pull registry.gdut.edu.cn/quay.io/coreos/flannel:v0.15.1
 # 如果是官方镜像或者单级存储则加上默认的库名称library即可
 docekr pull registry.gdut.edu.cn/quay.io/library/test:latest</pre>
-    <h4>5. 对于使用 k8s.gcr.io 镜像仓库</h4>
-    <pre>docker pull registry.gdut.edu.cn/k8s.gcr.io/google_containers/kube-proxy:v1.24.16</pre>
+    <h4>5. 对于使用 Microsoft Artifact Registry (mcr.microsoft.com) 镜像仓库</h4>
+    <pre>docker pull registry.gdut.edu.cn/mcr.microsoft.com/coreos/flannel:v0.15.1
+# 如果是官方镜像或者单级存储则加上默认的库名称library即可
+docekr pull registry.gdut.edu.cn/mcr.microsoft.com/library/test:latest</pre>
+    <h4>6. 对于使用 Google Container Registry (gcr.io) 镜像仓库</h4>
+    <pre>docker pull registry.gdut.edu.cn/gcr.io/kaniko-project/executor:v1.13.0-debug
+# 如果是官方镜像或者单级存储则加上默认的库名称library即可
+docekr pull registry.gdut.edu.cn/gcr.io/library/test:latest</pre>
+    <h4>7. 对于使用 k8s.gcr.io 镜像仓库</h4>
+    <pre>docker pull registry.gdut.edu.cn/k8s.gcr.io/kube-proxy:v1.24.16</pre>
+    <p>拉下来后该重新打Tag就重新打Tag</>
 </div>
 <script type="text/javascript" src="mirror.js"></script>
 </body>
