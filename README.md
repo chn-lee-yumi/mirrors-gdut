@@ -281,6 +281,18 @@ systemctl status harbor.service
 
 [harbor_k8s_deploy_chart.yaml](harbor_k8s_deploy_chart.yaml)
 
+## Harbor 镜像代理配置
+
+|名称|目标URL|提供者|配额|备注|
+|---|---|---|---|---|
+|docker|https://hub.docker.com|Docker Hub|20G|DockerHub镜像源|
+|aliyun|https://3mk4y2c6.mirror.aliyuncs.com|Docker Registry|20G|阿里云 Docker 镜像加速|
+|ghcr.io|https://ghcr.io|Docker Registry|20G|GitHub Container Registry|
+|quay.io|https://quay.io|Quay|20G|RedHat Quay.io|
+|mcr.microsoft.com|https://mcr.dockerproxy.com|Docker Registry|20G|Microsoft Artifact Registry|
+|gcr.io|https://gcr.dockerproxy.com|Docker Registry|20G|Google Container Registry|
+|k8s.gcr.io|https://k8s.dockerproxy.com|Docker Registry|20G|Google Container Registry for Kubernetes|
+
 # 运维文档
 
 ## 新增一个源的步骤
