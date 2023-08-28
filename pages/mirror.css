@@ -19,7 +19,7 @@
     src: url('../font/SFMono-Medium-8.otf');
     font-weight: medium;
 }
-@font-face {
+/*@font-face {
     font-family: "SFMono";
     src: url('../font/SFMono-Regular-10.otf');
 }
@@ -27,11 +27,10 @@
     font-family: "SFMono";
     src: url('../font/SFMono-Light-5.otf');
     font-weight: light;
-}
-
+}*/
 
 code {
-    font-family: "Fira Code", Consolas, Menlo, Monaco, "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", monospace;
+    font-family: "SFMono", "Fira Code", Consolas, Menlo, Monaco, "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", monospace;
 }
 
 pre {
@@ -101,7 +100,7 @@ table {
     background-color: #fff;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    padding: 1em; Add padding here
+    padding: 1em; /* Add padding here */
 }
 
 th, td {
@@ -117,24 +116,28 @@ th {
     border-top-right-radius: 10px;
 }
 
-tr:nth-child(even) {
+/*tr:nth-child(even) {
+    background-color: #f2f2f2;
+}*/
+.even {
     background-color: #f2f2f2;
 }
 
 tr:hover {
-    background-color: #e0e0e0;
+    /*background-color: #e0e0e0;*/
+    background-color: #eb296a;
     transition: background-color 0.3s;
 }
 
 a {
-    color: #ce6a00;
+    color: #007bff;
     text-decoration: none;
     transition: color 0.3s;
 }
 
 a:hover {
     text-decoration: underline;
-    color: #be2f00;
+    color: #0040ff;
 }
 
 #footer {
@@ -214,14 +217,42 @@ p.answer {
     border-top-right-radius: 10px;
 }
 
-.dark-theme tr:nth-child(even) {
+.dark-theme a {
+    color: #ce6a00;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.dark-theme a:hover {
+    text-decoration: underline;
+    color: #be2f00;
+}
+
+/*.dark-theme tr:nth-child(even) {
+    background-color: #444;
+}*/
+.dark-theme .even {
     background-color: #444;
 }
 
 .dark-theme tr:hover {
-    background-color: #555;
+    /*background-color: #555;*/
+    background-color: #971943;
+    transition: background-color 0.3s;
+}
+
+.dark-theme #footer a {
+    color: #fff;
+    margin: 0 10px;
+    font-size: 0.9em;
 }
 
 /* .dark-theme a {
     color: #bb86fc;
 } */
+
+/* Highlight syncing rows */
+.syncing-row {
+    background-color: #2563e6;
+    color: #fff;
+}
