@@ -81,6 +81,10 @@ debian-cd)
   # 上游：北京外国语镜像
   rsync ${COMMON_OPTIONS} --include='amd64/**.iso' --exclude='*.iso' --exclude='source/tar/**' mirrors.bfsu.edu.cn::debian-cd /mnt/mirror/debian-cd | tee ${LOG_FILE}
   ;;
+docker-ce)
+  # 上游：清华镜像
+  rsync ${COMMON_OPTIONS} --exclude='linux/fedora/' --exclude='linux/raspbian/' --exclude='linux/rhel/' mirrors.tuna.tsinghua.edu.cn::docker-ce /mnt/mirror/docker-ce/ | tee ${LOG_FILE}
+  ;;
 elpa)
   # 上游：elpa.emacs-china.org
   rsync ${COMMON_OPTIONS} elpa.emacs-china.org::elpa /mnt/mirror/elpa/ | tee ${LOG_FILE}
@@ -103,6 +107,10 @@ gentoo)
 kali-images)
   # 上游：清华镜像
   rsync ${COMMON_OPTIONS} --include='*amd64.iso' --exclude='*.iso' mirrors.tuna.tsinghua.edu.cn::kali-images /mnt/mirror/kali-images | tee ${LOG_FILE}
+  ;;
+kubernetes)
+  # 上游：清华镜像
+  rsync ${COMMON_OPTIONS} mirrors.tuna.tsinghua.edu.cn::kubernetes /mnt/mirror/kubernetes/ | tee ${LOG_FILE}
   ;;
 manjaro)
   # 上游：中科大镜像

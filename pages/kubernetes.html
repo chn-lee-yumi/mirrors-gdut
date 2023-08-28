@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>Kubernetes镜像使用帮助</title>
+    <link rel="stylesheet" type="text/css" href="mirror.css" media="screen"/>
+</head>
+<body>
+
+<h1>Kubernetes镜像使用帮助</h1>
+
+<div id="mirror-data">
+    <h3>收录架构</h3>
+    <ul>
+        <li>全部</li>
+    </ul>
+    <h3>收录版本</h3>
+    <ul>
+        <li>全部</li>
+    </ul>
+    <h3>更新时间</h3>
+    <p>每6小时更新一次</p>
+</div>
+<div class="hr">
+    <hr/>
+</div>
+<div id="mirror-usage">
+    <h3>使用说明</h3>
+    <!--<p>在修改源之前，请先执行： apt-get install apt-transport-https</p>-->
+    <p>Kubernetes 是用于自动部署，扩展和管理容器化应用程序的开源系统。</p>
+    <p>硬件架构: <code>x86_64</code>, <code>armhfp</code>, <code>aarch64</code></p>
+    <h4>1. 对于Debian/Ubuntu</h4>
+    <p>首先导入 gpg key：</p>
+    <pre>sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+#如果不行就使用下面的命令
+sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg</pre>
+    <p>新建 <code>/etc/apt/sources.list.d/kubernetes.list</code>，内容为</p>
+    <pre>deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://mirrors.gdut.edu.cn/kubernetes/apt kubernetes-xenial main</pre>
+    <p>如果在执行<code>sudo apt update</code>时出现“无法安全地用该源进行更新，所以默认禁用该源。”的问题,可以执行以下的指令
+    <pre>sudo apt update --allow-insecure-repositories</pre>
+    <h4>2. 对于RHEL/CentOS</h4>
+    <p>新建 <code>/etc/yum.repos.d/kubernetes.repo</code>，内容为：</p>
+    <pre>[kubernetes]
+name=kubernetes
+baseurl=https://mirrors.gdut.edu.cn/kubernetes/yum/repos/kubernetes-el7-$basearch
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg</pre>
+</div>
+<script type="text/javascript" src="mirror.js"></script>
+
+</body>
+</html>
