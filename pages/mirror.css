@@ -36,11 +36,16 @@ code {
 
 pre {
     font-family: "Fira Code", Consolas, Menlo, Monaco, "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", monospace;
+    font-size: 110%;
+    margin: 0px;
+    width: 1200px;
+    line-height: 150%;
+    overflow:auto;
     border: 1px solid black; /* 添加黑色边框 */
     border-radius: 10px; /* 添加圆角 */
     background-color: rgba(128, 128, 128, 0.1); /* 设置灰色背景 */
     padding: 10px; /* 添加内边距，使内容与边框之间有一些间距 */
-    white-space: pre-wrap;  
+    white-space: pre-wrap; 
 }
 
 /* updated-mirror.css */
@@ -48,7 +53,7 @@ body {
     font-family: "MyriadPro", Helvetica, Arial, sans-serif;
     font-size: 16px;
     margin: 0;
-    padding: 0;
+    padding: 0px 40px;
     background-color: #f5f5f5;
     color: #333;
 }
@@ -75,6 +80,19 @@ h1 {
     font-size: 36px;
 }
 
+h1, h2, h3 {
+    color: #971943;
+    //font-size: 20px;
+    //line-height: 50px;
+    //height: 50px;
+    margin: 0;
+    //padding: 20px 50px;
+}
+
+h4 {
+    color: #971943;
+    font-size: 18px;
+}
 table {
     width: 100%;
     border-collapse: separate;
@@ -83,7 +101,7 @@ table {
     background-color: #fff;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    padding: 20px; /* Add padding here */
+    padding: 1em; Add padding here
 }
 
 th, td {
@@ -109,27 +127,60 @@ tr:hover {
 }
 
 a {
-    color: #007bff;
+    color: #ce6a00;
     text-decoration: none;
     transition: color 0.3s;
 }
 
 a:hover {
     text-decoration: underline;
-    color: #0056b3;
+    color: #be2f00;
 }
 
 #footer {
     text-align: center;
     margin-top: 40px;
+    margin-bottom: 10px;
     padding-top: 20px;
     border-top: 1px solid #ddd;
+    clear: both;
 }
 
 #footer a {
     color: #555;
     margin: 0 10px;
-    font-size: 14px;
+    font-size: 0.9em;
+}
+
+span {
+    margin-right: 20px;
+}
+
+#mirror-data, #mirror-usage, #mirror-links, #mirror-misc {
+    margin-top: 20px;
+    padding-bottom: 10px;
+}
+
+.hr {
+    border-bottom: dashed #777 1px;
+    width: 60%;
+}
+
+.hr hr {
+    display: none;
+}
+
+p.answer {
+    text-indent: 20px;
+    margin-bottom: 30px;
+}
+#distro-table {
+    width: 100%;
+}
+#copyright {
+    color: #555;
+    margin: 0px 10px;
+    font-size: 0.8em;
 }
 
 /* Animation */
@@ -171,7 +222,6 @@ a:hover {
     background-color: #555;
 }
 
-.dark-theme a {
+/* .dark-theme a {
     color: #bb86fc;
-}
-
+} */
