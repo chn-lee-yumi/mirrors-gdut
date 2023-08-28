@@ -319,4 +319,6 @@ under construction
 |freebsd-ports|534G|https://www.freebsd.org/doc/en_US.ISO8859-1/articles/hubs/mirror-howto.html ||
 |docker|缓存加速|参考 https://github.com/goharbor/harbor |已经拿到新的域名，可以开始部署|
 |fedora|1.13T|待google||
+|docker-ce|628G|||
+|kubernetes|72G|||
 
