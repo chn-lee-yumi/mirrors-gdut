@@ -241,6 +241,12 @@ p.answer {
     transition: background-color 0.3s;
 }
 
+.dark-theme #footer a {
+    color: #fff;
+    margin: 0 10px;
+    font-size: 0.9em;
+}
+
 /* .dark-theme a {
     color: #bb86fc;
 } */
