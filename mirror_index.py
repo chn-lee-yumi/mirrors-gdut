@@ -72,7 +72,7 @@ FOOTER = """
 
 html = HEADER
 odd_or_even = 'odd'
-is_syncing = 'false'
+odd_or_even_syncing = 'odd'
 
 mirror_list = sorted(glob.glob('/mnt/mirror/*'))
 cdn_mirror_list = ['pypi', 'centos-vault', 'anaconda', 'maven', 'npm', 'kali', 'ubuntu-ports', 'freebsd-pkg', 'docker', 'go']
@@ -97,20 +97,20 @@ for mirror in mirror_list:
                     sync_time = "⏱️ " + f.read().strip()
             except FileNotFoundError:
                 sync_time = '❌ 从未同步'
-                is_syncing = 'false'
             if os.path.isfile('/tmp/mirror/lock/' + mirror_name + '.lock'):
                 sync_status = '▶️同步中'
-                is_syncing = 'true'
             else:
                 sync_status = '✅同步完成'
-                is_syncing = 'true'
 
         if sync_status == '▶️同步中':
+            odd_or_even_syncing = odd_or_even
             odd_or_even = 'syncing-row'
 
         # 组合成一行的HTML
         html += SECTION_TEMPLATE.substitute(odd_or_even=odd_or_even, mirror_name=mirror_name, sync_time=sync_time, sync_status=sync_status)
         # 修改表格的class，得出黑白相间的表格
+        if sync_status == '▶同步中':
+            odd_or_even = odd_or_even_syncing
         if odd_or_even == 'odd':
             odd_or_even = 'even'
         else:
