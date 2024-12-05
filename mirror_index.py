@@ -33,10 +33,10 @@ HEADER = """
         </h2>
         <table id="distro-table" cellpadding="0" cellspacing="0">
             <colgroup>
-                <col width="25%"/>
-                <col width="25%"/>
-                <col width="25%"/>
-                <col width="25%"/>
+                <col />
+                <col />
+                <col />
+                <col />
             </colgroup>
             <thead>
             <tr>
@@ -82,7 +82,7 @@ FOOTER = """
             联系我们
         </h2>
         <ul>
-            <li><strong>发送邮件</strong><br>stunic@gdut.edu.cn</li>
+            <li><strong>📮发送邮件</strong><br>stunic@gdut.edu.cn</li>
         </ul>
 
         <h2>
@@ -138,12 +138,13 @@ for mirror in mirror_list:
             try:
                 with open('/home/mirror/sync_time/' + mirror_name, 'r') as f:
                     sync_time = "⏱️ " + f.read().strip()
+                if os.path.isfile('/tmp/mirror/lock/' + mirror_name + '.lock'):
+                    sync_status = '▶️ 同步中'
+                else:
+                    sync_status = '✅ 同步完成'
             except FileNotFoundError:
-                sync_time = '❌ 从未同步'
-            if os.path.isfile('/tmp/mirror/lock/' + mirror_name + '.lock'):
-                sync_status = '▶️ 同步中'
-            else:
-                sync_status = '✅ 同步完成'
+                sync_time = '⛔️'
+                sync_status = '❌ 从未同步'
 
         # 修改表格的class，得出黑白相间的表格
         if odd_or_even == 'even':
