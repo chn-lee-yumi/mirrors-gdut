@@ -4,6 +4,8 @@ http://mirrors.gdut.edu.cn/ 仅校园网可访问
 
 ![screenshot](screenshot.png)
 
+[//]: # (镜像站初版于2019年7月28日上线，代码于2019年12月23日开源。)
+
 交流群：`VVZIbnZxVHZ2Sm80T1RNM09USTVORFVLCg==`
 
 # 架构
@@ -309,16 +311,37 @@ systemctl status harbor.service
 
 ### 缓存源
 
-under construction
+参考[mirror.conf](https://github.com/chn-lee-yumi/mirrors-gdut/blob/master/nginx_conf/conf/mirror/mirror.conf)，配置`proxy_cache_path`和`location`即可。
+
+例子：
+```conf
+...
+
+# centos-vault 缓存
+proxy_cache_path /home/mirror/nginx_cache/centos-vault levels=2:2 keys_zone=cache_centos_vault:1m max_size=5G inactive=30d use_temp_path=off;
+
+...
+
+server {
+    ...
+    ##############################
+    # centos-vault 配置
+    ##############################
+
+    # 反代到清华，所有文件缓存30天
+    location /centos-vault/ {
+        include /home/nginx/conf/mirror/proxy_pass_tsinghua.conf;
+        proxy_cache cache_centos_vault;
+        include /home/nginx/conf/mirror/cache_30d.conf;
+    }
+    ...
+}
+```
 
 # New Mirror List
 
 |镜像|预估大小|文档|备注|
 |---|---|---|---|
-|freebsd|600G|https://www.freebsd.org/doc/en_US.ISO8859-1/articles/hubs/mirror-howto.html ||
 |freebsd-ports|534G|https://www.freebsd.org/doc/en_US.ISO8859-1/articles/hubs/mirror-howto.html ||
-|docker|缓存加速|参考 https://github.com/goharbor/harbor |已经拿到新的域名，可以开始部署|
 |fedora|1.13T|待google||
-|docker-ce|628G|||
-|kubernetes|72G|||
 
