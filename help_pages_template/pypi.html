@@ -1,14 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-    <title>pypi镜像使用帮助</title>
-    <link rel="stylesheet" type="text/css" href="mirror.css" media="screen"/>
-</head>
-<body>
-
-<h1>pypi镜像使用帮助</h1>
-<div id="mirror-usage">
+<div id="mirror-data">
     <h3>使用说明</h3>
     <p>由于pypi镜像大小高达7TB+，故我们不进行全量镜像，而是进行缓存。所有数据被请求过一次后即会缓存到服务器硬盘，缓存30天（对于会变动的文件，缓存时间为2小时）。</p>
     <!--TODO：支持数据包搜索-->
@@ -32,6 +22,3 @@ trusted-host = mirrors.gdut.edu.cn</pre>
     <pre>pip config set global.index-url http://mirrors.gdut.edu.cn/pypi/simple
 pip config set install.trusted-host mirrors.gdut.edu.cn</pre>
 </div>
-<script type="text/javascript" src="mirror.js"></script>
-</body>
-</html>

@@ -42,6 +42,14 @@ crontab -e  # 将上面cat的内容复制粘贴进来，然后保存
 
 然后坐等一两天等镜像同步完成。
 
+同步完成后使用`mirror`用户执行下面的命令渲染帮助页面：
+
+```shell
+python mirror_render_help_pages.py
+```
+
+帮助页面模板可以在`help_pages_template`目录下修改或新增。修改后需要重新执行渲染命令。
+
 ## 安装Nginx
 
 ### 编译安装

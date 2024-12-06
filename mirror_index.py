@@ -55,7 +55,7 @@ SECTION_TEMPLATE = Template("""
                     <td>💿 <a href="/${mirror_name}/">${mirror_name}</a></td>
                     <td><code>${sync_time}</code></td>
                     <td>${sync_status}</td>
-                    <td>📖 <a href="/${mirror_name}.html">${mirror_name}使用帮助</a></td>
+                    <td>📖 <a target="_blank" href="help/${mirror_name}.html">${mirror_name}使用帮助</a></td>
                 </tr>
 """)
 
@@ -92,9 +92,9 @@ FOOTER = """
             相关链接
         </h2>
         <ul>
-            <li><a href="http://www.gdut.edu.cn/">🏠 广东工业大学首页</a></li>
-            <li><a href="help.html">❓ 使用帮助</a></li>
-            <li><a href="status.html">🟢 当前状态</a></li>
+            <li><a target="_blank" href="http://www.gdut.edu.cn/">🏠 广东工业大学首页</a></li>
+            <li><a target="_blank" href="about.html">❓ 关于我们</a></li>
+            <li><a target="_blank" href="status.html">🟢 当前状态</a></li>
         </ul>
     </div>
 </div>
@@ -102,13 +102,12 @@ FOOTER = """
 <div id="footer">
     🏠<a target="_blank" href="http://www.gdut.edu.cn/">广东工业大学首页</a>
     &nbsp;|&nbsp;
-    ❓<a target="_blank" href="help.html">使用帮助</a>
+    ❓<a target="_blank" href="about.html">关于我们</a>
     &nbsp;|&nbsp;
     📮<a href="mailto:stunic@gdut.edu.cn">联系我们</a>
     &nbsp;|&nbsp;
     🟢<a target="_blank" href="status.html">当前状态</a>
 </div>
-<script type="text/javascript" src="mirror.js"></script>
 <script type="text/javascript" src="mirror.js"></script>
 </body>
 </html>
@@ -119,7 +118,7 @@ odd_or_even = 'even'
 
 mirror_list = sorted(glob.glob('/mnt/mirror/*'))
 cdn_mirror_list = ['pypi', 'centos-vault', 'anaconda', 'maven', 'npm', 'kali', 'ubuntu-ports', 'freebsd-pkg', 'docker', 'go']
-ignore_dir = ['static', 'font']
+ignore_dir = ['static', 'font', 'help']
 
 for mirror in mirror_list:
     if os.path.isdir(mirror):

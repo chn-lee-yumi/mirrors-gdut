@@ -35,14 +35,13 @@ code {
 
 pre {
     font-family: "Fira Code", Consolas, Menlo, Monaco, "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", monospace;
-    font-size: 110%;
     margin: 0px;
-    width: 1200px;
+    width: 100%;
     line-height: 150%;
     overflow:auto;
     border: 1px solid black; /* 添加黑色边框 */
     border-radius: 10px; /* 添加圆角 */
-    background-color: rgba(128, 128, 128, 0.1); /* 设置灰色背景 */
+    background-color: #F8F8FF;
     padding: 10px; /* 添加内边距，使内容与边框之间有一些间距 */
     white-space: pre-wrap; 
 }
@@ -268,3 +267,38 @@ p.answer {
     max-width: 25%;
     padding: 0px 10px;
 }
+
+/* 样式化导航栏 */
+.nav {
+    gap: 20px; /* 控制选项间距 */
+    list-style: none;
+}
+
+.nav-item {
+
+}
+
+/* 样式化每个选项 */
+.nav-link {
+    padding: 8px 16px; /* 内边距让点击区域更大 */
+    border-radius: 6px; /* 圆角效果 */
+    font-size: 18px;
+    box-sizing: border-box;
+    display: block;
+}
+
+/* 默认情况下选项的悬停效果 */
+.nav-link:hover {
+    text-decoration: none; /* 去掉下划线 */
+}
+
+/* 当前激活的选项样式 */
+.nav-link-selected {
+    background-color: #007bff; /* 蓝色背景 */
+    color: white; /* 白色字体 */
+}
+
+.nav-link-selected:hover {
+    color: #F8F8FF; /* 白色字体 */
+}
+
