@@ -20,7 +20,7 @@ HEADER = """
 <body class="fade-in">
 
 <header>
-    <h1><img style="vertical-align: middle;" src="https://dl.gdutnic.com/static/wiki/网管队Logo/学校Logo.png" width="40" height="40"/>&nbsp;广东工业大学开源镜像站</h1>
+    <h1><img style="vertical-align: middle;" src="/GDUT_Logo.png" width="40" height="40"/>&nbsp;广东工业大学开源镜像站</h1>
 </header>
 
 <div class="container">
