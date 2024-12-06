@@ -19,15 +19,6 @@
     src: url('../font/SFMono-Medium-8.otf');
     font-weight: medium;
 }
-/*@font-face {
-    font-family: "SFMono";
-    src: url('../font/SFMono-Regular-10.otf');
-}
-@font-face {
-    font-family: "SFMono";
-    src: url('../font/SFMono-Light-5.otf');
-    font-weight: light;
-}*/
 
 code {
     font-family: "SFMono", "Fira Code", Consolas, Menlo, Monaco, "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", monospace;
@@ -46,7 +37,6 @@ pre {
     white-space: pre-wrap; 
 }
 
-/* updated-mirror.css */
 body {
     font-family: "MyriadPro", Helvetica, Arial, sans-serif;
     font-size: 16px;
@@ -88,6 +78,7 @@ h4 {
     color: #971943;
     font-size: 18px;
 }
+
 table {
     width: 100%;
     border-collapse: separate;
@@ -110,13 +101,13 @@ th {
     font-weight: bold;
 }
 
-.even {
-    background-color: #FBFBFF;
-}
-
 tr:hover {
     background-color: #CAF4FF;
     transition: background-color 0.3s;
+}
+
+.even {
+    background-color: #FBFBFF;
 }
 
 a {
@@ -167,81 +158,17 @@ p.answer {
     text-indent: 20px;
     margin-bottom: 30px;
 }
+
 #distro-table {
     width: 100%;
 }
+
 #copyright {
     color: #555;
     margin: 0px 10px;
     font-size: 0.8em;
 }
 
-/* Animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-.fade-in {
-    animation: fadeIn 1s ease-in-out;
-}
-
-/* Dark theme */
-.dark-theme {
-    background-color: #222;
-    color: #fff;
-}
-
-.dark-theme table {
-    background-color: #333;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-.dark-theme th {
-    background-color: #444;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-}
-
-.dark-theme a {
-    color: #ce6a00;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.dark-theme a:hover {
-    text-decoration: underline;
-    color: #be2f00;
-}
-
-/*.dark-theme tr:nth-child(even) {
-    background-color: #444;
-}*/
-.dark-theme .even {
-    background-color: #444;
-}
-
-.dark-theme tr:hover {
-    /*background-color: #555;*/
-    background-color: #971943;
-    transition: background-color 0.3s;
-}
-
-.dark-theme #footer a {
-    color: #fff;
-    margin: 0 10px;
-    font-size: 0.9em;
-}
-
-/* .dark-theme a {
-    color: #bb86fc;
-} */
-
-/* Highlight syncing rows */
 .syncing-row {
     background-color: #FFFFF0;
 }
@@ -268,37 +195,109 @@ p.answer {
     padding: 0px 10px;
 }
 
-/* 样式化导航栏 */
 .nav {
-    gap: 20px; /* 控制选项间距 */
+    gap: 20px;
     list-style: none;
 }
 
-.nav-item {
-
-}
-
-/* 样式化每个选项 */
 .nav-link {
-    padding: 8px 16px; /* 内边距让点击区域更大 */
-    border-radius: 6px; /* 圆角效果 */
+    padding: 8px 16px;
+    border-radius: 6px;
     font-size: 18px;
     box-sizing: border-box;
     display: block;
 }
 
-/* 默认情况下选项的悬停效果 */
 .nav-link:hover {
-    text-decoration: none; /* 去掉下划线 */
+    text-decoration: none;
 }
 
-/* 当前激活的选项样式 */
 .nav-link-selected {
-    background-color: #007bff; /* 蓝色背景 */
-    color: white; /* 白色字体 */
+    background-color: #007bff;
+    color: white;
 }
 
 .nav-link-selected:hover {
-    color: #F8F8FF; /* 白色字体 */
+    color: #F8F8FF;
 }
 
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Dark theme */
+.dark-theme {
+    background-color: #222;
+    color: #fff;
+}
+
+.dark-theme h1 {
+    color: #fff;
+}
+
+.dark-theme h2 {
+    color: #CCBBFF;
+}
+
+.dark-theme h4 {
+    color: #fff;
+}
+
+.dark-theme .syncing-row {
+    background-color: #444488;
+}
+
+.dark-theme .nav-link-selected {
+    background-color: #0077AA;
+}
+
+.dark-theme table {
+    background-color: #333;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.dark-theme th {
+    background-color: #444;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.dark-theme a {
+    color: #ce6a00;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.dark-theme a:hover {
+    text-decoration: none;
+    color: #be2f00;
+}
+
+.dark-theme .even {
+    background-color: #444;
+}
+
+.dark-theme tr:hover {
+    background-color: #971943;
+    transition: background-color 0.3s;
+}
+
+.dark-theme #footer a {
+    color: #fff;
+    margin: 0 10px;
+    font-size: 0.9em;
+}
+
+.dark-theme pre {
+    background-color: #444;
+}

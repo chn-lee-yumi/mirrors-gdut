@@ -1,3 +1,4 @@
+// 自动切换深色模式
 document.addEventListener("DOMContentLoaded", function() {
     // Check if the user's system has dark mode preference
     const prefersDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;

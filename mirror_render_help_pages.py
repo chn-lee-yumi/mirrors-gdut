@@ -47,7 +47,7 @@ ${html}
     &nbsp;|&nbsp;
     🟢<a target="_blank" href="status.html">当前状态</a>
 </div>
-<script type="text/javascript" src="mirror.js"></script>
+<script type="text/javascript" src="/mirror.js"></script>
 </body>
 </html>
 """)
