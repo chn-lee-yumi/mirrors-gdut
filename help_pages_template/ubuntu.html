@@ -1,3 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="/mirror.css" media="screen" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/atom-one-dark.min.css">
+    <title>广东工业大学开源镜像站</title>
+</head>
+
+<body class="fade-in">
+
+<header>
+    <h1><img style="vertical-align: middle;" src="/GDUT_Logo.png" width="40" height="40"/>&nbsp;广东工业大学开源镜像站</h1>
+</header>
+
+<div class="container">
+    <div class="col-25">
+        <ul class="nav">
+
+
+            <li class="nav-item">
+                <a href="/help/anaconda.html" class="nav-link ">anaconda</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/archlinux.html" class="nav-link ">archlinux</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/archlinuxcn.html" class="nav-link ">archlinuxcn</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/centos.html" class="nav-link ">centos</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/centos-vault.html" class="nav-link ">centos-vault</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/debian.html" class="nav-link ">debian</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/debian-cd.html" class="nav-link ">debian-cd</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/docker.html" class="nav-link ">docker</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/docker-ce.html" class="nav-link ">docker-ce</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/epel.html" class="nav-link ">epel</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/freebsd.html" class="nav-link ">freebsd</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/freebsd-pkg.html" class="nav-link ">freebsd-pkg</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/gentoo.html" class="nav-link ">gentoo</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/go.html" class="nav-link ">go</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/kali.html" class="nav-link ">kali</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/kali-images.html" class="nav-link ">kali-images</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/kubernetes.html" class="nav-link ">kubernetes</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/manjaro.html" class="nav-link ">manjaro</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/manjaro-cd.html" class="nav-link ">manjaro-cd</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/maven.html" class="nav-link ">maven</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/npm.html" class="nav-link ">npm</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/pypi.html" class="nav-link ">pypi</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/raspbian.html" class="nav-link ">raspbian</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/termux.html" class="nav-link ">termux</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu.html" class="nav-link nav-link-selected">ubuntu</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu-cloud-images.html" class="nav-link ">ubuntu-cloud-images</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu-ports.html" class="nav-link ">ubuntu-ports</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu-releases.html" class="nav-link ">ubuntu-releases</a>
+            </li>
+
+        </ul>
+    </div>
+    <div class="col-75">
+        <h2>ubuntu镜像使用帮助</h2>
 <div id="mirror-data">
     <h3>收录架构</h3>
     <ul>
@@ -17,8 +153,7 @@
     <h3>使用说明</h3>
     <!--<p>在修改源之前，请先执行： apt-get install apt-transport-https</p>-->
     <p>这里以 bionic(18.04 LTS) 版本为例，编辑/etc/apt/sources.list文件, 修改为如下内容。（操作前请做好相应备份）</p>
-    <pre>
-deb http://mirrors.gdut.edu.cn/ubuntu/ bionic main restricted universe multiverse
+    <pre><code class="ini">deb http://mirrors.gdut.edu.cn/ubuntu/ bionic main restricted universe multiverse
 deb-src http://mirrors.gdut.edu.cn/ubuntu/ bionic main restricted universe multiverse
 deb http://mirrors.gdut.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse
 deb-src http://mirrors.gdut.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse
@@ -28,11 +163,10 @@ deb http://mirrors.gdut.edu.cn/ubuntu/ bionic-security main restricted universe 
 deb-src http://mirrors.gdut.edu.cn/ubuntu/ bionic-security main restricted universe multiverse
 # 预发布软件源，不建议启用
 # deb http://mirrors.gdut.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse
-# deb-src http://mirrors.gdut.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse</pre>
+# deb-src http://mirrors.gdut.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse</code></pre>
     <p>如果使用其它版本，将对应的版本代号替换掉bionic即可。</p>
     <p>如 20.04 LTS 版本代号为focal，则其/etc/apt/sources.list文件内容如下：</p>
-    <pre>
-deb http://mirrors.gdut.edu.cn/ubuntu/ focal main restricted universe multiverse
+    <pre><code class="ini">deb http://mirrors.gdut.edu.cn/ubuntu/ focal main restricted universe multiverse
 deb-src http://mirrors.gdut.edu.cn/ubuntu/ focal main restricted universe multiverse
 deb http://mirrors.gdut.edu.cn/ubuntu/ focal-updates main restricted universe multiverse
 deb-src http://mirrors.gdut.edu.cn/ubuntu/ focal-updates main restricted universe multiverse
@@ -42,10 +176,9 @@ deb http://mirrors.gdut.edu.cn/ubuntu/ focal-security main restricted universe m
 deb-src http://mirrors.gdut.edu.cn/ubuntu/ focal-security main restricted universe multiverse
 # 预发布软件源，不建议启用
 # deb http://mirrors.gdut.edu.cn/ubuntu/ focal-proposed main restricted universe multiverse
-# deb-src http://mirrors.gdut.edu.cn/ubuntu/ focal-proposed main restricted universe multiverse</pre>
+# deb-src http://mirrors.gdut.edu.cn/ubuntu/ focal-proposed main restricted universe multiverse</code></pre>
     <p>如 16.04 LTS 版本代号为xenial，则其/etc/apt/sources.list文件内容如下：</p>
-    <pre>
-deb http://mirrors.gdut.edu.cn/ubuntu/ xenial main restricted universe multiverse
+    <pre><code class="ini">deb http://mirrors.gdut.edu.cn/ubuntu/ xenial main restricted universe multiverse
 deb-src http://mirrors.gdut.edu.cn/ubuntu/ xenial main restricted universe multiverse
 deb http://mirrors.gdut.edu.cn/ubuntu/ xenial-updates main restricted universe multiverse
 deb-src http://mirrors.gdut.edu.cn/ubuntu/ xenial-updates main restricted universe multiverse
@@ -55,5 +188,24 @@ deb http://mirrors.gdut.edu.cn/ubuntu/ xenial-security main restricted universe 
 deb-src http://mirrors.gdut.edu.cn/ubuntu/ xenial-security main restricted universe multiverse
 # 预发布软件源，不建议启用
 # deb http://mirrors.gdut.edu.cn/ubuntu/ xenial-proposed main restricted universe multiverse
-# deb-src http://mirrors.gdut.edu.cn/ubuntu/ xenial-proposed main restricted universe multiverse</pre>
+# deb-src http://mirrors.gdut.edu.cn/ubuntu/ xenial-proposed main restricted universe multiverse</code></pre>
+    <p>或者直接使用以下命令进行替换:</p>
+    <pre><code class="bash">sed -i 's/https:\/\/archive.ubuntu.com/http:\/\/mirrors.gdut.edu.cn/g' /etc/apt/sources.list</code></pre>
 </div>
+    </div>
+</div>
+
+<div id="footer">
+    🏠<a target="_blank" href="http://www.gdut.edu.cn/">广东工业大学首页</a>
+    &nbsp;|&nbsp;
+    ❓<a target="_blank" href="about.html">关于我们</a>
+    &nbsp;|&nbsp;
+    📮<a href="mailto:stunic@gdut.edu.cn">联系我们</a>
+    &nbsp;|&nbsp;
+    🟢<a target="_blank" href="status.html">当前状态</a>
+</div>
+<script type="text/javascript" src="/mirror.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>
