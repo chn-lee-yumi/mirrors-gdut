@@ -1,3 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="/mirror.css" media="screen" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/atom-one-dark.min.css">
+    <title>广东工业大学开源镜像站</title>
+</head>
+
+<body class="fade-in">
+
+<header>
+    <h1><img style="vertical-align: middle;" src="/GDUT_Logo.png" width="40" height="40"/>&nbsp;广东工业大学开源镜像站</h1>
+</header>
+
+<div class="container">
+    <div class="col-25">
+        <ul class="nav">
+
+
+            <li class="nav-item">
+                <a href="/help/anaconda.html" class="nav-link ">anaconda</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/archlinux.html" class="nav-link ">archlinux</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/archlinuxcn.html" class="nav-link nav-link-selected">archlinuxcn</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/centos.html" class="nav-link ">centos</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/centos-vault.html" class="nav-link ">centos-vault</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/debian.html" class="nav-link ">debian</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/debian-cd.html" class="nav-link ">debian-cd</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/docker.html" class="nav-link ">docker</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/docker-ce.html" class="nav-link ">docker-ce</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/epel.html" class="nav-link ">epel</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/freebsd.html" class="nav-link ">freebsd</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/freebsd-pkg.html" class="nav-link ">freebsd-pkg</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/gentoo.html" class="nav-link ">gentoo</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/go.html" class="nav-link ">go</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/kali.html" class="nav-link ">kali</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/kali-images.html" class="nav-link ">kali-images</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/kubernetes.html" class="nav-link ">kubernetes</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/manjaro.html" class="nav-link ">manjaro</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/manjaro-cd.html" class="nav-link ">manjaro-cd</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/maven.html" class="nav-link ">maven</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/npm.html" class="nav-link ">npm</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/pypi.html" class="nav-link ">pypi</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/raspbian.html" class="nav-link ">raspbian</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/termux.html" class="nav-link ">termux</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu.html" class="nav-link ">ubuntu</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu-cloud-images.html" class="nav-link ">ubuntu-cloud-images</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu-ports.html" class="nav-link ">ubuntu-ports</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu-releases.html" class="nav-link ">ubuntu-releases</a>
+            </li>
+
+        </ul>
+    </div>
+    <div class="col-75">
+        <h2>archlinuxcn镜像使用帮助</h2>
 <div id="mirror-data">
     <h3>收录架构</h3>
     <ul>
@@ -16,8 +152,28 @@
 <div id="mirror-usage">
     <h3>使用说明</h3>
     <p>在 /etc/pacman.conf 文件末尾添加以下两行：</p>
-    <pre>[archlinuxcn]
-Server = http://mirrors.gdut.edu.cn/archlinuxcn/$arch</pre>
-    <p>之后执行命令 sudo pacman -S archlinuxcn-keyring 导入 GPG key。</p>
-    <p>再执行 sudo pacman -Sy 更新一下源。</p>
+    <pre><code class="ini">[archlinuxcn]
+Server = http://mirrors.gdut.edu.cn/archlinuxcn/$arch</code></pre>
+    <p>之后执行以下命令导入 GPG key：</p>
+    <pre><code class="bash">sudo pacman -S archlinuxcn-keyring</code></pre>
+    <p>再执行以下命令更新一下源：</p>
+    <pre><code class="bash">sudo pacman -Sy</code></pre>
 </div>
+
+    </div>
+</div>
+
+<div id="footer">
+    🏠<a target="_blank" href="http://www.gdut.edu.cn/">广东工业大学首页</a>
+    &nbsp;|&nbsp;
+    ❓<a target="_blank" href="about.html">关于我们</a>
+    &nbsp;|&nbsp;
+    📮<a href="mailto:stunic@gdut.edu.cn">联系我们</a>
+    &nbsp;|&nbsp;
+    🟢<a target="_blank" href="status.html">当前状态</a>
+</div>
+<script type="text/javascript" src="/mirror.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>

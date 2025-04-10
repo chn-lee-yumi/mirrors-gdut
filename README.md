@@ -104,11 +104,43 @@ docker pull sonatype/nexus3
 docker run -d -p 8081:8081 --restart always -v /home/mirror/nexus:/nexus-data --name nexus sonatype/nexus3
 ```
 
-**使用Kubernetes：**
+**使用Helm在Kubernetes上安装：**
 
-可以参考如下文件：
+Helm 添加 Harbor 源并更新
 
-[nexus_k8s_deploy_chart.yaml](nexus_k8s_deploy_chart.yaml)
+```bash
+helm repo add sonatype https://sonatype.github.io/helm3-charts/
+helm repo update
+```
+
+编辑 `values.yaml` 文件
+
+```yaml
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+  hostPath: /
+  hostRepo: pkg.gdut.edu.cn
+  tls:
+    - secretName: nexus-tls
+      hosts:
+        - pkg.gdut.edu.cn
+
+persistence:
+  enabled: true
+  accessMode: ReadWriteOnce
+  storageClass: "storageclass"
+  storageSize: 100Gi
+
+```
+
+安装Nexus
+
+```bash
+helm -n gdut-mirrors upgrade --install sonartype/nexus --values values.yaml
+```
 
 ## Harbor安装
 
@@ -285,23 +317,304 @@ systemctl start harbor.service
 systemctl status harbor.service
 ```
 
-**使用Kubernetes：**
+**使用Helm在Kubernetes上安装：**
 
-可以参考如下文件：
+Helm 添加 Harbor 源并更新
 
-[harbor_k8s_deploy_chart.yaml](harbor_k8s_deploy_chart.yaml)
+```bash
+helm repo add harbor https://helm.goharbor.io
+helm repo update
+```
+
+编辑 `values.yaml` 文件
+
+```yaml
+expose:
+  type: ingress
+  tls:
+    enabled: true
+    certSource: auto
+    auto:
+      commonName: "example@example.com"
+  ingress:
+    hosts:
+      core: registry.gdut.edu.cn
+    className: "nginx"
+    annotations:
+      ingress.kubernetes.io/ssl-redirect: "false"
+      ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/ingress.provider: nginx
+
+externalURL: https://registry.gdut.edu.cn
+
+persistence:
+  enabled: true
+  persistentVolumeClaim:
+    registry:
+      storageClass: "storageclass"
+      subPath: ""
+      accessMode: ReadWriteOnce
+      size: 5Gi
+      annotations: {}
+    jobservice:
+      jobLog:
+        existingClaim: ""
+        storageClass: "nfs-client-02"
+        subPath: ""
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        annotations: {}
+    database:
+      existingClaim: ""
+      storageClass: "nfs-client-02"
+      subPath: ""
+      accessMode: ReadWriteOnce
+      size: 1Gi
+      annotations: {}
+    redis:
+      existingClaim: ""
+      storageClass: "nfs-client-02"
+      subPath: ""
+      accessMode: ReadWriteOnce
+      size: 1Gi
+      annotations: {}
+    trivy:
+      existingClaim: ""
+      storageClass: "nfs-client-02"
+      subPath: ""
+      accessMode: ReadWriteOnce
+      size: 5Gi
+      annotations: {}
+
+existingSecretAdminPasswordKey: HARBOR_ADMIN_PASSWORD
+harborAdminPassword: "Your Admin Password"
+
+
+trivy:
+  enabled: true
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+
+```
+
+安装Harbor
+
+```bash
+helm -n gdut-mirrors upgrade --install harbor/harbor --values values.yaml
+```
+
 
 ## Harbor 镜像代理配置
 
 |名称|目标URL|提供者|配额|备注|
 |---|---|---|---|---|
 |docker|https://hub.docker.com|Docker Hub|20G|DockerHub镜像源|
-|aliyun|https://3mk4y2c6.mirror.aliyuncs.com|Docker Registry|20G|阿里云 Docker 镜像加速|
 |ghcr.io|https://ghcr.io|Docker Registry|20G|GitHub Container Registry|
 |quay.io|https://quay.io|Quay|20G|RedHat Quay.io|
-|mcr.microsoft.com|https://mcr.dockerproxy.com|Docker Registry|20G|Microsoft Artifact Registry|
-|gcr.io|https://gcr.dockerproxy.com|Docker Registry|20G|Google Container Registry|
-|k8s.gcr.io|https://k8s.dockerproxy.com|Docker Registry|20G|Google Container Registry for Kubernetes|
+|mcr.microsoft.com|https://mcr.microsoft.com|Docker Registry|20G|Microsoft Artifact Registry|
+|gcr.io|https://gcr.io|Docker Registry|20G|Google Container Registry|
+|registry.k8s.io|https://registry.k8s.io|Docker Registry|20G|Kubernetes Container Registry|
+|nvcr.io|https://nvcr.io|Docker Registry|20G|Nvidia Container Registry|
+|docker.elastic.co|https://docker.elastic.co|Docker Registry|20G|Elastic Docker Registry|
+
+## Harbor Nginx配置
+
+```nginx
+server {
+  listen 80;
+  server_name registry.gdut.edu.cn;
+  return 302 https://$host$request_uri;
+}
+server
+{
+    #listen 80;
+    listen 443 ssl ;
+    server_name registry.gdut.edu.cn;
+    index index.php index.html index.htm default.php default.htm default.html;
+    root /home/nginx/wwwroot/registry.gdut.edu.cn;
+
+    #SSL-START SSL相关配置，请勿删除或修改下一行带注释的404规则
+    #error_page 404/404.html;
+    ssl_certificate /home/nginx/cert/-.gdut.edu.cn_chain.crt;
+    ssl_certificate_key /home/nginx/cert/-.gdut.edu.cn.key;
+    ssl_protocols TLSv1.1 TLSv1.2 TLSv1.3;
+    ssl_ciphers EECDH+CHACHA20:EECDH+CHACHA20-draft:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+    add_header Strict-Transport-Security "max-age=31536000";
+    error_page 497  https://$host$request_uri;
+    #SSL-END
+   
+    client_max_body_size 10G;
+
+    # Allow Docker registry pulls/pushes from any IP
+    location /v2/ {
+        allow all;
+        # no deny statement here to allow everyone
+        proxy_pass https://k8s-gateway-https;
+        proxy_set_header HOST $host;
+        proxy_ssl_verify off;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_buffering off;
+        proxy_request_buffering off;
+        proxy_cache_convert_head off;
+        proxy_cache_methods GET HEAD;
+        proxy_cache_key $scheme$request_method$proxy_host$request_uri;
+    }
+    location /service/ {
+        allow all;
+        # no deny statement here to allow everyone
+        proxy_pass https://k8s-gateway-https;
+        proxy_set_header HOST $host;
+        proxy_ssl_verify off;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_buffering off;
+        proxy_request_buffering off;
+        proxy_cache_convert_head off;
+        proxy_cache_methods GET HEAD;
+        proxy_cache_key $scheme$request_method$proxy_host$request_uri;
+    }
+
+    # Restrict Harbor UI to only 10.9.0.0/16
+    location / {
+        include conf/allow_ips;
+        deny all;
+        
+        proxy_pass https://k8s-gateway-https;
+        proxy_set_header HOST $host;
+        proxy_ssl_verify off;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_buffering off;
+        proxy_request_buffering off;
+        proxy_cache_convert_head off;
+        proxy_cache_methods GET HEAD;
+        proxy_cache_key $scheme$request_method$proxy_host$request_uri;
+    }
+    
+    access_log  /home/nginx/logs/registry.gdut.edu.cn.log;
+    error_log  /home/nginx/logs/registry.gdut.edu.cn.error.log;
+}
+
+
+# 首先在 http 区域或更上层声明 map，用于映射固定域名到指定路径
+# 注意：该 map 声明应放在 server 块之外，如直接放在 http { ... } 中
+
+map $host $mapped_path {
+    # 固定映射表
+    "ghcr.registry.gdut.edu.cn"    "ghcr.io";
+    "quay.registry.gdut.edu.cn"    "quay.io";
+    "k8s.registry.gdut.edu.cn"     "registry.k8s.io";
+    "mcr.registry.gdut.edu.cn"     "mcr.microsoft.com";
+    "gcr.registry.gdut.edu.cn"     "gcr.io";
+    "elastic.registry.gdut.edu.cn" "docker.elastic.co";
+    "nvcr.registry.gdut.edu.cn"    "nvcr.io";
+    # 如果不在上述映射表中，则使用空值，后续在 server 块中判断
+    default "";
+}
+
+# 0. Harbor 地址
+upstream harbor-gdut {
+    server harbor-host;
+}
+
+# 1. 对所有子域名进行 HTTP -> HTTPS 的重定向
+server {
+    listen 80;
+    server_name ~^(?<subdomain>.+)\.registry\.gdut\.edu\.cn$;
+    return 302 https://$host$request_uri;
+}
+
+# 2. 对所有子域名进行 HTTPS 配置
+server {
+    listen 443 ssl;
+    server_name ~^(?<subdomain>.+)\.registry\.gdut\.edu\.cn$;
+    index  index.php index.html index.htm;
+    root   /home/nginx/wwwroot/registry.gdut.edu.cn;
+
+    # 证书配置（根据实际情况修改）
+    ssl_certificate     /home/nginx/cert/_.registry.gdut.edu.cn.crt;
+    ssl_certificate_key /home/nginx/cert/_.registry.gdut.edu.cn.key;
+    ssl_protocols       TLSv1.1 TLSv1.2 TLSv1.3;
+    ssl_ciphers         EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache   shared:SSL:10m;
+    ssl_session_timeout 10m;
+    add_header Strict-Transport-Security "max-age=31536000";
+    error_page 497 https://$host$request_uri;
+
+    client_header_timeout 3600;
+    client_body_timeout   3600;
+    send_timeout          3600;
+    keepalive_timeout     3600;
+    client_max_body_size  20G;
+
+    # 在 /v2/ 路径使用子域动态映射
+    location ~ ^/v2/(?<path>.*)$ {
+        # 如果 map 返回空字串，则使用 subdomain，否则使用映射值
+        if ($mapped_path = "") {
+            set $final_path $subdomain;  # 无匹配时默认使用 subdomain 作为子路径
+        }
+        if ($mapped_path != "") {
+            set $final_path $mapped_path; # 有匹配时使用指定映射路径
+        }
+
+        # 将最终路径拼接进 proxy_pass
+        if ($path != "") {
+            set $final_path "$final_path/$path";
+        }
+
+        proxy_pass       http://harbor-gdut/v2/$final_path;
+        proxy_cache      off;
+        proxy_set_header Host              $http_host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # 如果需要认证头，可在此设置
+        proxy_set_header Authorization     "Basic xxx";
+        proxy_read_timeout 900;
+        proxy_hide_header  Www-Authenticate;
+    }
+
+    # /service/ 路径与上面类似，基于固定映射或子域处理
+    location ~ ^/service/ {
+        if ($mapped_path = "") {
+            set $final_path $subdomain;
+        }
+        if ($mapped_path != "") {
+            set $final_path $mapped_path;
+        }
+
+        # 同步修改 scope 参数中的 repository 值
+        if ($args ~* "^(.*)(scope=repository%3A)(.*)$") {
+            set $args "$1$2$final_path%2F$3";
+        }
+
+        proxy_pass       http://harbor-gdut$uri$is_args$args;
+        proxy_cache      off;
+        proxy_set_header Host              $http_host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 900;
+    }
+
+    access_log /home/nginx/logs/registry.gdut.edu.cn.log;
+    error_log  /home/nginx/logs/registry.gdut.edu.cn.error.log;
+}
+```
 
 # 运维文档
 

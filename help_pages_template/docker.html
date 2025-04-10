@@ -1,32 +1,383 @@
-<div id="mirror-usage">
-    <h3>使用说明</h3>
-    <p>基于 Harbor 实现的容器镜像代理仓库，支持搜索已经缓存下来的镜像。</p>
-    <h4>1. 对于使用 Docker-Hub 镜像仓库</h4>
-    <pre>docker pull registry.gdut.edu.cn/docker/google/pause:latest
-# 如果是官方镜像或者单级存储则加上默认的库名称library即可
-docekr pull registry.gdut.edu.cn/docker/library/nginx:latest</pre>
-    <h4>2. 对于使用阿里云 Docker 镜像仓库</h4>
-    <pre>docker pull registry.gdut.edu.cn/aliyun/portainer/portainer-ce:latest
-# 如果是官方镜像或者单级存储则加上默认的库名称library即可
-docekr pull registry.gdut.edu.cn/aliyun/library/java:latest</pre>
-    由于阿里云代理仓库的时效性问题,这里不建议在此使用<code>latest</code>标签拉取镜像
-    <h4>3. 对于使用 GitHub Container Registry (ghcr.io) 镜像仓库</h4>
-    <pre>docker pull registry.gdut.edu.cn/ghcr.io/hay-kot/homebox:latest
-# 如果是官方镜像或者单级存储则加上默认的库名称library即可
-docekr pull registry.gdut.edu.cn/ghcr.io/library/test:latest</pre>
-    <h4>4. 对于使用 RedHat Quay.io (quay.io) 镜像仓库</h4>
-    <pre>docker pull registry.gdut.edu.cn/quay.io/coreos/flannel:v0.15.1
-# 如果是官方镜像或者单级存储则加上默认的库名称library即可
-docekr pull registry.gdut.edu.cn/quay.io/library/test:latest</pre>
-    <h4>5. 对于使用 Microsoft Artifact Registry (mcr.microsoft.com) 镜像仓库</h4>
-    <pre>docker pull registry.gdut.edu.cn/mcr.microsoft.com/coreos/flannel:v0.15.1
-# 如果是官方镜像或者单级存储则加上默认的库名称library即可
-docekr pull registry.gdut.edu.cn/mcr.microsoft.com/library/test:latest</pre>
-    <h4>6. 对于使用 Google Container Registry (gcr.io) 镜像仓库</h4>
-    <pre>docker pull registry.gdut.edu.cn/gcr.io/kaniko-project/executor:v1.13.0-debug
-# 如果是官方镜像或者单级存储则加上默认的库名称library即可
-docekr pull registry.gdut.edu.cn/gcr.io/library/test:latest</pre>
-    <h4>7. 对于使用 k8s.gcr.io 镜像仓库</h4>
-    <pre>docker pull registry.gdut.edu.cn/k8s.gcr.io/kube-proxy:v1.24.16</pre>
-    <p>拉下来后该重新打Tag就重新打Tag</>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="/mirror.css" media="screen" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/atom-one-dark.min.css">
+    <title>广东工业大学开源镜像站</title>
+</head>
+
+<body class="fade-in">
+
+<header>
+    <h1><img style="vertical-align: middle;" src="/GDUT_Logo.png" width="40" height="40"/>&nbsp;广东工业大学开源镜像站</h1>
+</header>
+
+<div class="container">
+    <div class="col-25">
+        <ul class="nav">
+
+
+            <li class="nav-item">
+                <a href="/help/anaconda.html" class="nav-link ">anaconda</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/archlinux.html" class="nav-link ">archlinux</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/archlinuxcn.html" class="nav-link ">archlinuxcn</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/centos.html" class="nav-link ">centos</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/centos-vault.html" class="nav-link ">centos-vault</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/debian.html" class="nav-link ">debian</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/debian-cd.html" class="nav-link ">debian-cd</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/docker.html" class="nav-link nav-link-selected">docker</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/docker-ce.html" class="nav-link ">docker-ce</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/epel.html" class="nav-link ">epel</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/freebsd.html" class="nav-link ">freebsd</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/freebsd-pkg.html" class="nav-link ">freebsd-pkg</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/gentoo.html" class="nav-link ">gentoo</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/go.html" class="nav-link ">go</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/kali.html" class="nav-link ">kali</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/kali-images.html" class="nav-link ">kali-images</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/kubernetes.html" class="nav-link ">kubernetes</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/manjaro.html" class="nav-link ">manjaro</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/manjaro-cd.html" class="nav-link ">manjaro-cd</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/maven.html" class="nav-link ">maven</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/npm.html" class="nav-link ">npm</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/pypi.html" class="nav-link ">pypi</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/raspbian.html" class="nav-link ">raspbian</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/termux.html" class="nav-link ">termux</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu.html" class="nav-link ">ubuntu</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu-cloud-images.html" class="nav-link ">ubuntu-cloud-images</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu-ports.html" class="nav-link ">ubuntu-ports</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu-releases.html" class="nav-link ">ubuntu-releases</a>
+            </li>
+
+        </ul>
+    </div>
+    <div class="col-75">
+        <h2>Docker镜像使用帮助</h2>
+<div id="mirror-data">
+    <h3>收录架构</h3>
+    <ul>
+        <li>全部</li>
+    </ul>
+    <h3>支持的容器镜像库</h3>
+    <ul>
+        <li>
+            <p><span>Docker-Hub (docker.io)</span></p>
+        </li>
+        <li>
+            <p><span>GitHub Container Registry (ghcr.io)</span></p>
+        </li>
+        <li>
+            <p><span>RedHat Quay.io (quay.io)</span></p>
+        </li>
+        <li>
+            <p><span>Kubernetes Container Registry (registry.k8s.io)</span></p>
+        </li>
+        <li>
+            <p><span>Microsoft Artifact Registry (mcr.microsoft.com)</span></p>
+        </li>
+        <li>
+            <p><span>Google Container Registry (gcr.io)</span></p>
+        </li>
+        <li>
+            <p><span>Kubernetes Container Registry (k8s.gcr.io)</span></p>
+        </li>
+        <li>
+            <p><span>Elastic Docker Registry (docker.elastic.co)</span></p>
+        </li>
+        <li>
+            <p><span>NVIDIA Container Registry (nvcr.io)</span></p>
+        </li>
+    </ul>
+    <h3>更新时间</h3>
+    <p>缓存加速</p>
 </div>
+<div class="hr">
+    <hr/>
+</div>
+<div id="mirror-usage">
+    <h2>使用说明</h2>
+    <p>基于 Harbor 实现的容器镜像代理仓库，支持搜索已经缓存下来的镜像，目前镜像站的容器镜像库有两种代理模式。</p>
+    <h3>一、前缀添加模式</h3>
+    <h4>1. 对于使用 Docker-Hub 镜像仓库</h4>
+    <pre><code class="bash">docker pull registry.gdut.edu.cn/docker/google/pause:latest
+# 如果是官方镜像或者单级存储则加上默认的库名称library即可
+docekr pull registry.gdut.edu.cn/docker/library/nginx:latest</code></pre>
+    <h4>2. 对于使用 GitHub Container Registry (ghcr.io) 镜像仓库</h4>
+    <pre><code class="bash">docker pull registry.gdut.edu.cn/ghcr.io/hay-kot/homebox:latest</code></pre>
+    <h4>3. 对于使用 RedHat Quay.io (quay.io) 镜像仓库</h4>
+    <pre><code class="bash">docker pull registry.gdut.edu.cn/quay.io/coreos/flannel:v0.15.1</code></pre>
+    <h4>3. 对于使用 Kubernetes Container Registry (registry.k8s.io) 镜像仓库</h4>
+    <pre><code class="bash">docker pull registry.gdut.edu.cn/registry.k8s.io/coredns/coredns:v1.6.6
+# 如果是官方镜像或者单级存储则按如下所示拉取
+docekr pull registry.gdut.edu.cn/registry.k8s.io/kube-apiserver:v1.26.8</code></pre>
+    <h4>5. 对于使用 Microsoft Artifact Registry (mcr.microsoft.com) 镜像仓库</h4>
+    <pre><code class="bash">docker pull registry.gdut.edu.cn/mcr.microsoft.com/coreos/flannel:v0.15.1</code></pre>
+    <h4>6. 对于使用 Google Container Registry (gcr.io) 镜像仓库</h4>
+    <pre><code class="bash">docker pull registry.gdut.edu.cn/gcr.io/kaniko-project/executor:v1.13.0-debug</code></pre>
+    <h4>7. 对于使用旧版 Kubernetes Container Registry (k8s.gcr.io) 镜像仓库</h4>
+    <pre><code class="bash">docker pull registry.gdut.edu.cn/registry.k8s.io/kube-proxy:v1.24.16</code></pre>
+    <h4>8. 对于使用 Elastic Docker Registry (docker.elastic.co) 镜像仓库</h4>
+    <pre><code class="bash">docker pull registry.gdut.edu.cn/docker.elastic.co/elasticsearch/elasticsearch:8.17.1</code></pre>
+    <h4>9. 对于使用 NVIDIA Container Registry (nvcr.io) 镜像仓库</h4>
+    <pre><code class="bash">docker pull registry.gdut.edu.cn/nvcr.io/nvidia/k8s-device-plugin:v0.17.0</code></pre>
+    <p>所有镜像拉下来后该重新打Tag就重新打Tag</p>
+    <h4>附: 本镜像站支持的主流容器镜像库对应的代理地址</h4>
+    <table>
+        <thead>
+                <tr>
+                    <th>容器镜像库</th>
+                    <th>原地址</th>
+                    <th>代理地址</th>
+                </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>Docker Hub</b></td>
+                <td><code>nginx:latest</code></td>
+                <td><code>registry.gdut.edu.cn/docker/library/nginx:latest</code></td>
+            </tr>
+            <tr>
+                <td><b>Docker Hub</b></td>
+                <td><code>rancher/rancher:latest</code></td>
+                <td><code>registry.gdut.edu.cn/docker/rancher/rancher:latest</code></td>
+            </tr>
+            <tr>
+                <td><b>Docker Hub</b></td>
+                <td><code>docker.io/foo/bar:latest</code></td>
+                <td><code>registry.gdut.edu.cn/docker/foo/bar:latest</code></td>
+            </tr>
+            <tr>
+                <td><b>GitHub Package Registry</b></td>
+                <td><code>ghcr.io/foo/bar:latest</code></td>
+                <td><code>registry.gdut.edu.cn/ghcr.io/foo/bar:latest</code></td>
+            </tr>
+            <tr>
+                <td><b>Red Hat Quay</b></td>
+                <td><code>quay.io/foo/bar:latest</code></td>
+                <td><code>registry.gdut.edu.cn/quay.io/foo/bar:latest</code></td>
+            </tr>
+            <tr>
+                <td><b>Kubernetes Container Registry</b></td>
+                <td><code>registry.k8s.io/foo/bar:latest</code></td>
+                <td><code>registry.gdut.edu.cn/registry.k8s.io/foo/bar:latest</code></td>
+            </tr>
+            <tr>
+                <td><b>Microsoft Container Registry</b></td>
+                <td><code>mcr.microsoft.com/foo/bar:latest</code></td>
+                <td><code>registry.gdut.edu.cn/mcr.microsoft.com/foo/bar:latest</code></td>
+            </tr>
+            <tr>
+                <td><b>Google Container Registry</b></td>
+                <td><code>gcr.io/foo/bar:latest</code></td>
+                <td><code>registry.gdut.edu.cn/gcr.io/foo/bar:latest</code></td>
+            </tr>
+            <tr>
+                <td><b>Elastic Docker registry</b></td>
+                <td><code>docker.elastic.co/foo/bar:latest</code></td>
+                <td><code>registry.gdut.edu.cn/docker.elastic.co/foo/bar:latest</code></td>
+            </tr>
+            <tr>
+                <td><b>NVIDIA Container Registry</b></td>
+                <td><code>nvcr.io/foo/bar:latest</code></td>
+                <td><code>registry.gdut.edu.cn/nvcr.io/foo/bar:latest</code></td>
+            </tr>
+        
+        </tbody>
+    </table>
+    <h3>二、域名置换模式</h3>
+    <p>这种模式主要用在 Docker Daemon 配置中</p>
+    <p>由于学校未提供 <code>registry.gdut.edu.cn</code> 的子域名的解析及公共 TLS 证书,因此需要进行亿些额外的配置</p>
+    <h4>1. 配置 Hosts 文件</h4>
+    <p>在本机所在的 Hosts 文件中添加以下记录，Hosts 文件的路径会因系统而已，请自行百度：</p>
+    <pre><code class="ini"># GDUT Mirrors Registry
+222.200.97.228 docker.registry.gdut.edu.cn
+222.200.97.228 ghcr.registry.gdut.edu.cn
+222.200.97.228 quay.registry.gdut.edu.cn
+222.200.97.228 k8s.registry.gdut.edu.cn
+222.200.97.228 mcr.registry.gdut.edu.cn
+222.200.97.228 gcr.registry.gdut.edu.cn
+222.200.97.228 nvcr.registry.gdut.edu.cn
+222.200.97.228 elastic.registry.gdut.edu.cn
+# GDUT Mirrors Registry END</code></pre>
+    <h4>2. 信任镜像站的自签署 CA 证书</h4>
+    <p><a href="https://mirrors.gdut.edu.cn/certs/mirrors-ca.crt">点此</a>下载镜像站的CA证书，然后安装到本机并信任该证书</p>
+    <h4>3. 修改 Docker Daemon 配置</h4>
+    <p>对 Docker Daemon 配置进行修改，在<code>registry-mirrors</code>中将本镜像站的Docker镜像加速地址添加上去：
+    <pre><code class="json">{
+  "registry-mirrors": [
+    "https://docker.registry.gdutnic.com"
+  ]
+}</code></pre>
+    <h4>4. 重启Docker</h4>
+    <p>重启 Docker，让新配置生效，自此大功告成。</p>
+    <h4>附a: 快速配置脚本：</h4>
+    <p>本镜像站供了一个快速配置脚本，可以用于快速配置 Docker 镜像源。</p>
+    <p>使用方法：直接执行以下命令即可（需要有管理员权限）</p>
+    <p>Linux 系统:</p>
+    <pre><code class="bash">curl -fsSL --insecure https://mirrors.gdut.edu.cn/scripts/configure-docker-registry.sh | sudo -E bash</code></pre>
+    <p>Windows 系统:</p>
+    <pre><code class="powershell">curl.exe -sSL --insecure https://mirrors.gdut.edu.cn/scripts/configure-docker-registry.ps1 | powershell -NoProfile -ExecutionPolicy Bypass -</code></pre>
+    <h4>附b: 本镜像站支持的主流容器镜像库对应的代理地址</h4>
+    <table>
+        <thead>
+                <tr>
+                    <th>容器镜像库</th>
+                    <th>原地址</th>
+                    <th>代理地址</th>
+                </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>Docker Hub</b></td>
+                <td><code>nginx:latest</code></td>
+                <td><code>docker.registry.gdut.edu.cn/library/nginx:latest</code></td>
+            </tr>
+            <tr>
+                <td><b>Docker Hub</b></td>
+                <td><code>rancher/rancher:latest</code></td>
+                <td><code>docker.registry.gdut.edu.cn/rancher/rancher:latest</code></td>
+            </tr>
+            <tr>
+                <td><b>Docker Hub</b></td>
+                <td><code>docker.io/foo/bar:latest</code></td>
+                <td><code>docker.registry.gdut.edu.cn/foo/bar:latest</code></td>
+            </tr>
+            <tr>
+                <td><b>GitHub Package Registry</b></td>
+                <td><code>ghcr.io/foo/bar:latest</code></td>
+                <td><code>ghcr.registry.gdut.edu.cn/foo/bar:latest</code></td>
+            </tr>
+            <tr>
+                <td><b>Red Hat Quay</b></td>
+                <td><code>quay.io/foo/bar:latest</code></td>
+                <td><code>quay.registry.gdut.edu.cn/foo/bar:latest</code></td>
+            </tr>
+            <tr>
+                <td><b>Kubernetes Container Registry</b></td>
+                <td><code>registry.k8s.io/foo/bar:latest</code></td>
+                <td><code>k8s.registry.gdut.edu.cn/foo/bar:latest</code></td>
+            </tr>
+            <tr>
+                <td><b>Microsoft Container Registry</b></td>
+                <td><code>mcr.microsoft.com/foo/bar:latest</code></td>
+                <td><code>mcr.registry.gdut.edu.cn/foo/bar:latest</code></td>
+            </tr>
+            <tr>
+                <td><b>Google Container Registry</b></td>
+                <td><code>gcr.io/foo/bar:latest</code></td>
+                <td><code>gcr.registry.gdut.edu.cn/foo/bar:latest</code></td>
+            </tr>
+            <tr>
+                <td><b>Elastic Docker registry</b></td>
+                <td><code>docker.elastic.co/foo/bar:latest</code></td>
+                <td><code>elastic.registry.gdut.edu.cn/foo/bar:latest</code></td>
+            </tr>
+            <tr>
+                <td><b>NVIDIA Container Registry</b></td>
+                <td><code>nvcr.io/foo/bar:latest</code></td>
+                <td><code>nvcr.registry.gdut.edu.cn/foo/bar:latest</code></td>
+            </tr>
+        
+        </tbody>
+    </table>
+    <h3>对于想要在此上传自己镜像的</h3>
+    <p><!--如果想要将自己制作的 Docker 镜像上传到本仓库进行开发使用，可以向<a href="mailto:stunic@gdut.edu.cn">本邮箱</a>发送一封申请邮件申请一个账号，申请时需要说明具体
+用途，用途必须合法合规。若审核通过将会回复一份带有账号信息的邮件；每个账号名下将会有一个项目，项目空间默认为5GB，并且默认为私有项目，不对外公开。若需要更多空间,请发送一封新的申请邮件来申请更多的空间。--></p>
+</div>
+</div>
+
+<div id="footer">
+    🏠<a target="_blank" href="http://www.gdut.edu.cn/">广东工业大学首页</a>
+    &nbsp;|&nbsp;
+    ❓<a target="_blank" href="about.html">关于我们</a>
+    &nbsp;|&nbsp;
+    📮<a href="mailto:stunic@gdut.edu.cn">联系我们</a>
+    &nbsp;|&nbsp;
+    🟢<a target="_blank" href="status.html">当前状态</a>
+</div>
+<script type="text/javascript" src="/mirror.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>
