@@ -104,11 +104,43 @@ docker pull sonatype/nexus3
 docker run -d -p 8081:8081 --restart always -v /home/mirror/nexus:/nexus-data --name nexus sonatype/nexus3
 ```
 
-**使用Kubernetes：**
+**使用Helm在Kubernetes上安装：**
 
-可以参考如下文件：
+Helm 添加 Harbor 源并更新
 
-[nexus_k8s_deploy_chart.yaml](nexus_k8s_deploy_chart.yaml)
+```bash
+helm repo add sonatype https://sonatype.github.io/helm3-charts/
+helm repo update
+```
+
+编辑 `values.yaml` 文件
+
+```yaml
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+  hostPath: /
+  hostRepo: pkg.gdut.edu.cn
+  tls:
+    - secretName: nexus-tls
+      hosts:
+        - pkg.gdut.edu.cn
+
+persistence:
+  enabled: true
+  accessMode: ReadWriteOnce
+  storageClass: "storageclass"
+  storageSize: 100Gi
+
+```
+
+安装Nexus
+
+```bash
+helm -n gdut-mirrors upgrade --install sonartype/nexus --values values.yaml
+```
 
 ## Harbor安装
 
@@ -369,6 +401,12 @@ metrics:
   serviceMonitor:
     enabled: true
 
+```
+
+安装Harbor
+
+```bash
+helm -n gdut-mirrors upgrade --install harbor/harbor --values values.yaml
 ```
 
 
