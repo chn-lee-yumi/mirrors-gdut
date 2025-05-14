@@ -61,6 +61,10 @@ echo "日志文件："${LOG_FILE}
 
 # 执行同步命令
 case $1 in
+anolis)
+  # 上游：Anolis官方镜像
+  RSYNC_PASSWORD=Rsync@2020 rsync ${COMMON_OPTIONS} rsync_user@rsync.openanolis.cn::anolis /mnt/mirror/anolis | tee ${LOG_FILE}
+  ;;
 archlinux)
   # 上游：中科大镜像
   rsync ${COMMON_OPTIONS} rsync.mirrors.ustc.edu.cn::archlinux /mnt/mirror/archlinux | tee ${LOG_FILE}
@@ -119,6 +123,10 @@ manjaro)
 manjaro-cd)
   # 上游：中科大镜像
   rsync ${COMMON_OPTIONS} --exclude='z_release_archive/' rsync.mirrors.ustc.edu.cn::repo/manjaro-cd/ /mnt/mirror/manjaro-cd/ | tee ${LOG_FILE}
+  ;;
+openeuler)
+  # 上游：OpenEular官方
+  rsync ${COMMON_OPTIONS} --exclude='**/aarch64' --exclude='**/loongarch64' --exclude='**/ppc64le' --exclude='**/riscv64' repo.openeuler.openatom.cn::openeuler /mnt/mirror/openeuler/ | tee ${LOG_FILE}
   ;;
 raspberrypi)
   # 上游：apt-repo.raspberrypi.org
