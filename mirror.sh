@@ -22,9 +22,9 @@ usage() {
   cat <<EOF
 Usage: $0 [mirror]
 Example: $0 debian
-Supported mirrors: archlinux archlinuxcn centos debian debian-cd
-                   elpa epel freebsd gentoo kali-images manjaro manjaro-cd
-                   raspberrypi raspbian termux ubuntu ubuntu-releases
+Supported mirrors: anolis archlinux archlinuxcn centos debian debian-cd docker-ce
+                   elpa epel freebsd gentoo kali-images kubernetes manjaro manjaro-cd
+                   openeuler raspberrypi raspbian termux ubuntu ubuntu-releases
 EOF
   exit 0
 }
@@ -125,7 +125,7 @@ manjaro-cd)
   rsync ${COMMON_OPTIONS} --exclude='z_release_archive/' rsync.mirrors.ustc.edu.cn::repo/manjaro-cd/ /mnt/mirror/manjaro-cd/ | tee ${LOG_FILE}
   ;;
 openeuler)
-  # 上游：OpenEular官方
+  # 上游：OpenEuler官方
   rsync ${COMMON_OPTIONS} --exclude='**/aarch64' --exclude='**/loongarch64' --exclude='**/ppc64le' --exclude='**/riscv64' repo.openeuler.openatom.cn::openeuler /mnt/mirror/openeuler/ | tee ${LOG_FILE}
   ;;
 raspberrypi)
