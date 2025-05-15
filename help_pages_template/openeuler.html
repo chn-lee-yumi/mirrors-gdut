@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="/mirror.css" media="screen" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/atom-one-dark.min.css">
+    <title>广东工业大学开源镜像站</title>
+</head>
+
+<body class="fade-in">
+
+<header>
+    <h1><img style="vertical-align: middle;" src="/GDUT_Logo.png" width="40" height="40"/>&nbsp;广东工业大学开源镜像站</h1>
+</header>
+
+<div class="container">
+    <div class="col-25">
+        <ul class="nav">
+
+
+            <li class="nav-item">
+                <a href="/help/anaconda.html" class="nav-link ">anaconda</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/archlinux.html" class="nav-link ">archlinux</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/archlinuxcn.html" class="nav-link ">archlinuxcn</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/centos.html" class="nav-link ">centos</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/centos-vault.html" class="nav-link ">centos-vault</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/debian.html" class="nav-link ">debian</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/debian-cd.html" class="nav-link ">debian-cd</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/docker.html" class="nav-link ">docker</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/docker-ce.html" class="nav-link ">docker-ce</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/epel.html" class="nav-link ">epel</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/freebsd.html" class="nav-link ">freebsd</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/freebsd-pkg.html" class="nav-link ">freebsd-pkg</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/gentoo.html" class="nav-link ">gentoo</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/go.html" class="nav-link ">go</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/kali.html" class="nav-link ">kali</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/kali-images.html" class="nav-link ">kali-images</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/kubernetes.html" class="nav-link ">kubernetes</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/manjaro.html" class="nav-link ">manjaro</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/manjaro-cd.html" class="nav-link ">manjaro-cd</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/maven.html" class="nav-link ">maven</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/npm.html" class="nav-link ">npm</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/pypi.html" class="nav-link ">pypi</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/raspbian.html" class="nav-link ">raspbian</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/termux.html" class="nav-link ">termux</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu.html" class="nav-link nav-link-selected">ubuntu</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu-cloud-images.html" class="nav-link ">ubuntu-cloud-images</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu-ports.html" class="nav-link ">ubuntu-ports</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu-releases.html" class="nav-link ">ubuntu-releases</a>
+            </li>
+
+        </ul>
+    </div>
+    <div class="col-75">
+        <h2>ubuntu镜像使用帮助</h2>
+<div id="mirror-data">
+    <h3>收录架构</h3>
+    <ul>
+        <li>AMD64</li>
+    </ul>
+    <h3>收录版本</h3>
+    <ul>
+        <li>全部</li>
+    </ul>
+    <h3>更新时间</h3>
+    <p>每6小时更新一次</p>
+</div>
+<div class="hr">
+    <hr/>
+</div>
+<div id="mirror-usage">
+    <h3>介绍</h3>
+    <p>openEuler是一个开源免费的Linux发行版系统，通过开放的社区形式与全球的开发者共同构建一个开放、多元和架构包容的软件生态体系，openEuler同时是一个创新的系统，倡导客户在系统上提出创新想法、开拓新思路、实践新方案。</p>
+    <h3>使用说明</h3>
+    <p>首先备份 <code>/etc/yum.repos.d/openEuler.repo</code></p>
+    <pre><code class="bash">mv /etc/yum.repos.d/openEuler.repo /etc/yum.repos.d/openEuler.repo.backup</code></pre>
+    <p>根据对应的OpenEuler版本，编辑/etc/yum.repos.d/openEuler.repo文件, 修改为对应内容。（详见后面配置参考）</p>
+    <p>最后运行以下命令生成缓存</p>
+    <pre><code class="bash">yum clean all
+yum makecache</code></pre>
+    <h3>配置参考</h3>
+    <p>注：CentOS 6 已停止维护，如需使用 CentOS 6 的源，请移步<a href="\centos-vault.html">centos-vault</a>。</p>
+    <p>这里以OpenEuler22.09为例，将 <code>/etc/yum.repos.d/CentOS-Base.repo</code> 修改为下面的内容：</p>
+    <pre><code class="ini">[OS]
+name=OS
+baseurl=https://mirrors.gdut.edu.cn/openeuler/openEuler-22.09/OS/$basearch/
+enabled=1
+gpgcheck=1
+gpgkey=https://mirrors.gdut.edu.cn/openeuler/openEuler-22.09/OS/$basearch/RPM-GPG-KEY-openEuler
+
+[everything]
+name=everything
+baseurl=https://mirrors.gdut.edu.cn/openeuler/openEuler-22.09/everything/$basearch/
+enabled=1
+gpgcheck=1
+gpgkey=https://mirrors.gdut.edu.cn/openeuler/openEuler-22.09/everything/$basearch/RPM-GPG-KEY-openEuler
+
+[EPOL]
+name=EPOL
+baseurl=https://mirrors.gdut.edu.cn/openeuler/openEuler-22.09/EPOL/main/$basearch/
+enabled=1
+gpgcheck=1
+gpgkey=https://mirrors.gdut.edu.cn/openeuler/openEuler-22.09/OS/$basearch/RPM-GPG-KEY-openEuler
+
+[debuginfo]
+name=debuginfo
+baseurl=https://mirrors.gdut.edu.cn/openeuler/openEuler-22.09/debuginfo/$basearch/
+enabled=1
+gpgcheck=1
+gpgkey=https://mirrors.gdut.edu.cn/openeuler/openEuler-22.09/debuginfo/$basearch/RPM-GPG-KEY-openEuler
+
+[source]
+name=source
+baseurl=https://mirrors.gdut.edu.cn/openeuler/openEuler-22.09/source/
+enabled=1
+gpgcheck=1
+gpgkey=https://mirrors.gdut.edu.cn/openeuler/openEuler-22.09/source/RPM-GPG-KEY-openEuler
+
+[update]
+name=update
+baseurl=https://mirrors.gdut.edu.cn/openeuler/openEuler-22.09/update/$basearch/
+enabled=1
+gpgcheck=1
+gpgkey=https://mirrors.gdut.edu.cn/openeuler/openEuler-22.09/OS/$basearch/RPM-GPG-KEY-openEuler</code></pre>
+    <p>或者，可通过以下命令将镜像地址做批量替换：</p>
+    <pre><code class="bash">sed -i 's|http://repo.openeuler.org|https://mirrors.gdut.edu.cn/openeuler/|g' /etc/yum.repos.d/openEuler.repo</code></pre>
+</div>
+
+    </div>
+</div>
+
+<div id="footer">
+    🏠<a target="_blank" href="http://www.gdut.edu.cn/">广东工业大学首页</a>
+    &nbsp;|&nbsp;
+    ❓<a target="_blank" href="about.html">关于我们</a>
+    &nbsp;|&nbsp;
+    📮<a href="mailto:stunic@gdut.edu.cn">联系我们</a>
+    &nbsp;|&nbsp;
+    🟢<a target="_blank" href="status.html">当前状态</a>
+</div>
+<script type="text/javascript" src="/mirror.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>
