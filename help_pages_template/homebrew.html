@@ -83,7 +83,7 @@
             </li>
 
             <li class="nav-item">
-                <a href="/help/homebrew.html" class="nav-link ">homebrew-bottles</a>
+                <a href="/help/homebrew-bottles.html" class="nav-link ">homebrew-bottles</a>
             </li>
 
             <li class="nav-item">
@@ -131,7 +131,7 @@
             </li>
 
             <li class="nav-item">
-                <a href="/help/ubuntu.html" class="nav-link nav-link-selected">ubuntu</a>
+                <a href="/help/ubuntu.html" class="nav-link">ubuntu</a>
             </li>
 
             <li class="nav-item">
@@ -167,7 +167,7 @@
 </div>
 <div id="mirror-usage">
     <h3>使用说明</h3>
-    <p><strong>注：该镜像是 Homebrew / Linuxbrew 源程序以及 formula / cask 索引的镜像（即 <code>brew update</code> 时所更新内容）。镜像站同时提供相应的二进制预编译包的镜像，请参考 <a" href="/homebrew-bottles/">Homebrew bottles 镜像使用帮助</a></strong></p>
+    <p><strong>注：该镜像是 Homebrew / Linuxbrew 源程序以及 formula / cask 索引的镜像（即 <code>brew update</code> 时所更新内容）。镜像站同时提供相应的二进制预编译包的镜像，请参考 <a" href="/help/homebrew-bottles.html">Homebrew bottles 镜像使用帮助</a></strong></p>
     <p>镜像站提供了 <a href="https://github.com/Homebrew">https://github.com/Homebrew</a> 组织下的以下 <code >repo</code>：<code >brew</code>, <code >homebrew-core</code>, <code >homebrew-cask</code>, <code >homebrew-command-not-found</code>, <code >install</code>。</p>
     <p><strong>注：自 brew 4.0.0 (2023 年 2 月 16 日) 起，<code >HOMEBREW_INSTALL_FROM_API</code> 会成为默认行为，无需设置。大部分用户无需再克隆 <code >homebrew-core</code> 仓库，故无需设置 <code >HOMEBREW_CORE_GIT_REMOTE</code> 环境变量；但若需要运行 <code >brew</code> 的开发命令或者 <code >brew</code> 安装在非官方支持的默认 prefix 位置，则仍需设置 <code >HOMEBREW_CORE_GIT_REMOTE</code> 环境变量。如果不想通过 API 安装，可以设置 <code >HOMEBREW_NO_INSTALL_FROM_API=1</code>。</strong></p>
     <p><strong>注：目前，<code >homebrew-cask-{drivers,versions,fonts}</code> 已被弃用，所有 cask 合并至 <code >homebrew-cask</code> 仓库。本帮助内已移除克隆这些仓库的命令。已克隆用户（<code >brew tap</code> 查看）可使用 <code >brew untap</code> 移除废弃的仓库。</strong></p>
@@ -184,7 +184,7 @@ export HOMEBREW_INSTALL_FROM_API=1
 # export HOMEBREW_API_DOMAIN
 # export HOMEBREW_BOTTLE_DOMAIN
 # export HOMEBREW_PIP_INDEX_URL</code></pre>
-    <p>前往 <a href="/homebrew-bottles/">Homebrew bottles 镜像使用帮助</a>中「临时替换」一节设置好 <code>HOMEBREW_API_DOMAIN</code> 与 <code>HOMEBREW_BOTTLE_DOMAIN</code>。</p>
+    <p>前往 <a href="/help/homebrew-bottles.html">Homebrew bottles 镜像使用帮助</a>中「临时替换」一节设置好 <code>HOMEBREW_API_DOMAIN</code> 与 <code>HOMEBREW_BOTTLE_DOMAIN</code>。</p>
     <p>最后，在终端运行以下命令以安装 Homebrew / Linuxbrew：</p>
     <pre><code class="bash"># 从镜像下载安装脚本并安装 Homebrew / Linuxbrew
 git clone --depth=1 https://mirrors.gdut.edu.cn/git/homebrew/install.git brew-install
@@ -217,7 +217,7 @@ test -r ~/.zprofile && echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >>
     <pre><code class="bash"># export HOMEBREW_API_DOMAIN=
 export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.gdut.edu.cn/git/homebrew/brew.git"
 brew update</code></pre>
-    <p>前往 <a href="/homebrew-bottles/">Homebrew bottles 镜像使用帮助</a>中「临时替换」一节设置好 <code>HOMEBREW_API_DOMAIN</code></p>
+    <p>前往 <a href="/help/homebrew-bottles.html">Homebrew bottles 镜像使用帮助</a>中「临时替换」一节设置好 <code>HOMEBREW_API_DOMAIN</code></p>
     <p>以下针对 macOS 系统上的 Homebrew：</p>
     <pre><code class="bash"># 手动设置
 export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.gdut.edu.cn/git/homebrew/homebrew-core.git"
