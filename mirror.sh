@@ -109,8 +109,8 @@ gentoo)
   rsync ${COMMON_OPTIONS} --exclude='/releases/historical' --exclude='/distfiles/**' --exclude='**/alpha' --exclude='**/bsd' --exclude='**/hppa' --exclude='**/ia64' --exclude='**/m68k' --exclude='**/mips' --exclude='**/ppc' --exclude='**/prefix' --exclude='**/s390' --exclude='**/sh' --exclude='**/sparc' masterdistfiles.gentoo.org::gentoo /mnt/mirror/gentoo | tee ${LOG_FILE}
   ;;
 homebrew-bottles)
-  # 上游：南大镜像
-  rsync ${COMMON_OPTIONS} mirrors.nju.edu.cn::homebrew-bottles /mnt/mirror/homebrew-bottles | tee ${LOG_FILE}
+  # 上游：清华镜像
+  rsync ${COMMON_OPTIONS} mirrors.tuna.tsinghua.edu.cn::homebrew-bottles /mnt/mirror/homebrew-bottles | tee ${LOG_FILE}
   ;;
 kali-images)
   # 上游：清华镜像
