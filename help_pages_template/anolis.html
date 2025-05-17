@@ -150,7 +150,7 @@
     </div>
     <div class="col-75">
         <h2>Anolis镜像使用帮助</h2>
-<div id="mirror-data">
+<!-- <div id="mirror-data">
     <h3>收录架构</h3>
     <ul>
         <li>AMD64, aarch64</li>
@@ -164,11 +164,12 @@
 </div>
 <div class="hr">
     <hr/>
-</div>
+</div> -->
 <div id="mirror-usage">
     <h3>介绍</h3>
     <p>Anolis OS 8是OpenAnolis社区推出的完全开源、中立、开放的发行版，它支持多计算架构，也面向云端场景优化，100%兼容CentOS 8软件生态。Anolis OS 8旨在为广大开发者和运维人员提供稳定、高性能、安全、可靠、开源的操作系统服务。</p>
     <h3>使用说明</h3>
+    <p>由于Anolis镜像高达40TB+，故我们不进行全量镜像，而是进行缓存。回源站点为阿里云镜像站。所有数据被请求过一次后即会缓存到服务器硬盘，缓存30天（对于会变动的文件，缓存时间为2小时）。</p>
     <p>首先备份 <code>/etc/yum.repos.d/openEuler.repo</code></p>
     <pre><code class="bash">mv /etc/yum.repos.d/openEuler.repo /etc/yum.repos.d/openEuler.repo.backup</code></pre>
     <p>根据对应的OpenEuler版本，编辑/etc/yum.repos.d/openEuler.repo文件, 修改为对应内容。（详见后面配置参考）</p>
