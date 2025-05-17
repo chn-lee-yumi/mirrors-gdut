@@ -130,7 +130,7 @@ manjaro-cd)
   ;;
 openeuler)
   # 上游：OpenEuler官方
-  rsync ${COMMON_OPTIONS} --exclude='**/loongarch64' --exclude='**/ppc64le' --exclude='**/riscv64' repo.openeuler.openatom.cn::openeuler /mnt/mirror/openeuler/ | tee ${LOG_FILE}
+  rsync ${COMMON_OPTIONS} --exclude='**/aarch64' --exclude='**/loongarch64' --exclude='**/ppc64le' --exclude='**/riscv64' repo.openeuler.openatom.cn::openeuler /mnt/mirror/openeuler/ | tee ${LOG_FILE}
   ;;
 raspberrypi)
   # 上游：apt-repo.raspberrypi.org
