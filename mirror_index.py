@@ -1,5 +1,6 @@
 import glob
 import os
+import csv
 from string import Template
 
 """
@@ -37,12 +38,14 @@ HEADER = """
                 <col />
                 <col />
                 <col />
+                <col />
             </colgroup>
             <thead>
             <tr>
                 <th>💽 镜像名</th>
                 <th>🔄 同步时间</th>
                 <th>ℹ️ 同步状态</th>
+                <th>📊 下载次数</th>
                 <th>💡 使用帮助</th>
             </tr>
             </thead>
@@ -55,6 +58,7 @@ SECTION_TEMPLATE = Template("""
                     <td>💿 ${mirror_link}</td>
                     <td><code>${sync_time}</code></td>
                     <td>${sync_status}</td>
+                    <td>${download_count}</td>
                     <td>📖 <a target="_blank" href="help/${mirror_name}.html">${mirror_name}使用帮助</a></td>
                 </tr>
 """)
@@ -113,6 +117,19 @@ FOOTER = """
 </html>
 """
 
+# 读取下载次数统计
+download_stats = {}
+try:
+    with open('/home/mirror/log/total.csv', 'r') as f:
+        reader = csv.reader(f)
+        next(reader)  # 跳过标题行
+        for row in reader:
+            if len(row) == 2:
+                mirror_name, count = row
+                download_stats[mirror_name] = count
+except FileNotFoundError:
+    pass
+
 html = HEADER
 odd_or_even = 'even'
 
@@ -127,6 +144,9 @@ for mirror in mirror_list:
         # 判断目录是否要忽略
         if mirror_name in ignore_dir:
             continue
+
+        # 获取下载次数
+        download_count = download_stats.get(mirror_name, '0')
 
         # 判断镜像是否缓存镜像
         if mirror_name in cdn_mirror_list:  # 缓存镜像（nginx反向代理）
@@ -162,7 +182,7 @@ for mirror in mirror_list:
             row_class = 'syncing-row'
         # 组合成一行的HTML
         html += SECTION_TEMPLATE.substitute(row_class=row_class, mirror_link=mirror_link, mirror_name=mirror_name, sync_time=sync_time,
-                                            sync_status=sync_status)
+                                            sync_status=sync_status, download_count=download_count)
 
 html += FOOTER
 
