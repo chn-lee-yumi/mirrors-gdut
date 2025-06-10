@@ -22,9 +22,9 @@ usage() {
   cat <<EOF
 Usage: $0 [mirror]
 Example: $0 debian
-Supported mirrors: archlinux archlinuxcn centos debian debian-cd
-                   elpa epel freebsd gentoo kali-images manjaro manjaro-cd
-                   raspberrypi raspbian termux ubuntu ubuntu-releases
+Supported mirrors: anolis archlinux archlinuxcn centos debian debian-cd docker-ce elpa epel
+                   freebsd gentoo homebrew-bottles kali-images kubernetes manjaro manjaro-cd
+                   openeuler raspberrypi raspbian termux ubuntu ubuntu-releases
 EOF
   exit 0
 }
@@ -61,6 +61,10 @@ echo "日志文件："${LOG_FILE}
 
 # 执行同步命令
 case $1 in
+anolis)
+  # 上游：Anolis官方镜像
+  RSYNC_PASSWORD=Rsync@2020 rsync ${COMMON_OPTIONS} --exclude='**/loongarch64' rsync_user@rsync.openanolis.cn::anolis /mnt/mirror/anolis | tee ${LOG_FILE}
+  ;;
 archlinux)
   # 上游：中科大镜像
   rsync ${COMMON_OPTIONS} rsync.mirrors.ustc.edu.cn::archlinux /mnt/mirror/archlinux | tee ${LOG_FILE}
@@ -104,6 +108,10 @@ gentoo)
   # 官方文档 https://wiki.gentoo.org/wiki/Project:Infrastructure/Mirrors/Source
   rsync ${COMMON_OPTIONS} --exclude='/releases/historical' --exclude='/distfiles/**' --exclude='**/alpha' --exclude='**/bsd' --exclude='**/hppa' --exclude='**/ia64' --exclude='**/m68k' --exclude='**/mips' --exclude='**/ppc' --exclude='**/prefix' --exclude='**/s390' --exclude='**/sh' --exclude='**/sparc' masterdistfiles.gentoo.org::gentoo /mnt/mirror/gentoo | tee ${LOG_FILE}
   ;;
+homebrew-bottles)
+  # 上游：清华镜像
+  rsync ${COMMON_OPTIONS} mirrors.tuna.tsinghua.edu.cn::homebrew-bottles /mnt/mirror/homebrew-bottles | tee ${LOG_FILE}
+  ;;
 kali-images)
   # 上游：清华镜像
   rsync ${COMMON_OPTIONS} --include='*amd64.iso' --exclude='*.iso' mirrors.tuna.tsinghua.edu.cn::kali-images /mnt/mirror/kali-images | tee ${LOG_FILE}
@@ -119,6 +127,10 @@ manjaro)
 manjaro-cd)
   # 上游：中科大镜像
   rsync ${COMMON_OPTIONS} --exclude='z_release_archive/' rsync.mirrors.ustc.edu.cn::repo/manjaro-cd/ /mnt/mirror/manjaro-cd/ | tee ${LOG_FILE}
+  ;;
+openeuler)
+  # 上游：OpenEuler官方
+  rsync ${COMMON_OPTIONS} --exclude='**/aarch64' --exclude='**/loongarch64' --exclude='**/ppc64le' --exclude='**/riscv64' repo.openeuler.openatom.cn::openeuler /mnt/mirror/openeuler/ | tee ${LOG_FILE}
   ;;
 raspberrypi)
   # 上游：apt-repo.raspberrypi.org

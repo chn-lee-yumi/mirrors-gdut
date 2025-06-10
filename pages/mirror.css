@@ -301,3 +301,66 @@ p.answer {
 .dark-theme pre {
     background-color: #444;
 }
+
+input {
+        margin: 0 auto;
+        font-size: 100%;
+        vertical-align: middle;
+        *overflow: visible;
+        line-height: normal;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 12px;
+        font-weight: 300;
+        line-height: 18px;
+        color: #555;
+        display: inline-block;
+        height: 20px;
+        padding: 4px 32px 4px 6px;
+        margin-bottom: 9px;
+        font-size: 14px;
+        line-height: 20px;
+        color: #555;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        width: 196px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+        -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+        -webkit-transition: border linear .2s,box-shadow linear .2s;
+        -moz-transition: border linear .2s,box-shadow linear .2s;
+        -o-transition: border linear .2s,box-shadow linear .2s;
+        transition: border linear .2s,box-shadow linear .2s;
+}
+input:focus {
+        outline: 0;
+        border-color: rgba(0,0,0,0.8);
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(0,0,0,0.6);
+        -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(0,0,0,0.6);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(0,0,0,0.6);
+}
+input::-moz-focus-inner {
+        padding: 0;
+        border: 0;
+}
+
+#search {
+        color: #FFFFFF;
+        background-color: #262A32;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 250px;
+        margin-top: 20px;
+        -webkit-box-sizing: content-box;
+        -moz-box-sizing: content-box;
+        box-sizing: content-box;
+        -webkit-appearance: textfield;
+        -webkit-transition: all 300ms ease-in;
+        -moz-transition: all 300ms ease-in;
+        -ms-transition: all 300ms ease-in;
+        -o-transition: all 300ms ease-in;
+        transition: all 300ms ease-in;
+}

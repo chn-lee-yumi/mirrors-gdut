@@ -79,11 +79,11 @@
             </li>
 
             <li class="nav-item">
-                <a href="/help/homebrew.html" class="nav-link ">homebrew</a>
+                <a href="/help/homebrew.html" class="nav-link">homebrew</a>
             </li>
 
             <li class="nav-item">
-                <a href="/help/homebrew.html" class="nav-link ">homebrew-bottles</a>
+                <a href="/help/homebrew-bottles.html" class="nav-link nav-link-selected">homebrew-bottles</a>
             </li>
 
             <li class="nav-item">
@@ -111,7 +111,7 @@
             </li>
 
             <li class="nav-item">
-                <a href="/help/npm.html" class="nav-link nav-link-selected">npm</a>
+                <a href="/help/npm.html" class="nav-link ">npm</a>
             </li>
 
             <li class="nav-item">
@@ -131,7 +131,7 @@
             </li>
 
             <li class="nav-item">
-                <a href="/help/ubuntu.html" class="nav-link ">ubuntu</a>
+                <a href="/help/ubuntu.html" class="nav-link">ubuntu</a>
             </li>
 
             <li class="nav-item">
@@ -149,20 +149,41 @@
         </ul>
     </div>
     <div class="col-75">
-        <h2>npm镜像使用帮助</h2>
+        <h2>Homebrew Bottless镜像使用帮助</h2>
 <div id="mirror-data">
-    <h3>使用说明</h3>
-    <p>proxy代理仓库。本站也支持https，如果npm使用http的源报错，可以尝试将url改成https。</p>
-    <h4>临时使用</h4>
-    <pre><code class="bash">npm --registry http://mirrors.gdut.edu.cn/nexus/repository/npm install express</code></pre>
-    <h4>持久使用</h4>
-    <pre><code class="bash">npm config set registry http://mirrors.gdut.edu.cn/nexus/repository/npm
-// 配置后可通过下面方式来验证是否成功
-npm config get registry
-// 或
-npm info express</code></pre>
+    <h3>收录架构</h3>
+    <ul>
+        <li>全部</li>
+    </ul>
+    <h3>收录版本</h3>
+    <ul>
+        <li>全部</li>
+    </ul>
+    <h3>更新时间</h3>
+    <p>每6小时更新一次</p>
 </div>
-
+<div class="hr">
+    <hr/>
+</div>
+<div id="mirror-usage">
+    <h3>使用说明</h3>
+    <p><strong>注：该镜像是 Homebrew 二进制预编译包的镜像。镜像站同时提供 Homebrew 的 formula 索引的镜像（即 <code>brew update</code> 时所更新内容），请参考 <a href="/help/homebrew.html">Homebrew 镜像使用帮助</a>。</strong></p>
+    <h3>临时替换</h3>
+    <pre><code class="bash">export HOMEBREW_API_DOMAIN="https://mirrors.gdut.edu.cn/homebrew-bottles/api"
+export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.gdut.edu.cn/homebrew-bottles"</code></pre>
+    <h3>长期替换</h3>
+    <p>如果你使用 bash：</p>
+    <pre><code class="bash">echo 'export HOMEBREW_API_DOMAIN="https://mirrors.gdut.edu.cn/homebrew-bottles/api"' >> ~/.bash_profile
+echo 'export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.gdut.edu.cn/homebrew-bottles"' >> ~/.bash_profile
+export HOMEBREW_API_DOMAIN="https://mirrors.gdut.edu.cn/homebrew-bottles/api"
+export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.gdut.edu.cn/homebrew-bottles"</code></pre>
+    <p>如果你使用 zsh：</p>
+    <pre><code class="bash">echo 'export HOMEBREW_API_DOMAIN="https://mirrors.gdut.edu.cn/homebrew-bottles/api"' >> ~/.zprofile
+echo 'export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.gdut.edu.cn/homebrew-bottles"' >> ~/.zprofile
+export HOMEBREW_API_DOMAIN="https://mirrors.gdut.edu.cn/homebrew-bottles/api"
+export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.gdut.edu.cn/homebrew-bottles"</code></pre>
+    <p><strong>注：Linuxbrew 核心仓库（<code>linuxbrew-core</code>）自 2021 年 10 月 25 日（<code>brew</code> 版本 3.3.0 起）被弃用，Linuxbrew 用户应迁移至 <code>homebrew-core</code>。Linuxbrew 用户请依本镜像说明重新设置镜像。</strong></p>
+</div>
     </div>
 </div>
 

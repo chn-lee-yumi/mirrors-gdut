@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="/mirror.css" media="screen" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/atom-one-dark.min.css">
+    <title>广东工业大学开源镜像站</title>
+</head>
+
+<body class="fade-in">
+
+<header>
+    <h1><img style="vertical-align: middle;" src="/GDUT_Logo.png" width="40" height="40"/>&nbsp;广东工业大学开源镜像站</h1>
+</header>
+
+<div class="container">
+    <div class="col-25">
+        <ul class="nav">
+
+
+            <li class="nav-item">
+                <a href="/help/anaconda.html" class="nav-link ">anaconda</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/anolis.html" class="nav-link ">anolis</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/archlinux.html" class="nav-link ">archlinux</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/archlinuxcn.html" class="nav-link ">archlinuxcn</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/centos.html" class="nav-link ">centos</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/centos-vault.html" class="nav-link ">centos-vault</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/debian.html" class="nav-link ">debian</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/debian-cd.html" class="nav-link ">debian-cd</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/docker.html" class="nav-link ">docker</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/docker-ce.html" class="nav-link ">docker-ce</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/epel.html" class="nav-link ">epel</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/freebsd.html" class="nav-link ">freebsd</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/freebsd-pkg.html" class="nav-link ">freebsd-pkg</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/gentoo.html" class="nav-link ">gentoo</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/go.html" class="nav-link ">go</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/homebrew.html" class="nav-link nav-link-selected">homebrew</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/homebrew-bottles.html" class="nav-link ">homebrew-bottles</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/kali.html" class="nav-link ">kali</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/kali-images.html" class="nav-link ">kali-images</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/kubernetes.html" class="nav-link ">kubernetes</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/manjaro.html" class="nav-link ">manjaro</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/manjaro-cd.html" class="nav-link ">manjaro-cd</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/maven.html" class="nav-link ">maven</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/npm.html" class="nav-link ">npm</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/openeuler.html" class="nav-link ">openeuler</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/pypi.html" class="nav-link ">pypi</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/raspbian.html" class="nav-link ">raspbian</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/termux.html" class="nav-link ">termux</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu.html" class="nav-link">ubuntu</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu-cloud-images.html" class="nav-link ">ubuntu-cloud-images</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu-ports.html" class="nav-link ">ubuntu-ports</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu-releases.html" class="nav-link ">ubuntu-releases</a>
+            </li>
+
+        </ul>
+    </div>
+    <div class="col-75">
+        <h2>Homebrew镜像使用帮助</h2>
+<div id="mirror-data">
+    <h3>收录架构</h3>
+    <ul>
+        <li>全部</li>
+    </ul>
+    <h3>收录版本</h3>
+    <ul>
+        <li>全部</li>
+    </ul>
+    <h3>更新时间</h3>
+    <p>每6小时更新一次</p>
+</div>
+<div class="hr">
+    <hr/>
+</div>
+<div id="mirror-usage">
+    <h3>使用说明</h3>
+    <p><strong>注：该镜像是 Homebrew / Linuxbrew 源程序以及 formula / cask 索引的镜像（即 <code>brew update</code> 时所更新内容）。镜像站同时提供相应的二进制预编译包的镜像，请参考 <a" href="/help/homebrew-bottles.html">Homebrew bottles 镜像使用帮助</a></strong></p>
+    <p>镜像站提供了 <a href="https://github.com/Homebrew">https://github.com/Homebrew</a> 组织下的以下 <code >repo</code>：<code >brew</code>, <code >homebrew-core</code>, <code >homebrew-cask</code>, <code >homebrew-command-not-found</code>, <code >install</code>。</p>
+    <p><strong>注：自 brew 4.0.0 (2023 年 2 月 16 日) 起，<code >HOMEBREW_INSTALL_FROM_API</code> 会成为默认行为，无需设置。大部分用户无需再克隆 <code >homebrew-core</code> 仓库，故无需设置 <code >HOMEBREW_CORE_GIT_REMOTE</code> 环境变量；但若需要运行 <code >brew</code> 的开发命令或者 <code >brew</code> 安装在非官方支持的默认 prefix 位置，则仍需设置 <code >HOMEBREW_CORE_GIT_REMOTE</code> 环境变量。如果不想通过 API 安装，可以设置 <code >HOMEBREW_NO_INSTALL_FROM_API=1</code>。</strong></p>
+    <p><strong>注：目前，<code >homebrew-cask-{drivers,versions,fonts}</code> 已被弃用，所有 cask 合并至 <code >homebrew-cask</code> 仓库。本帮助内已移除克隆这些仓库的命令。已克隆用户（<code >brew tap</code> 查看）可使用 <code >brew untap</code> 移除废弃的仓库。</strong></p>
+    <h3>首次安装 Homebrew / Linuxbrew</h3>
+    <p>首先，需要确保系统中安装了 bash、git 和 curl，对于 macOS 用户需额外要求安装 Command Line Tools (CLT) for Xcode。</p>
+    <ul>
+        <li>对于 macOS 用户，系统自带 bash、git 和 curl，在命令行输入 <code >xcode-select --install</code> 安装 CLT for Xcode 即可。</li>
+        <li>对于 Linux 用户，系统自带 bash，仅需额外安装 git 和 curl。</li>
+    </ul>
+    <p>接着，在终端输入以下几行命令设置环境变量：</p>
+    <pre><code class="bash">export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.gdut.edu.cn/git/homebrew/brew.git"
+export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.gdut.edu.cn/git/homebrew/homebrew-core.git"
+export HOMEBREW_INSTALL_FROM_API=1
+# export HOMEBREW_API_DOMAIN
+# export HOMEBREW_BOTTLE_DOMAIN
+# export HOMEBREW_PIP_INDEX_URL</code></pre>
+    <p>前往 <a href="/help/homebrew-bottles.html">Homebrew bottles 镜像使用帮助</a>中「临时替换」一节设置好 <code>HOMEBREW_API_DOMAIN</code> 与 <code>HOMEBREW_BOTTLE_DOMAIN</code>。</p>
+    <p>最后，在终端运行以下命令以安装 Homebrew / Linuxbrew：</p>
+    <pre><code class="bash"># 从镜像下载安装脚本并安装 Homebrew / Linuxbrew
+git clone --depth=1 https://mirrors.gdut.edu.cn/git/homebrew/install.git brew-install
+/bin/bash brew-install/install.sh
+rm -rf brew-install
+
+# 也可从 GitHub 获取官方安装脚本安装 Homebrew / Linuxbrew
+/bin/bash -c "$(curl -fsSL https://github.com/Homebrew/install/raw/master/install.sh)"</code></pre>
+    <p>这样在首次安装的时候也可以使用镜像。更多信息请参考 <a href="https://docs.brew.sh/Installation">Homebrew 官方安装文档</a>。</p>
+    <p><strong>安装成功后需将 brew 程序的相关路径加入到环境变量中：</strong></p>
+    <ul>
+        <li>
+            <p>以下针对基于 Apple Silicon CPU 设备上的 macOS 系统（命令行运行 <code >uname -m</code> 应输出 <code >arm64</code>）上的 Homebrew：</p>
+            <pre><code class="bash">test -r ~/.bash_profile && echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.bash_profile
+test -r ~/.zprofile && echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile</code></pre>
+            <p>对基于 Intel CPU 设备上的 macOS 系统（命令行运行 <code >uname -m</code> 应输出 <code >x86_64</code>）的用户可跳过本步。</p>
+        </li>
+        <li>
+            <p>以下针对 Linux 系统上的 Linuxbrew：</p>
+            <pre><code class="bash">test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
+test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+test -r ~/.bash_profile && echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.bash_profile
+test -r ~/.profile && echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.profile
+test -r ~/.zprofile && echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.zprofile</code></pre>
+            <p>参考了 <a href="https://docs.brew.sh/Homebrew-on-Linux">https://docs.brew.sh/Homebrew-on-Linux</a>。</p>
+        </li>
+    </ul>
+    <h3>替换现有仓库上游</h3>
+    <p>替换 brew 程序本身的源，Homebrew / Linuxbrew 相同：</p>
+    <pre><code class="bash"># export HOMEBREW_API_DOMAIN=
+export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.gdut.edu.cn/git/homebrew/brew.git"
+brew update</code></pre>
+    <p>前往 <a href="/help/homebrew-bottles.html">Homebrew bottles 镜像使用帮助</a>中「临时替换」一节设置好 <code>HOMEBREW_API_DOMAIN</code></p>
+    <p>以下针对 macOS 系统上的 Homebrew：</p>
+    <pre><code class="bash"># 手动设置
+export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.gdut.edu.cn/git/homebrew/homebrew-core.git"
+
+# 注：自 brew 4.0 起，大部分 Homebrew 用户无需设置 homebrew/core 和 homebrew/cask 镜像，只需设置 HOMEBREW_API_DOMAIN 即可。
+# 如果需要使用 Homebrew 的开发命令 (如 `brew cat &lt;formula&gt;`)，则仍然需要设置 homebrew/core 和 homebrew/cask 镜像。
+# 请按需执行如下两行命令：
+brew tap --custom-remote --force-auto-update homebrew/core https://mirrors.gdut.edu.cn/git/homebrew/homebrew-core.git
+brew tap --custom-remote --force-auto-update homebrew/cask https://mirrors.gdut.edu.cn/git/homebrew/homebrew-cask.git
+
+# 除 homebrew/core 和 homebrew/cask 仓库外的 tap 仓库仍然需要设置镜像
+brew tap --custom-remote --force-auto-update homebrew/command-not-found https://mirrors.gdut.edu.cn/git/homebrew/homebrew-command-not-found.git
+brew update
+
+# 或使用下面的几行命令自动设置
+export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.gdut.edu.cn/git/homebrew/homebrew-core.git"
+for tap in core cask command-not-found; do
+    brew tap --custom-remote --force-auto-update "homebrew/${tap}" "https://mirrors.gdut.edu.cn/git/homebrew/homebrew-${tap}.git"
+done
+brew update</code></pre>
+    <p>以下针对 Linux 系统上的 Linuxbrew：</p>
+    <pre><code class="bash">export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.gdut.edu.cn/git/homebrew/homebrew-core.git"
+
+# 注：自 brew 4.0 起，使用默认 prefix (即 "/home/linuxbrew/.linuxbrew") 的大部分 Homebrew 用户无需设置 homebrew/core 镜像，只需设置 HOMEBREW_API_DOMAIN 即可。
+# 如果不是默认 prefix 或者需要使用 Homebrew 的开发命令 (如 `brew cat &lt;formula&gt;`)，则仍然需要设置 homebrew/core 镜像。
+# 请按需执行如下命令：
+brew tap --custom-remote --force-auto-update homebrew/core https://mirrors.gdut.edu.cn/git/homebrew/homebrew-core.git
+
+# 除 homebrew/core 仓库外的 tap 仓库仍然需要设置镜像
+brew tap --custom-remote --force-auto-update homebrew/command-not-found https://mirrors.gdut.edu.cn/git/homebrew/homebrew-command-not-found.git
+brew update</code></pre>
+    <p><strong>注：如果用户设置了环境变量 <code >HOMEBREW_BREW_GIT_REMOTE</code> 和 <code >HOMEBREW_CORE_GIT_REMOTE</code>，则每次执行 <code >brew update</code> 时，<code >brew</code> 程序本身和 Core Tap (<code >homebrew-core</code>) 的远程将被自动设置。推荐用户将这两个环境变量设置加入 shell 的 profile 设置中。</strong></p>
+    <pre><code class="bash">test -r ~/.bash_profile && echo 'export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.gdut.edu.cn/git/homebrew/brew.git"' >> ~/.bash_profile  # bash
+test -r ~/.bash_profile && echo 'export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.gdut.edu.cn/git/homebrew/homebrew-core.git"' >> ~/.bash_profile
+test -r ~/.profile && echo 'export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.gdut.edu.cn/git/homebrew/brew.git"' >> ~/.profile
+test -r ~/.profile && echo 'export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.gdut.edu.cn/git/homebrew/homebrew-core.git"' >> ~/.profile
+
+test -r ~/.zprofile && echo 'export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.gdut.edu.cn/git/homebrew/brew.git"' >> ~/.zprofile  # zsh
+test -r ~/.zprofile && echo 'export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.gdut.edu.cn/git/homebrew/homebrew-core.git"' >> ~/.zprofile</code></pre>
+    <p>对于 <code >HOMEBREW_API_DOMAIN</code> 与其余 bottles 相关环境变量的持久化，可以参考 <a" href="/homebrew-bottles/">Homebrew Bottles 帮助</a>。</p>
+    <h3>复原仓库上游</h3>
+    <ul>
+        <li>
+            <p>以下针对 macOS 系统上的 Homebrew</p>
+            <pre><code class="bash"># brew 程序本身，Homebrew / Linuxbrew 相同
+unset HOMEBREW_API_DOMAIN
+unset HOMEBREW_BREW_GIT_REMOTE
+git -C "$(brew --repo)" remote set-url origin https://github.com/Homebrew/brew
+
+# 以下针对 macOS 系统上的 Homebrew
+unset HOMEBREW_CORE_GIT_REMOTE
+BREW_TAPS="$(BREW_TAPS="$(brew tap 2>/dev/null)"; echo -n "${BREW_TAPS//$'\n'/:}")"
+for tap in core cask command-not-found; do
+    if [[ ":${BREW_TAPS}:" == *":homebrew/${tap}:"* ]]; then  # 只复原已安装的 Tap
+        brew tap --custom-remote "homebrew/${tap}" "https://github.com/Homebrew/homebrew-${tap}"
+    fi
+done
+
+# 重新拉取远程
+brew update</code></pre>
+        </li>
+        <li>
+            <p>以下针对 Linux 系统上的 Linuxbrew</p>
+            <pre><code class="bash"># brew 程序本身，Homebrew / Linuxbrew 相同
+unset HOMEBREW_API_DOMAIN
+unset HOMEBREW_BREW_GIT_REMOTE
+git -C "$(brew --repo)" remote set-url origin https://github.com/Homebrew/brew
+
+# 以下针对 Linux 系统上的 Linuxbrew
+unset HOMEBREW_API_DOMAIN
+unset HOMEBREW_CORE_GIT_REMOTE
+brew tap --custom-remote homebrew/core https://github.com/Homebrew/homebrew-core
+brew tap --custom-remote homebrew/command-not-found https://github.com/Homebrew/homebrew-command-not-found
+
+# 重新拉取远程
+brew update</code></pre>
+        </li>
+    </ul>
+    <p><strong>注：重置回默认远程后，用户应该删除 shell 的 profile 设置中的环境变量 <code >HOMEBREW_BREW_GIT_REMOTE</code> 和 <code >HOMEBREW_CORE_GIT_REMOTE</code> 以免运行 <code >brew update</code> 时远程再次被更换。</strong></p>
+</div>
+    </div>
+</div>
+
+<div id="footer">
+    🏠<a target="_blank" href="http://www.gdut.edu.cn/">广东工业大学首页</a>
+    &nbsp;|&nbsp;
+    ❓<a target="_blank" href="about.html">关于我们</a>
+    &nbsp;|&nbsp;
+    📮<a href="mailto:stunic@gdut.edu.cn">联系我们</a>
+    &nbsp;|&nbsp;
+    🟢<a target="_blank" href="status.html">当前状态</a>
+</div>
+<script type="text/javascript" src="/mirror.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>
