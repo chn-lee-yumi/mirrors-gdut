@@ -52,7 +52,7 @@ HEADER = """
 
 SECTION_TEMPLATE = Template("""
                 <tr class="${row_class}">
-                    <td>💿 <a href="/${mirror_name}/">${mirror_name}</a></td>
+                    <td>💿 ${mirror_link}</td>
                     <td><code>${sync_time}</code></td>
                     <td>${sync_status}</td>
                     <td>📖 <a target="_blank" href="help/${mirror_name}.html">${mirror_name}使用帮助</a></td>
@@ -118,7 +118,7 @@ odd_or_even = 'even'
 
 mirror_list = sorted(glob.glob('/mnt/mirror/*'))
 cdn_mirror_list = ['pypi', 'centos-vault', 'anaconda', 'maven', 'npm', 'kali', 'ubuntu-ports', 'freebsd-pkg', 'docker', 'go']
-ignore_dir = ['static', 'font', 'help']
+ignore_dir = ['static', 'font', 'help', 'Nginx-Fancyindex-Theme', 'certs', 'git', 'scripts', 'ubuntu-cloud-images']
 
 for mirror in mirror_list:
     if os.path.isdir(mirror):
@@ -145,6 +145,12 @@ for mirror in mirror_list:
                 sync_time = '⛔️'
                 sync_status = '❌ 从未同步'
 
+        # 生成镜像链接（缓存镜像除了docker都不显示链接）
+        if mirror_name in cdn_mirror_list and mirror_name != "docker":
+            mirror_link = mirror_name
+        else:
+            mirror_link = f'<a href="/{mirror_name}/">{mirror_name}</a>'
+
         # 修改表格的class，得出黑白相间的表格
         if odd_or_even == 'even':
             row_class = 'even'
@@ -155,7 +161,8 @@ for mirror in mirror_list:
         if sync_status == '▶️ 同步中':
             row_class = 'syncing-row'
         # 组合成一行的HTML
-        html += SECTION_TEMPLATE.substitute(row_class=row_class, mirror_name=mirror_name, sync_time=sync_time, sync_status=sync_status)
+        html += SECTION_TEMPLATE.substitute(row_class=row_class, mirror_link=mirror_link, mirror_name=mirror_name, sync_time=sync_time,
+                                            sync_status=sync_status)
 
 html += FOOTER
 
