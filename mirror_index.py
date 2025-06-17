@@ -108,6 +108,7 @@ FOOTER = """
         <ul>
             <li><a target="_blank" href="http://www.gdut.edu.cn/">🏠 广东工业大学首页</a></li>
             <li><a target="_blank" href="about.html">❓ 关于我们</a></li>
+            <li><a target="_blank" href="https://docs.stunic.gdut.edu.cn/s/d6a3f671-45f2-4c51-9a51-c651f3a7d6ac/doc/5bm5bel6zwc5yop56uz5l255so5pah5qgj-XtDBSIgjtB">📖 文档中心</a></li>
             <li><a target="_blank" href="status.html">🟢 当前状态</a></li>
         </ul>
     </div>
@@ -119,6 +120,8 @@ FOOTER = """
     ❓<a target="_blank" href="about.html">关于我们</a>
     &nbsp;|&nbsp;
     📮<a href="mailto:stunic@gdut.edu.cn">联系我们</a>
+    &nbsp;|&nbsp;
+    📖<a target="_blank" href="https://docs.stunic.gdut.edu.cn/s/d6a3f671-45f2-4c51-9a51-c651f3a7d6ac/doc/5bm5bel6zwc5yop56uz5l255so5pah5qgj-XtDBSIgjtB">文档中心</a>
     &nbsp;|&nbsp;
     🟢<a target="_blank" href="status.html">当前状态</a>
 </div>
