@@ -3,6 +3,7 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" type="text/css" href="/mirror.css" media="screen" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/atom-one-dark.min.css">
     <title>广东工业大学开源镜像站</title>
 </head>
 
@@ -42,7 +43,7 @@
             </li>
 
             <li class="nav-item">
-                <a href="/help/crates.io-index.html" class="nav-link ">crates.io-index</a>
+                <a href="/help/crates.io-index.html" class="nav-link nav-link-selected">crates.io-index</a>
             </li>
 
             <li class="nav-item">
@@ -94,7 +95,7 @@
             </li>
 
             <li class="nav-item">
-                <a href="/help/kali-images.html" class="nav-link nav-link-selected">kali-images</a>
+                <a href="/help/kali-images.html" class="nav-link ">kali-images</a>
             </li>
 
             <li class="nav-item">
@@ -152,24 +153,27 @@
         </ul>
     </div>
     <div class="col-75">
-        <h2>kali-images镜像使用帮助</h2>
-<div id="mirror-data">
-    <h3>收录架构</h3>
-     <ul>
-        <li>amd64</li>
-     </ul>
-    <h3>收录版本</h3>
-     <ul>
-        <li>最新版、weekly</li>
-     </ul>
-    <h3>更新时间</h3>
-    <p>每6小时更新一次</p>
-</div>
-<div class="hr"><hr /></div>
+        <h2>Rust crates.io 稀疏索引镜像使用帮助</h2>
 <div id="mirror-usage">
     <h3>使用说明</h3>
-    <p>Kali Linux 安装光盘。请自行浏览目录挑选下载。</p>
+    <p>proxy代理仓库。本站也支持https。</p>
+    <p>编辑 <code>$CARGO_HOME/config.toml</code> 文件，添加以下内容：</p>
+    <pre><code class="bash">[registries]
+cargo-gdut = { index = "sparse+http://mirrors.gdut.edu.cn/repository/crates.io-index/" }
+
+[registries.cargo-hosted]
+index = "sparse+http://mirrors.gdut.edu.cn/repository/crates.io-index/"
+
+[source.crates-io]
+replace-with = "cargo-gdut"</code></pre>
+    <p>注：<code>sparse+</code> 表示在使用稀疏索引，链接末尾的 <code>/</code> 不能缺少。</p>
+    <p>注：<code>$CARGO_HOME</code>：在 Windows 系统默认为：<code>%USERPROFILE%\.cargo</code>，在类 Unix 系统默认为：<code>$HOME/.cargo</code>。</p>
+    <p>注：cargo 仍会尝试读取不带 <code>.toml</code> 扩展名的配置文件（即 <code>$CARGO_HOME/config</code>），但从 1.39 版本起，cargo 引入了对 <code>.toml</code> 扩展名的支持，并将其设为首选格式。请根据使用的 cargo 版本选择适当的配置文件名。</p>
+    <p>注：使用 <code>cargo search</code>、<code>cargo info</code> 等命令时需要添加 <code>--registry mirror</code>，例如 <code>cargo search --registry cargo-gdut reqwest</code>。</p>
+    <p>截至目前，可以通过 <code>cargo +nightly -Z sparse-registry update</code> 使用稀疏索引。</p>
+    <p>cargo 1.68 版本开始支持稀疏索引：不再需要完整克隆 crates.io-index 仓库，可以加快获取包的速度。如果您的 cargo 版本大于等于 1.68，可以直接使用而不需要开启 nightly。</p>
 </div>
+
     </div>
 </div>
 
@@ -183,5 +187,7 @@
     🟢<a target="_blank" href="status.html">当前状态</a>
 </div>
 <script type="text/javascript" src="/mirror.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
 </body>
 </html>
