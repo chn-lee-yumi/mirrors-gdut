@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="/mirror.css" media="screen" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/atom-one-dark.min.css">
+    <title>广东工业大学开源镜像站</title>
+</head>
+
+<body class="fade-in">
+
+<header>
+    <h1><img style="vertical-align: middle;" src="/GDUT_Logo.png" width="40" height="40"/>&nbsp;广东工业大学开源镜像站</h1>
+</header>
+
+<div class="container">
+    <div class="col-25">
+        <ul class="nav">
+
+
+            <li class="nav-item">
+                <a href="/help/anaconda.html" class="nav-link ">anaconda</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/anolis.html" class="nav-link ">anolis</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/archlinux.html" class="nav-link ">archlinux</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/archlinuxcn.html" class="nav-link ">archlinuxcn</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/centos.html" class="nav-link ">centos</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/centos-vault.html" class="nav-link ">centos-vault</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/crates.io-index.html" class="nav-link ">crates.io-index</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/debian.html" class="nav-link ">debian</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/debian-cd.html" class="nav-link ">debian-cd</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/docker.html" class="nav-link ">docker</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/docker-ce.html" class="nav-link ">docker-ce</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/epel.html" class="nav-link ">epel</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/freebsd.html" class="nav-link ">freebsd</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/freebsd-pkg.html" class="nav-link ">freebsd-pkg</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/gentoo.html" class="nav-link ">gentoo</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/go.html" class="nav-link ">go</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/homebrew.html" class="nav-link ">homebrew</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/homebrew.html" class="nav-link ">homebrew-bottles</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/kali.html" class="nav-link ">kali</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/kali-images.html" class="nav-link ">kali-images</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/kubernetes.html" class="nav-link ">kubernetes</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/manjaro.html" class="nav-link ">manjaro</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/manjaro-cd.html" class="nav-link ">manjaro-cd</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/maven.html" class="nav-link ">maven</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/npm.html" class="nav-link ">npm</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/openeuler.html" class="nav-link ">openeuler</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/opensuse.html" class="nav-link nav-link-selected">opensuse</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/openwrt.html" class="nav-link ">openwrt</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/pypi.html" class="nav-link ">pypi</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/raspbian.html" class="nav-link ">raspbian</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/termux.html" class="nav-link ">termux</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu.html" class="nav-link ">ubuntu</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu-cloud-images.html" class="nav-link ">ubuntu-cloud-images</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu-ports.html" class="nav-link ">ubuntu-ports</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/help/ubuntu-releases.html" class="nav-link ">ubuntu-releases</a>
+            </li>
+
+        </ul>
+    </div>
+    <div class="col-75">
+        <h2>openSUSE镜像使用帮助</h2>
+<!-- <div id="mirror-data">
+    <h3>收录架构</h3>
+    <ul>
+        <li>AMD64, aarch64</li>
+    </ul>
+    <h3>收录版本</h3>
+    <ul>
+        <li>全部</li>
+    </ul>
+    <h3>更新时间</h3>
+    <p>每6小时更新一次</p>
+</div>
+<div class="hr">
+    <hr/>
+</div> -->
+<div id="mirror-usage">
+    <h3>介绍</h3>
+    <p>openSUSE 项目是一个由 SUSE 赞助的社区项目。该项目旨在推进 Linux 的广泛应用，提供自由、易于入手和美观实用的 openSUSE Linux 发行版。openSUSE 使用 <code>zypper</code> 作为包管理器，与 SUSE Linux Enterprise 保持了一致。</p>
+    <p>由于openSUSE镜像高达3TB+，故我们不进行全量镜像，而是进行缓存，缓存30天（对于会变动的文件，缓存时间为2小时）。</p>
+    <p>此发行版现在默认提供包括 <a href="https://get.opensuse.org/leap/">Leap</a>，<a href="https://get.opensuse.org/tumbleweed/">Tumbleweed</a>，<a href="https://en.opensuse.org/openSUSE:Slowroll">Slowroll</a>，<a href="https://get.opensuse.org/leapmicro">leap micro</a> 和 <a href="https://get.opensuse.org/microos/">Micro OS</a> 在内的五个发行版变体。</p>
+    <p>openSUSE 默认使用 <a href="https://zh.opensuse.org/MirrorCache">MirrorCache</a> 替换旧的 <a href="https://zh.opensuse.org/MirrorBrain">MirrorBrain</a> 作为技术统一镜像入口进行镜像站点的监测和管理以及下载时的镜像源分配服务，免去用户需要手动更换镜像的不确定性和困难，并从 2023.07 开始一并使用 fastly CDN (cdn.opensuse.org) 进行分发，从而给用户提供更好的便利性和安全性，通常情况下使用默认配置即可。MirrorBrain 和 MirrorCache 的具体区别可参见此<a href="https://opensuse.github.io/MirrorCache/mb_compare/">链接</a>。</p>
+    <h3>关于统一镜像分发</h3>
+    <p>openSUSE 默认启用了 <a href="https://en.opensuse.org/openSUSE:Standards_Repository_Index_Service">RIS</a> 和 MirrorCache 技术用于统一分发软件仓库更改和镜像，通常情况下<strong class="iLdtFu ">无需更改镜像</strong>，但可以通过禁用官方源并启用更高优先级的其他镜像来实现更换镜像源的操作。</p>
+    <p>由于 RIS 的存在，手工关闭单个官方源仓库的刷新，将在下次执行更新操作时被重新启用，在执行更新时 <code >zypper</code> 仍需要和官方源（download.opensuse.org）进行同步，因此在不更改 <code >openSUSE</code> 服务的前提下，所有针对官方源的修改将在下次仓库或软件更新时被覆盖或重置。</p>
+    <p>下面提供了三种方法以供用户选择来保留或使用 RIS。无论是否禁用 RIS，都可以使用高优先级的软件源替代官方源进行使用。</p>
+    <h4>1. 完全启用 RIS</h4>
+    <p>在此目标下，通常无需对系统软件源进行任何更改，更新时会被自动分流至任意<a href="https://mirrors.opensuse.org">注册到 MirrorCache</a> 的镜像站。这也是官方最推荐的做法。</p>
+    <h4>2. 临时禁用 RIS</h4>
+    <p>下面流程提供了一种通过修改配置文件半永久性禁用 RIS 的方法，但同时保留了 <code >zypper</code> 的 <code >RIS</code> 特性满足官方的推荐更新方式，来实现临时禁用 RIS 自动刷新。</p>
+    <ol>
+        <li>使用任意编辑器打开并编辑文件 <code >/etc/zypp/services.d/openSUSE.service</code>;</li>
+        <li>修改 <code >enabled</code> 值为 <code >0</code>;</li>
+        <li>修改 <code >autorefresh</code> 值为 <code >0</code>;</li>
+        <li>保存并退出;</li>
+    </ol>
+    <p>更改后可以指定更高优先级的软件源，并同时可以免去使用第三方软件源但仍和官方服务器通信的不便。</p>
+    <p>请注意：这种方法的更改会在软件包 <code >openSUSE-repos-*</code> 所包含的多个软件包更新后被覆盖，需要重新执行更改。对于希望方便维护系统，但又不需要定期和官方主服务器通信的用户，我们推荐这种方式。</p>
+    <h4>3. 完全禁用 RIS</h4>
+    <p>完全禁用 RIS 意味着用户需要手工管理软件源，除非清楚这么做的目的和意义，否则通常情况下不推荐此方法。</p>
+    <p>如需还原为传统镜像源管理方式，确保在 <code >bash</code> 或 <code >zsh</code> 下执行：</p>
+    <pre><code class="bash">sudo zypper remove openSUSE-repos-*</code></pre>
+    <p>请注意，这可能会移除安装的包含 NVIDIA 等相关的使用 RIS 管理的第三方软件源。</p>
+    <p>查看需要恢复的 repo 文件：</p>
+    <pre><code class="bash">ls -la /etc/zypp/repos.d/*.rpmsave </code></pre>
+    <p>还原 repo 文件：</p>
+    <pre><code class="bash">sudo for file in /etc/zypp/repos.d/*.rpmsave; do echo mv $file `echo $file | sed -s "s/\.rpmsave//"`; done</code></pre>
+    <p>执行后需要刷新缓存。</p>
+    <p>请注意：该方法目前仍然可以使用，但如果官方给出了明确的路线图认为不再需要此种方法管理镜像源，则该方法失效。目前暂不明确不再提供还原的时间表。</p>
+    <h3>openSUSE Leap 使用方法</h3>
+    <p>禁用官方软件源</p>
+    <pre><code class="bash">sudo zypper mr -da</code></pre>
+    <p>添加镜像源，并启用更高优先级用以覆盖官方镜像（可更改 <code >98</code> 为更小的数字，越小优先级越高）</p>
+    <pre><code class="bash">sudo zypper ar -p 98 -cfg 'https://mirrors.gdut.edu.cn/opensuse/distribution/leap/$releasever/repo/oss/' mirror-oss
+sudo zypper ar -p 98 -cfg 'https://mirrors.gdut.edu.cn/opensuse/distribution/leap/$releasever/repo/non-oss/' mirror-non-oss
+sudo zypper ar -p 98 -cfg 'https://mirrors.gdut.edu.cn/opensuse/update/leap/$releasever/oss/' mirror-update
+sudo zypper ar -p 98 -cfg 'https://mirrors.gdut.edu.cn/opensuse/update/leap/$releasever/non-oss/' mirror-update-non-oss</code></pre>
+    <p>Leap 15.4 用户还需添加 sle 和 backports 源</p>
+    <pre><code class="bash">sudo zypper ar -p 98 -cfg 'https://mirrors.gdut.edu.cn/opensuse/update/leap/$releasever/sle/' mirror-sle-update
+sudo zypper ar -p 98 -cfg 'https://mirrors.gdut.edu.cn/opensuse/update/leap/$releasever/backports/' mirror-backports-update</code></pre>
+    <p>Leap 15.4 注：若在安装时<strong>没有</strong>启用在线软件源，sle 源和 backports 源将在系统首次更新后引入，请确保系统在更新后仅启用了<strong>六个</strong>所需软件源。可使用 <code >zypper lr</code> 检查软件源状态，并使用 <code >zypper mr -d</code> 禁用多余的软件源。</p>
+    <h3>openSUSE Tumbleweed 使用方法</h3>
+    <p>禁用官方软件源</p>
+    <pre><code class="bash">sudo zypper mr -da</code></pre>
+    <p>添加镜像源，并启用更高优先级用以覆盖官方镜像（可更改 <code >98</code> 为更小的数字，越小优先级越高）</p>
+    <pre><code class="bash">sudo zypper ar -p 98 -cfg 'https://mirrors.gdut.edu.cn/opensuse/tumbleweed/repo/oss/' mirror-oss
+sudo zypper ar -p 98 -cfg 'https://mirrors.gdut.edu.cn/opensuse/tumbleweed/repo/non-oss/' mirror-non-oss
+sudo zypper ar -p 98 -cfg 'https://mirrors.gdut.edu.cn/opensuse/update/tumbleweed/' mirror-factory-update</code></pre>
+    <p>刷新软件源</p>
+    <pre><code class="bash">sudo zypper ref</code></pre>
+    <p>Tumbleweed 注：Tumbleweed 安装后默认会启用 oss, non-oss, update, 3 个官方软件源，其中 oss 及 non-oss 源用于发布 Tumbleweed 的每日构建快照，快照中已包含系统所需的全部软件包及更新。update 源用于推送工厂源 <a href="https://build.opensuse.org/project/show/openSUSE:Factory">Factory</a> 中安全和紧急更新，通常情况下分发 opensuse 镜像会完整同步该仓库。禁用 update 源并不会使系统缺失任何功能，仅会导致极少数更新晚些推送，如有需求可以重新启用 update 源。</p>
+    <h3>openSUSE Slowroll 使用方法</h3>
+    <p>Slowroll 目前仍未正式发行，此发行版以 Tumbleweed 作为基础，但不可混用软件源。</p>
+    <p>部分镜像站可能并未同步或排除了此发行版。</p>
+    <p>禁用官方软件源</p>
+    <pre><code class="bash">sudo zypper mr -da</code></pre>
+    <p>添加镜像源，并启用更高优先级用以覆盖官方镜像（可更改 <code >98</code> 为更小的数字，越小优先级越高）</p>
+    <pre><code class="bash">sudo zypper ar -p 98 -cfg 'https://mirrors.gdut.edu.cn/opensuse/slowroll/repo/oss/' mirror-oss
+sudo zypper ar -p 98 -cfg 'https://mirrors.gdut.edu.cn/opensuse/slowroll/repo/non-oss/' mirror-non-oss
+sudo zypper ar -p 98 -cfg 'https://mirrors.gdut.edu.cn/opensuse/update/slowroll/repo/oss/' mirror-oss-factory-update</code></pre>
+    <p>刷新软件源</p>
+    <pre><code class="bash">sudo zypper ref</code></pre>
+    <p>Tumbleweed 注：Tumbleweed 安装后默认会启用 oss, non-oss, update, 3 个官方软件源，其中 oss 及 non-oss 源用于发布 Tumbleweed 的每日构建快照，快照中已包含系统所需的全部软件包及更新。update 源用于推送工厂源 <a href="https://build.opensuse.org/project/show/openSUSE:Factory">Factory</a> 中安全和紧急更新，通常情况下分发 opensuse 镜像会完整同步该仓库。禁用 update 源并不会使系统缺失任何功能，仅会导致极少数更新晚些推送，如有需求可以重新启用 update 源。</p>
+    <h3>图形界面下配置方法</h3>
+    <p>以 openSUSE Leap 15.5 为例：</p>
+    <ol>
+        <li>
+            <p>打开 <code >YaST控制中心</code>；</p>
+        </li>
+        <li>
+            <p>点击 <code >软件</code> （Software）分组中的 <code >软件源</code> （Software Repositories）；</p>
+        </li>
+        <li>
+            <p>在打开的窗口中找到 <code >服务</code> （Service）列为 <code >openSUSE</code> 的条目，选择并取消勾选 <code >已启用(E)</code> （enabled(E)） 。此流程需要保留 <code >名称</code> （Name）列为 <code >repo-openh264</code> 的仓库保持勾选;</p>
+        </li>
+        <li>
+            <p>点击 <code >添加(A)</code> （Add(A)） ，类型选择为 <code >指定 URL</code>，并点击下一步;</p>
+        </li>
+        <li>
+            <p><code >软件源名称</code> （Repository Name）和 <code >URL</code> 填写为 Leap 或 Tumbleweed 中的仓库和对应连接，如：</p>
+            <pre><code># 软件源名称
+mirror-oss
+# URL
+https://mirrors.gdut.edu.cn/opensuse/tumbleweed/repo/oss/</code></pre>
+            <p>点击 <code >下一步</code> 保存并刷新仓库缓存。</p>
+            <p>此处给出通常情况下需要手工添加的仓库和发行版分支对应关系：</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align: center;">发行版</th>
+                        <th style="text-align: center;">仓库名称</th>
+                        <th style="text-align: center;">URL</th><th style="text-align: center;">备注</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: center;">Leap</td>
+                        <td style="text-align: center;">OSS</td>
+                        <td style="text-align: center;">
+                            <code >镜像站域名</code>/opensuse/distribution/leap/$releasever/repo/oss/
+                        </td>
+                        <td style="text-align: center;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">Leap</td>
+                        <td style="text-align: center;">NON-OSS</td>
+                        <td style="text-align: center;">
+                            <code >镜像站域名</code>/opensuse/distribution/leap/$releasever/repo/non-oss/
+                        </td>
+                        <td style="text-align: center;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">Leap</td>
+                        <td style="text-align: center;">UPDATE</td>
+                        <td style="text-align: center;">
+                            <code >镜像站域名</code>/opensuse/update/leap/$releasever/oss/
+                        </td>
+                        <td style="text-align: center;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">Leap</td>
+                        <td style="text-align: center;">UPDATE-NON-OSS</td>
+                        <td style="text-align: center;">
+                            <code >镜像站域名</code>/opensuse/update/leap/$releasever/non-oss/
+                        </td>
+                        <td style="text-align: center;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">Leap</td>
+                        <td style="text-align: center;">SLE-UPDATE</td><td style="text-align: center;">
+                            <code >镜像站域名</code>/opensuse/update/leap/$releasever/sle/
+                        </td>
+                        <td style="text-align: center;">仅使用 Backport 时需要添加</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">Leap</td>
+                        <td style="text-align: center;">SLE-BACKPORT-UPDATE</td><td style="text-align: center;">
+                            <code >镜像站域名</code>/opensuse/update/leap/$releasever/backports/
+                        </td>
+                        <td style="text-align: center;">仅使用 Backport 时需要添加</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">Tumbleweed</td>
+                        <td style="text-align: center;">OSS</td>
+                        <td style="text-align: center;">
+                            <code >镜像站域名</code>/opensuse/tumbleweed/repo/oss/
+                        </td>
+                        <td style="text-align: center;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">Tumbleweed</td>
+                        <td style="text-align: center;">NON-OSS</td>
+                        <td style="text-align: center;">
+                            <code >镜像站域名</code>/opensuse/tumbleweed/repo/non-oss/
+                        </td>
+                        <td style="text-align: center;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">Tumbleweed</td>
+                        <td style="text-align: center;">UPDATE</td>
+                        <td style="text-align: center;">
+                            <code >镜像站域名</code>/opensuse/update/tumbleweed/
+                        </td>
+                        <td style="text-align: center;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">Slowroll</td>
+                        <td style="text-align: center;">OSS</td>
+                        <td style="text-align: center;">
+                            <code >镜像站域名</code>/opensuse/slowroll/repo/oss/
+                        </td>
+                        <td style="text-align: center;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">Slowroll</td>
+                        <td style="text-align: center;">NON-OSS</td>
+                        <td style="text-align: center;">
+                            <code >镜像站域名</code>/opensuse/slowroll/repo/non-oss/
+                        </td>
+                        <td style="text-align: center;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">Slowroll</td>
+                        <td style="text-align: center;">UPDATE</td>
+                        <td style="text-align: center;">
+                            <code >镜像站域名</code>/opensuse/update/slowroll/repo/oss/</td>
+                            <td style="text-align: center;">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+        </li>
+</div>
+
+    </div>
+</div>
+
+<div id="footer">
+    🏠<a target="_blank" href="http://www.gdut.edu.cn/">广东工业大学首页</a>
+    &nbsp;|&nbsp;
+    ❓<a target="_blank" href="about.html">关于我们</a>
+    &nbsp;|&nbsp;
+    📮<a href="mailto:stunic@gdut.edu.cn">联系我们</a>
+    &nbsp;|&nbsp;
+    🟢<a target="_blank" href="status.html">当前状态</a>
+</div>
+<script type="text/javascript" src="/mirror.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>
