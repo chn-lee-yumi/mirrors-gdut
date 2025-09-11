@@ -59,7 +59,7 @@ SECTION_TEMPLATE = Template("""
                     <td><code>${sync_time}</code></td>
                     <td>${sync_status}</td>
                     <td>${download_count}</td>
-                    <td>📖 <a target="_blank" href="help/${mirror_name}.html">${mirror_name}使用帮助</a></td>
+                    <td>📖 <a target="_blank" href="help/docs/${mirror_name}">${mirror_name}使用帮助</a></td>
                 </tr>
 """)
 
