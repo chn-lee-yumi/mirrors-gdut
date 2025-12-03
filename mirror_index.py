@@ -97,7 +97,7 @@ FOOTER = """
             联系我们
         </h2>
         <ul>
-            <li><strong>📮发送邮件</strong><br>stunic@gdut.edu.cn</li>
+            <li><strong>📮发送邮件</strong><br><a href="mailto:stunic@gdut.edu.cn">stunic@gdut.edu.cn</a></li>
         </ul>
 
         <h2>
@@ -110,6 +110,7 @@ FOOTER = """
             <li><a target="_blank" href="about.html">❓ 关于我们</a></li>
             <li><a target="_blank" href="https://docs.stunic.gdut.edu.cn/s/d6a3f671-45f2-4c51-9a51-c651f3a7d6ac/doc/5bm5bel6zwc5yop56uz5l255so5pah5qgj-XtDBSIgjtB">📖 文档中心</a></li>
             <li><a target="_blank" href="status.html">🟢 当前状态</a></li>
+            <li><a target="_blank" href="https://speed.gdut.edu.cn">⏱ 校内测速</a></li>
         </ul>
     </div>
 </div>
@@ -124,6 +125,8 @@ FOOTER = """
     📖<a target="_blank" href="https://docs.stunic.gdut.edu.cn/s/d6a3f671-45f2-4c51-9a51-c651f3a7d6ac/doc/5bm5bel6zwc5yop56uz5l255so5pah5qgj-XtDBSIgjtB">文档中心</a>
     &nbsp;|&nbsp;
     🟢<a target="_blank" href="status.html">当前状态</a>
+    &nbsp;|&nbsp;
+    ⏱<a target="_blank" href="https://speed.gdut.edu.cn">校内测速</a>
 </div>
 <script type="text/javascript" src="mirror.js"></script>
 </body>
