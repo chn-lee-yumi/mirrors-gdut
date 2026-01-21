@@ -1,68 +1,137 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="关于广东工业大学开源镜像站">
     <link rel="stylesheet" type="text/css" href="/mirror.css" media="screen"/>
-    <title>广东工业大学开源镜像站</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <title>关于我们 - 广东工业大学开源镜像站</title>
 </head>
 
 <body class="fade-in">
 
-<header>
-    <h1><img style="vertical-align: middle;" src="/GDUT_Logo.png" width="40" height="40"/>&nbsp;广东工业大学开源镜像站</h1>
-</header>
-
-<div>
-    <h2>关于我们</h2>
-
-    <div id="mirror-intro">
-        <h3>简介</h3>
-        <p>
-            <a href="https://mirrors.gdut.edu.cn/" title="广东工业大学开源镜像">mirrors.gdut.edu.cn</a>
-            是广东工业大学学生网管队建立与维护的开源镜像站，致力于为校内用户提供稳定快速的镜像源。
-        </p>
-        <p>目前我们所提供的镜像服务包括：
-            <a title="查看使用帮助" href="/help/ubuntu.html">Ubuntu</a>，
-            <a title="查看使用帮助" href="/help/debian.html">Debian</a>，
-            <a title="查看使用帮助" href="/help/centos.html">CentOS</a>，
-            <a title="查看使用帮助" href="/help/archlinux.html">ArchLinux</a>，
-            <a title="查看使用帮助" href="/help/manjaro.html">Manjaro</a>，
-            <a title="查看使用帮助" href="/help/pypi.html">PyPi</a>
-            等等, 具体请参见<a href="https://mirrors.gdut.edu.cn/">镜像站首页</a>。
-        </p>
-        <p>如果您有任何建议或疑问，欢迎通过电子邮件联系我们: <a href="mailto:stunic@gdut.edu.cn">stunic@gdut.edu.cn</a>。</p>
-        <p><strong>如果您有对其它发行版或机器架构的软件包有需求，也十分欢迎通过电子邮件联系我们。</strong>
-        <p>
+<!-- Glassmorphic Navigation Bar -->
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="/" class="navbar-brand">
+            <img src="/GDUT_Logo.png" alt="GDUT Logo">
+            <span>GDUT 开源镜像站</span>
+        </a>
+        <div class="navbar-actions">
+            <button class="theme-toggle" aria-label="切换主题" title="切换深色/浅色主题">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                </svg>
+            </button>
+        </div>
     </div>
+</nav>
 
-    <div class="hr">
-        <hr/>
-    </div>
+<!-- Main Content -->
+<main class="main-container">
+    <div class="bento-grid">
+        <div class="bento-main" style="grid-column: span 12;">
+            <div class="island">
+                <div class="island-header">
+                    <svg class="island-icon" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                    </svg>
+                    <h2 class="island-title">关于我们</h2>
+                </div>
 
-    <div id="mirror-faq">
-        <h3>常见问题及解答</h3>
-        <p class="ask"><b>1</b>. 为什么广东工业大学开源镜像没有我用的发行版或者我的机器架构的软件包？</p>
-        <p class="answer">由于服务器磁盘空间有限，我们无法在短期内满足所有用户的需求,
-            希望用户谅解。当然我们也会根据用户需求热度，在保障服务长期稳定性的前提下逐步提供更全面的镜像资源。</p>
-        <p class="ask"><b>2</b>. 为什么我访问不了广东工业大学开源镜像？</p>
-        <p class="answer">广东工业大学开源镜像目前仅限校园网访问，外网是无法访问的。如果您在校内遇到访问问题，可以联系我们进行问题排查。</p>
-        <p class="ask"><b>3</b>. 为什么不开放外网访问？</p>
-        <p class="answer">
-            有两方面考虑，一个是安全性，另一个是带宽。即使足够安全了，我们的公网带宽相对于公网的很多镜像站来说并没有优势。所以我们对本镜像站的定位是校园网用户，优势就是内网带宽远远大于公网带宽，在校园网内最高可以提供1Gbps的速度（这取决于您的接入方式，如果是学生宿舍，网速最高可达100Mbps）。</p>
-        <p class="ask"><b>4</b>. 我发现广东工业大学开源镜像使用帮助有错误, 该怎么办？</p>
-        <p class="answer">如果发现使用帮助有误，请您通过电子邮件<a href="mailto:stunic@gdut.edu.cn">联系我们</a>，我们将尽快修复，谢谢您的支持和帮助！</p>
+                <div id="mirror-intro">
+                    <h3>简介</h3>
+                    <p>
+                        <a href="https://mirrors.gdut.edu.cn/" title="广东工业大学开源镜像">mirrors.gdut.edu.cn</a>
+                        是广东工业大学学生网管队建立与维护的开源镜像站，致力于为校内用户提供稳定快速的镜像源。
+                    </p>
+                    <p>目前我们所提供的镜像服务包括：
+                        <a title="查看使用帮助" href="/help/ubuntu.html">Ubuntu</a>，
+                        <a title="查看使用帮助" href="/help/debian.html">Debian</a>，
+                        <a title="查看使用帮助" href="/help/centos.html">CentOS</a>，
+                        <a title="查看使用帮助" href="/help/archlinux.html">ArchLinux</a>，
+                        <a title="查看使用帮助" href="/help/manjaro.html">Manjaro</a>，
+                        <a title="查看使用帮助" href="/help/pypi.html">PyPi</a>
+                        等等, 具体请参见<a href="https://mirrors.gdut.edu.cn/">镜像站首页</a>。
+                    </p>
+                    <p>如果您有任何建议或疑问，欢迎通过电子邮件联系我们: <a href="mailto:stunic@gdut.edu.cn">stunic@gdut.edu.cn</a>。</p>
+                    <p><strong>如果您有对其它发行版或机器架构的软件包有需求，也十分欢迎通过电子邮件联系我们。</strong></p>
+                </div>
+
+                <div class="hr"></div>
+
+                <div id="mirror-faq">
+                    <h3>常见问题及解答</h3>
+                    
+                    <p class="ask"><b>1</b>. 为什么广东工业大学开源镜像没有我用的发行版或者我的机器架构的软件包？</p>
+                    <p class="answer">由于服务器磁盘空间有限，我们无法在短期内满足所有用户的需求，希望用户谅解。当然我们也会根据用户需求热度，在保障服务长期稳定性的前提下逐步提供更全面的镜像资源。</p>
+                    
+                    <p class="ask"><b>2</b>. 为什么我访问不了广东工业大学开源镜像？</p>
+                    <p class="answer">广东工业大学开源镜像目前仅限校园网访问，外网是无法访问的。如果您在校内遇到访问问题，可以联系我们进行问题排查。</p>
+                    
+                    <p class="ask"><b>3</b>. 为什么不开放外网访问？</p>
+                    <p class="answer">有两方面考虑，一个是安全性，另一个是带宽。即使足够安全了，我们的公网带宽相对于公网的很多镜像站来说并没有优势。所以我们对本镜像站的定位是校园网用户，优势就是内网带宽远远大于公网带宽，在校园网内最高可以提供1Gbps的速度（这取决于您的接入方式，如果是学生宿舍，网速最高可达100Mbps）。</p>
+                    
+                    <p class="ask"><b>4</b>. 我发现广东工业大学开源镜像使用帮助有错误, 该怎么办？</p>
+                    <p class="answer">如果发现使用帮助有误，请您通过电子邮件<a href="mailto:stunic@gdut.edu.cn">联系我们</a>，我们将尽快修复，谢谢您的支持和帮助！</p>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
-<div id="footer">
-    🏠<a target="_blank" href="http://www.gdut.edu.cn/">广东工业大学首页</a>
-    &nbsp;|&nbsp;
-    ❓<a target="_blank" href="/about.html">关于我们</a>
-    &nbsp;|&nbsp;
-    📮<a href="mailto:stunic@gdut.edu.cn">联系我们</a>
-    &nbsp;|&nbsp;
-    🟢<a target="_blank" href="/status.html">当前状态</a>
-</div>
+</main>
+
+<!-- Footer -->
+<footer id="footer">
+    <div>
+        <a target="_blank" href="http://www.gdut.edu.cn/">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+            </svg>
+            广东工业大学首页
+        </a>
+        &nbsp;|&nbsp;
+        <a target="_blank" href="about.html">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>
+            关于我们
+        </a>
+        &nbsp;|&nbsp;
+        <a href="mailto:stunic@gdut.edu.cn">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+            </svg>
+            联系我们
+        </a>
+        &nbsp;|&nbsp;
+        <a target="_blank" href="https://docs.stunic.gdut.edu.cn/s/d6a3f671-45f2-4c51-9a51-c651f3a7d6ac/doc/5bm5bel6zwc5yop56uz5l255so5pah5qgj-XtDBSIgjtB">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+            </svg>
+            文档中心
+        </a>
+        &nbsp;|&nbsp;
+        <a target="_blank" href="status.html">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            当前状态
+        </a>
+        &nbsp;|&nbsp;
+        <a target="_blank" href="https://speed.gdut.edu.cn">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+            </svg>
+            校内测速
+        </a>
+    </div>
+    <div style="margin-top: 12px; font-size: 0.875rem; color: var(--color-text-muted);">
+        © 2024 广东工业大学学生网管队 | Powered by Island UI
+    </div>
+</footer>
+
 <script type="text/javascript" src="mirror.js"></script>
 </body>
 </html>
-
