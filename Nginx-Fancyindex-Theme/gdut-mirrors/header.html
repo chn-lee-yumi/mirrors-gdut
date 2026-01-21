@@ -14,6 +14,11 @@
             margin-top: var(--spacing-lg);
         }
         
+        /* Hide the auto-generated path header from Nginx Fancy Index */
+        .fancyindex-list > h1 {
+            display: none;
+        }
+        
         .fancyindex-list table {
             width: 100%;
             border-collapse: collapse;
@@ -88,6 +93,22 @@
         .breadcrumb-separator {
             color: var(--color-text-muted);
         }
+        
+        /* Fade-in animation for search results */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in-row {
+            animation: fadeIn 0.3s ease;
+        }
     </style>
 </head>
 
@@ -124,6 +145,18 @@
                 
                 <!-- Breadcrumb will be inserted by JavaScript -->
                 <div class="breadcrumb" id="breadcrumb"></div>
+                
+                <!-- Search Box for Fancy Index -->
+                <div class="search-container" style="margin: var(--spacing-lg) 0;">
+                    <div class="search-box">
+                        <span class="search-icon">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+                            </svg>
+                        </span>
+                        <input type="text" id="fancyindex-search" class="search-input" placeholder="搜索文件或目录..." aria-label="搜索文件或目录">
+                    </div>
+                </div>
                 
                 <!-- Fancy Index will insert directory listing here -->
                 <div class="fancyindex-list">
