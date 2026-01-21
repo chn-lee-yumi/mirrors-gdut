@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="广东工业大学开源镜像站 - 目录浏览">
-    <link rel="stylesheet" type="text/css" href="/mirror.css" media="screen" />
-    <link rel="icon" type="image/x-icon" href="/pages/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/Nginx-Fancyindex-Theme/gdut-mirrors/mirror.css" media="screen" />
+    <link rel="icon" type="image/x-icon" href="/Nginx-Fancyindex-Theme/gdut-mirrors/favicon.ico">
     <title>目录浏览 - 广东工业大学开源镜像站</title>
     <style>
         /* Additional styles for fancyindex directory listing */
@@ -13,7 +13,7 @@
             width: 100%;
             margin-top: var(--spacing-lg);
         }
-        
+
         /* Hide the auto-generated path header from Nginx Fancy Index */
         .fancyindex-list > h1 {
             display: none;
@@ -23,7 +23,7 @@
             width: 100%;
             border-collapse: collapse;
         }
-        
+
         .fancyindex-list th {
             background: var(--color-hover);
             padding: var(--spacing-md);
@@ -32,17 +32,17 @@
             color: var(--color-text);
             border-bottom: 2px solid var(--color-border);
         }
-        
+
         .fancyindex-list td {
             padding: var(--spacing-sm) var(--spacing-md);
             border-bottom: 1px solid var(--color-border);
             color: var(--color-text-secondary);
         }
-        
+
         .fancyindex-list tr:hover {
             background: var(--color-hover);
         }
-        
+
         .fancyindex-list a {
             color: var(--color-text);
             text-decoration: none;
@@ -50,27 +50,27 @@
             align-items: center;
             gap: 8px;
         }
-        
+
         .fancyindex-list a:hover {
             color: var(--color-primary);
         }
-        
+
         /* Directory and file icons */
         .fancyindex-list a[href$="/"]::before {
             content: "📁";
             font-size: 1.2em;
         }
-        
+
         .fancyindex-list a:not([href$="/"])::before {
             content: "📄";
             font-size: 1.2em;
         }
-        
+
         /* Parent directory link */
         .fancyindex-list a[href=".."]::before {
             content: "⬆️";
         }
-        
+
         /* Breadcrumb navigation */
         .breadcrumb {
             display: flex;
@@ -80,16 +80,16 @@
             color: var(--color-text-secondary);
             font-size: 0.9375rem;
         }
-        
+
         .breadcrumb a {
             color: var(--color-primary);
             text-decoration: none;
         }
-        
+
         .breadcrumb a:hover {
             text-decoration: underline;
         }
-        
+
         .breadcrumb-separator {
             color: var(--color-text-muted);
         }
@@ -118,7 +118,7 @@
 <nav class="navbar">
     <div class="navbar-container">
         <a href="/" class="navbar-brand">
-            <img src="/pages/GDUT_Logo.png" alt="GDUT Logo">
+            <img src="/Nginx-Fancyindex-Theme/gdut-mirrors/GDUT_Logo.png" alt="GDUT Logo">
             <span>GDUT 开源镜像站</span>
         </a>
         <div class="navbar-actions">
@@ -142,10 +142,10 @@
                     </svg>
                     <h2 class="island-title">目录浏览</h2>
                 </div>
-                
+
                 <!-- Breadcrumb will be inserted by JavaScript -->
                 <div class="breadcrumb" id="breadcrumb"></div>
-                
+
                 <!-- Search Box for Fancy Index -->
                 <div class="search-container" style="margin: var(--spacing-lg) 0;">
                     <div class="search-box">
