@@ -109,6 +109,7 @@
     const tbody = table.querySelector('tbody');
     if (!tbody) return;
     
+    // Cache table rows for better performance
     const rows = Array.from(tbody.querySelectorAll('tr'));
     
     // Debounce search for better performance
@@ -131,9 +132,10 @@
             
             if (searchTerm === '' || fileName.includes(searchTerm)) {
                 row.style.display = '';
-                row.style.animation = 'fadeIn 0.3s ease';
+                row.classList.add('fade-in-row');
             } else {
                 row.style.display = 'none';
+                row.classList.remove('fade-in-row');
             }
         });
     }
