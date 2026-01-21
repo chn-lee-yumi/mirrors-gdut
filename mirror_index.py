@@ -11,123 +11,255 @@ section即中间表格部分
 
 HEADER = """
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="广东工业大学开源镜像站 - 为校内用户提供稳定快速的开源软件镜像服务">
     <link rel="stylesheet" type="text/css" href="/mirror.css" media="screen" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <title>广东工业大学开源镜像站</title>
 </head>
 
 <body class="fade-in">
 
-<header>
-    <h1><img style="vertical-align: middle;" src="/GDUT_Logo.png" width="40" height="40"/>&nbsp;广东工业大学开源镜像站</h1>
-</header>
+<!-- Glassmorphic Navigation Bar -->
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="/" class="navbar-brand">
+            <img src="/GDUT_Logo.png" alt="GDUT Logo">
+            <span>GDUT 开源镜像站</span>
+        </a>
+        <div class="navbar-actions">
+            <button class="theme-toggle" aria-label="切换主题" title="切换深色/浅色主题">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</nav>
 
-<div class="container">
-    <div class="col-75">
-        <h2>
-            <svg xmlns="http://www.w3.org/2000/svg" style="vertical-align: bottom;" x="0px" y="0px" width="28" height="28" viewBox="0 0 26 26">
-                <path d="M 12.4375 0.1875 L 0 5.09375 L 0 18.53125 L 15 25.90625 L 26 18.53125 L 26 5.09375 Z M 12.46875 2.34375 L 23.6875 6.375 L 20.53125 8.0625 L 9.15625 3.65625 Z M 7.75 4.1875 L 19.34375 8.6875 L 15.59375 10.65625 L 3.4375 5.90625 Z M 2.0625 6.4375 L 15 11.5 L 15 23.5 L 14.84375 23.59375 L 2 17.28125 L 2 6.46875 Z M 22 9.5 C 22.171875 9.488281 22.273438 9.609375 22.28125 9.84375 C 22.292969 10.15625 22.101563 10.546875 21.84375 10.71875 L 19.84375 12.03125 C 19.53125 12.234375 19.261719 12.105469 19.25 11.75 C 19.238281 11.394531 19.464844 10.9375 19.78125 10.75 L 21.8125 9.5625 C 21.878906 9.523438 21.941406 9.503906 22 9.5 Z"></path>
-            </svg>
-            镜像列表
-        </h2>
-        <table id="distro-table" cellpadding="0" cellspacing="0">
-            <colgroup>
-                <col />
-                <col />
-                <col />
-                <col />
-                <col />
-            </colgroup>
-            <thead>
-            <tr>
-                <th>💽 镜像名</th>
-                <th>🔄 同步时间</th>
-                <th>ℹ️ 同步状态</th>
-                <th>📊 下载次数</th>
-                <th>💡 使用帮助</th>
-            </tr>
-            </thead>
-            <tbody>
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <img src="/GDUT_Logo.png" alt="GDUT Logo" class="hero-logo">
+        <h1 class="hero-title">广东工业大学开源镜像站</h1>
+        <p class="hero-subtitle">为校内用户提供高速、稳定的开源软件镜像服务</p>
+        
+        <!-- Search Box -->
+        <div class="search-container">
+            <div class="search-box">
+                <span class="search-icon">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+                    </svg>
+                </span>
+                <input type="text" id="search" class="search-input" placeholder="搜索镜像名称..." aria-label="搜索镜像">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content - Bento Grid Layout -->
+<main class="main-container">
+    <div class="bento-grid">
+        <!-- Main Island - Mirror List -->
+        <div class="bento-main">
+            <div class="island">
+                <div class="island-header">
+                    <svg class="island-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    <h2 class="island-title">镜像列表</h2>
+                </div>
+                <table id="distro-table" cellpadding="0" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>
+                                <svg width="18" height="18" style="vertical-align: middle; margin-right: 4px;" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z"/>
+                                    <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z"/>
+                                    <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z"/>
+                                </svg>
+                                镜像名称
+                            </th>
+                            <th>
+                                <svg width="18" height="18" style="vertical-align: middle; margin-right: 4px;" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                </svg>
+                                同步时间
+                            </th>
+                            <th>
+                                <svg width="18" height="18" style="vertical-align: middle; margin-right: 4px;" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                同步状态
+                            </th>
+                            <th>
+                                <svg width="18" height="18" style="vertical-align: middle; margin-right: 4px;" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+                                </svg>
+                                下载次数
+                            </th>
+                            <th>
+                                <svg width="18" height="18" style="vertical-align: middle; margin-right: 4px;" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                                使用帮助
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
 """
 
 SECTION_TEMPLATE = Template("""
-                <tr class="${row_class}">
-                    <td>💿 ${mirror_link}</td>
-                    <td><code>${sync_time}</code></td>
-                    <td>${sync_status}</td>
-                    <td>${download_count}</td>
-                    <td>📖 <a target="_blank" href="help/docs/mirrors/${mirror_name}-help">${mirror_name}使用帮助</a></td>
-                </tr>
+                    <tr class="${row_class}">
+                        <td>
+                            <svg width="16" height="16" style="vertical-align: middle; margin-right: 6px;" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z"/>
+                                <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z"/>
+                            </svg>
+                            ${mirror_link}
+                        </td>
+                        <td><code>${sync_time}</code></td>
+                        <td>${sync_status}</td>
+                        <td>${download_count}</td>
+                        <td>
+                            <a target="_blank" href="help/docs/mirrors/${mirror_name}-help" style="display: inline-flex; align-items: center; gap: 4px;">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+                                </svg>
+                                使用帮助
+                            </a>
+                        </td>
+                    </tr>
 """)
 
 FOOTER = """
-            </tbody>
-        </table>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <aside class="bento-sidebar">
+            <div class="island island-compact">
+                <div class="island-header">
+                    <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <h2 class="island-title">快速下载</h2>
+                </div>
+                <ul>
+                    <li><a href="https://mirrors.gdut.edu.cn/centos-stream/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso">CentOS 9 安装盘</a></li>
+                    <li><a href="https://mirrors.gdut.edu.cn/debian-cd/current/amd64/iso-cd/debian-12.8.0-amd64-netinst.iso">Debian 12 网络安装盘</a></li>
+                    <li><a href="https://mirrors.gdut.edu.cn/ubuntu-releases/oracular/ubuntu-24.10-desktop-amd64.iso">Ubuntu 24.10 桌面版</a></li>
+                </ul>
+            </div>
+            
+            <div class="island island-compact">
+                <div class="island-header">
+                    <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                    <h2 class="island-title">域名选择</h2>
+                </div>
+                <ul>
+                    <li><a href="https://mirrors.gdut.edu.cn">mirrors.gdut.edu.cn</a> <small style="color: var(--color-text-muted);">自动选择</small></li>
+                    <li><a href="https://mirrors4.gdut.edu.cn">mirrors4.gdut.edu.cn</a> <small style="color: var(--color-text-muted);">IPv4 线路</small></li>
+                    <li><a href="https://mirrors6.gdut.edu.cn">mirrors6.gdut.edu.cn</a> <small style="color: var(--color-text-muted);">IPv6 线路</small></li>
+                </ul>
+            </div>
+            
+            <div class="island island-compact">
+                <div class="island-header">
+                    <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <h2 class="island-title">联系我们</h2>
+                </div>
+                <ul>
+                    <li><strong>发送邮件</strong><br><a href="mailto:stunic@gdut.edu.cn">stunic@gdut.edu.cn</a></li>
+                </ul>
+            </div>
+            
+            <div class="island island-compact">
+                <div class="island-header">
+                    <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                    <h2 class="island-title">相关链接</h2>
+                </div>
+                <ul>
+                    <li><a target="_blank" href="http://www.gdut.edu.cn/">广东工业大学首页</a></li>
+                    <li><a target="_blank" href="about.html">关于我们</a></li>
+                    <li><a target="_blank" href="https://docs.stunic.gdut.edu.cn/s/d6a3f671-45f2-4c51-9a51-c651f3a7d6ac/doc/5bm5bel6zwc5yop56uz5l255so5pah5qgj-XtDBSIgjtB">文档中心</a></li>
+                    <li><a target="_blank" href="status.html">当前状态</a></li>
+                    <li><a target="_blank" href="https://speed.gdut.edu.cn">校内测速</a></li>
+                </ul>
+            </div>
+        </aside>
     </div>
-    <div class="col-25">
-        <h2>
-            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" style="vertical-align: bottom;" width="28" height="28" viewBox="0 0 48 48">
-                <path d="M 34.919922 5.4296875 C 32.954707 5.4296875 30.989736 6.1743261 29.501953 7.6621094 L 24.40625 12.757812 C 21.931571 15.232492 21.637762 18.971243 23.279297 21.890625 L 21.890625 23.279297 C 18.971116 21.637136 15.230807 21.931303 12.755859 24.40625 L 7.6601562 29.501953 C 4.6845898 32.47752 4.6845898 37.364277 7.6601562 40.339844 C 10.636337 43.314679 15.522694 43.315197 18.498047 40.339844 L 23.59375 35.244141 C 26.068697 32.769193 26.362864 29.028884 24.720703 26.109375 L 26.109375 24.720703 C 29.028937 26.361869 32.767685 26.068251 35.242188 23.59375 L 40.337891 18.498047 C 43.313457 15.52248 43.313457 10.637676 40.337891 7.6621094 C 38.850107 6.1743261 36.885137 5.4296875 34.919922 5.4296875 z M 34.919922 9.40625 C 35.853207 9.40625 36.786549 9.767018 37.509766 10.490234 C 38.956199 11.936668 38.956199 14.223488 37.509766 15.669922 L 32.414062 20.765625 C 31.504563 21.675125 30.273179 21.947057 29.117188 21.712891 L 31.785156 19.044922 A 2.0011673 2.0011673 0 1 0 28.955078 16.214844 L 26.287109 18.882812 C 26.053048 17.726809 26.325009 16.495302 27.234375 15.585938 L 32.330078 10.490234 C 33.053295 9.767018 33.986637 9.40625 34.919922 9.40625 z M 18.175781 26.150391 C 18.415361 26.150391 18.644834 26.241402 18.880859 26.289062 L 16.214844 28.955078 A 2.0011673 2.0011673 0 1 0 19.044922 31.785156 L 21.710938 29.119141 C 21.94425 30.274608 21.674498 31.505192 20.765625 32.414062 L 15.667969 37.511719 C 14.221322 38.958365 11.936101 38.956978 10.488281 37.509766 C 9.0430521 36.063267 9.0422494 33.778063 10.488281 32.332031 L 15.585938 27.234375 C 16.309154 26.511158 17.242496 26.150391 18.175781 26.150391 z"></path>
+</main>
+
+<footer id="footer">
+    <div>
+        <a target="_blank" href="http://www.gdut.edu.cn/">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
             </svg>
-            域名选择
-        </h2>
-        <ul>
-            <li><a href="https://mirrors.gdut.edu.cn">mirrors.gdut.edu.cn</a> 自动选择</li>
-            <li><a href="https://mirrors4.gdut.edu.cn">mirrors4.gdut.edu.cn</a> IPv4 线路</li>
-            <li><a href="https://mirrors6.gdut.edu.cn">mirrors6.gdut.edu.cn</a> IPv6 线路</li>
-        </ul>
-        <h2>
-            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrAAAACXBIWXMAAAsTAAALEwEAmpwYAAABhUlEQVR4nO2azUoDMRRGjxuLiDDizlrUl+jWF2r7WILgWheiuPKnmxEXQutCfQLFdh8JZKQMI9XJTXIrOfBtykx6D/dC0xCQowOMgDtgDpglmbtnh+5dVXSBh19I/JTSraGCjqfMopSKTo0EZKoMUMC9oNAtCpgJCtm1kmOEkxyThcgdikoeOfLIxSWPHHnk4pJHjjxycckjRx45Oa6B9wBj1TYfwKWP0LECCVPLqY/Qhjs7M0ryCGzhSQGMFchMgF1fGS1SE0mZ1FLTEDKppKYxjohjSUWRiSX1nOLwvggk9QIcxJYJJfWaUkZaSoWMlJSVOUQZRUupN40ybaVUy/xVKpiMqUWC7SW7dPujuR+qfhNAyLIJXDSs/yS8NzOxhKr/UycLa18BO8LfYWIKVfSBI2AtwNomhVBITBZSjvn3HZrVPthjdejVav9sutpy5h7UTg84b7paM/TYJWvLAHelq1RQjG9KYL1qX3fFpcqmMwhrZ1tm51DyhlWo2BpvXM3fnfkCr9lSDY7VKvsAAAAASUVORK5CYII="
-                 alt="download" style="vertical-align: bottom;" width="28" height="28">
-            快速下载
-        </h2>
-        <ul>
-            <li><a href="https://mirrors.gdut.edu.cn/centos-stream/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso">CentOS 9
-                安装盘</a></li>
-            <li><a href="https://mirrors.gdut.edu.cn/debian-cd/current/amd64/iso-cd/debian-12.8.0-amd64-netinst.iso">Debian 12 网络安装盘</a></li>
-            <li><a href="https://mirrors.gdut.edu.cn/ubuntu-releases/oracular/ubuntu-24.10-desktop-amd64.iso">Ubuntu 24.10 桌面版安装盘</a></li>
-        </ul>
-
-        <h2>
-            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAADCklEQVR4nO2Zy29NURSHP7T1KAlK4jXy+gMoOmBAQlASERETjwEDaaJmjYaYlMYIKTERvZp0RBOphBkRA2aUjqoGQq4WbSQqVZPKTtaVlZVze88+9j1Hk/sle3Jz1mOfs/dav70vVKhQIQQzgQagFegB+oFR4LeMUfntPnAO2CI2mbMKaAc+AZOe4yNwGViZReJ1wC1gIkHidvwCbgKL00r+CPAtIpE8cBs4CmyQSVbLWAJsBI7JM/kI+6/A4XImXiVv3QZ+AuwFZnn4cs82Ak8j/N2QWEGZCzw0gQaAnQF87wbeGd+9EjMIVRHJdwLzQgUAaoGuiEkE+RJ22ZynfFwwsTpCbNi0ki82iUMkpM5Umxzp0aXifgEW/evSGZB1mha1ZmN3JOmwukntIn32mGa3wse4XRm7Wp0Vz1Qel3yajNY2ruFkxT6Vx4e4ArDByIPgXdGDKmBI5bM5jlGrMnC6pRhOSY4HEHPjJZZHp3q2Jc4EepSBE2ZRzAB+BEh+UobzVYzj6rl7cSbQrwycqixGW8Av0DZFnHr17Js4ExhRBq6ZZc1SI7lLout/Ddkz2/SDkuhlMYdpOIHPymAZ03AJ9SkDdwwMXUZLlU3LJt9NrJXgyTKV0anKpuWEbxltVgZ3ylBGS5VNS863ka1XBiNyq5CllBhW+bieEIu3yugA2bE/iZhznFWGL8mO5yoPn2XHAuC7MnZ3mWnTaPaN14HGMagcbCNd5gPvVfzrvg7WmpKXtqToVvGHkxzqm8wFU5pcNGX3YBInvcqBm0xWyV9L4qTGdNk1pLPmu03yDzwvjP+yXTlxdzNRuOa2NVB1ajQbtpB84svdK+aqu8Bq4LQ411/ohTS7as8O65qUrvO64iR68wVeKWdX5VZsIIbGGZED+ClRscvlPFEjf3DUizDLGXkwKWMo6Ya1/IwpygZNs0s6xuWtLyQQj4sEGpPq1CR9otCxm412ijuctmmTLxUU5/CRJPxa9sSOGM1sHXAGuCt2eXm7E7K8+kTPt8gh5b/4m7VCBaY5fwDlENrwg3MbPQAAAABJRU5ErkJggg=="
-                 alt="chat-message" style="vertical-align: bottom;" width="28" height="28">
+            广东工业大学首页
+        </a>
+        &nbsp;|&nbsp;
+        <a target="_blank" href="about.html">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>
+            关于我们
+        </a>
+        &nbsp;|&nbsp;
+        <a href="mailto:stunic@gdut.edu.cn">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+            </svg>
             联系我们
-        </h2>
-        <ul>
-            <li><strong>📮发送邮件</strong><br><a href="mailto:stunic@gdut.edu.cn">stunic@gdut.edu.cn</a></li>
-        </ul>
-
-        <h2>
-            <img src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTE4IDIxSDZhMyAzIDAgMCAxLTMtM1Y2YTMgMyAwIDAgMSAzLTNoNGExIDEgMCAwIDEgMCAySDZhMSAxIDAgMCAwLTEgMXYxMmExIDEgMCAwIDAgMSAxaDEyYTEgMSAwIDAgMCAxLTF2LTRhMSAxIDAgMCAxIDIgMHY0YTMgMyAwIDAgMS0zIDNaIiBmaWxsPSIjMDAwMDAwIiBjbGFzcz0iZmlsbC00NjQ2NDYiPjwvcGF0aD48cGF0aCBkPSJNMjEgNC4wNXY1YTEgMSAwIDAgMS0uNjIuOTIuODQuODQgMCAwIDEtLjM4LjA4IDEgMSAwIDAgMS0uNzEtLjI5TDE3LjQ1IDhsLTQuNzkgNC43OWExIDEgMCAwIDEtMS40MiAwIDEgMSAwIDAgMSAwLTEuNDJMMTYgNi41NWwtMS43Ni0xLjc5QTEgMSAwIDAgMSAxNCAzLjY3YTEgMSAwIDAgMSAxLS42Mmg1YS43My43MyAwIDAgMSAuMjUgMCAuMzcuMzcgMCAwIDEgLjE0IDAgLjk0Ljk0IDAgMCAxIC41My41My4zNy4zNyAwIDAgMSAwIC4xNC43My43MyAwIDAgMSAuMDguMzNaIiBmaWxsPSIjMDAwMDAwIiBjbGFzcz0iZmlsbC00NjQ2NDYiPjwvcGF0aD48L3N2Zz4="
-                 alt="download" style="vertical-align: bottom;" width="28" height="28">
-            相关链接
-        </h2>
-        <ul>
-            <li><a target="_blank" href="http://www.gdut.edu.cn/">🏠 广东工业大学首页</a></li>
-            <li><a target="_blank" href="about.html">❓ 关于我们</a></li>
-            <li><a target="_blank" href="https://docs.stunic.gdut.edu.cn/s/d6a3f671-45f2-4c51-9a51-c651f3a7d6ac/doc/5bm5bel6zwc5yop56uz5l255so5pah5qgj-XtDBSIgjtB">📖 文档中心</a></li>
-            <li><a target="_blank" href="status.html">🟢 当前状态</a></li>
-            <li><a target="_blank" href="https://speed.gdut.edu.cn">⏱ 校内测速</a></li>
-        </ul>
+        </a>
+        &nbsp;|&nbsp;
+        <a target="_blank" href="https://docs.stunic.gdut.edu.cn/s/d6a3f671-45f2-4c51-9a51-c651f3a7d6ac/doc/5bm5bel6zwc5yop56uz5l255so5pah5qgj-XtDBSIgjtB">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+            </svg>
+            文档中心
+        </a>
+        &nbsp;|&nbsp;
+        <a target="_blank" href="status.html">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            当前状态
+        </a>
+        &nbsp;|&nbsp;
+        <a target="_blank" href="https://speed.gdut.edu.cn">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+            </svg>
+            校内测速
+        </a>
     </div>
-</div>
+    <div style="margin-top: 12px; font-size: 0.875rem; color: var(--color-text-muted);">
+        © 2024 广东工业大学学生网管队 | Powered by Island UI
+    </div>
+</footer>
 
-<div id="footer">
-    🏠<a target="_blank" href="http://www.gdut.edu.cn/">广东工业大学首页</a>
-    &nbsp;|&nbsp;
-    ❓<a target="_blank" href="about.html">关于我们</a>
-    &nbsp;|&nbsp;
-    📮<a href="mailto:stunic@gdut.edu.cn">联系我们</a>
-    &nbsp;|&nbsp;
-    📖<a target="_blank" href="https://docs.stunic.gdut.edu.cn/s/d6a3f671-45f2-4c51-9a51-c651f3a7d6ac/doc/5bm5bel6zwc5yop56uz5l255so5pah5qgj-XtDBSIgjtB">文档中心</a>
-    &nbsp;|&nbsp;
-    🟢<a target="_blank" href="status.html">当前状态</a>
-    &nbsp;|&nbsp;
-    ⏱<a target="_blank" href="https://speed.gdut.edu.cn">校内测速</a>
-</div>
 <script type="text/javascript" src="mirror.js"></script>
 </body>
 </html>
