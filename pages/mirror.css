@@ -658,7 +658,8 @@ p.answer {
 #mirror-data,
 #mirror-usage,
 #mirror-links,
-#mirror-misc {
+#mirror-misc,
+.help-content {
     margin-top: var(--spacing-lg);
     padding-bottom: var(--spacing-md);
 }
