@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="广东工业大学开源镜像站 - 目录浏览">
+    <link rel="stylesheet" type="text/css" href="mirror.css" media="screen" />
+    <link rel="icon" type="image/x-icon" href="pages/favicon.ico">
+    <title>目录浏览 - 广东工业大学开源镜像站</title>
+    <style>
+        /* Additional styles for fancyindex directory listing */
+        .fancyindex-list {
+            width: 100%;
+            margin-top: var(--spacing-lg);
+        }
+        
+        .fancyindex-list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .fancyindex-list th {
+            background: var(--color-hover);
+            padding: var(--spacing-md);
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-text);
+            border-bottom: 2px solid var(--color-border);
+        }
+        
+        .fancyindex-list td {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-bottom: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+        }
+        
+        .fancyindex-list tr:hover {
+            background: var(--color-hover);
+        }
+        
+        .fancyindex-list a {
+            color: var(--color-text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .fancyindex-list a:hover {
+            color: var(--color-primary);
+        }
+        
+        /* Directory and file icons */
+        .fancyindex-list a[href$="/"]::before {
+            content: "📁";
+            font-size: 1.2em;
+        }
+        
+        .fancyindex-list a:not([href$="/"])::before {
+            content: "📄";
+            font-size: 1.2em;
+        }
+        
+        /* Parent directory link */
+        .fancyindex-list a[href=".."]::before {
+            content: "⬆️";
+        }
+        
+        /* Breadcrumb navigation */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md) 0;
+            color: var(--color-text-secondary);
+            font-size: 0.9375rem;
+        }
+        
+        .breadcrumb a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .breadcrumb-separator {
+            color: var(--color-text-muted);
+        }
+    </style>
+</head>
+
+<body class="fade-in">
+
+<!-- Glassmorphic Navigation Bar -->
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="/" class="navbar-brand">
+            <img src="pages/GDUT_Logo.png" alt="GDUT Logo">
+            <span>GDUT 开源镜像站</span>
+        </a>
+        <div class="navbar-actions">
+            <button class="theme-toggle" aria-label="切换主题" title="切换深色/浅色主题">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<main class="main-container">
+    <div class="bento-grid">
+        <div class="bento-main" style="grid-column: span 12;">
+            <div class="island">
+                <div class="island-header">
+                    <svg class="island-icon" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+                    </svg>
+                    <h2 class="island-title">目录浏览 - /ubuntu/dists/focal/</h2>
+                </div>
+                
+                <!-- Breadcrumb navigation -->
+                <div class="breadcrumb">
+                    <a href="/">🏠 首页</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <a href="/ubuntu/">ubuntu</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <a href="/ubuntu/dists/">dists</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <span>focal</span>
+                </div>
+                
+                <!-- Fancy Index directory listing (demo) -->
+                <div class="fancyindex-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>
+                                    <svg width="18" height="18" style="vertical-align: middle; margin-right: 4px;" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                                        <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+                                    </svg>
+                                    文件名
+                                </th>
+                                <th>
+                                    <svg width="18" height="18" style="vertical-align: middle; margin-right: 4px;" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                    </svg>
+                                    修改时间
+                                </th>
+                                <th>
+                                    <svg width="18" height="18" style="vertical-align: middle; margin-right: 4px;" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clip-rule="evenodd"/>
+                                    </svg>
+                                    大小
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><a href="..">..</a></td>
+                                <td>2024-01-20 15:30</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td><a href="main/">main/</a></td>
+                                <td>2024-01-20 08:45</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td><a href="restricted/">restricted/</a></td>
+                                <td>2024-01-20 08:45</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td><a href="universe/">universe/</a></td>
+                                <td>2024-01-20 08:45</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td><a href="multiverse/">multiverse/</a></td>
+                                <td>2024-01-20 08:45</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td><a href="InRelease">InRelease</a></td>
+                                <td>2024-01-20 08:44</td>
+                                <td>248.5 KB</td>
+                            </tr>
+                            <tr>
+                                <td><a href="Release">Release</a></td>
+                                <td>2024-01-20 08:44</td>
+                                <td>247.8 KB</td>
+                            </tr>
+                            <tr>
+                                <td><a href="Release.gpg">Release.gpg</a></td>
+                                <td>2024-01-20 08:44</td>
+                                <td>833 B</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer id="footer">
+    <div>
+        <a target="_blank" href="http://www.gdut.edu.cn/">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+            </svg>
+            广东工业大学首页
+        </a>
+        &nbsp;|&nbsp;
+        <a target="_blank" href="pages/about.html">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>
+            关于我们
+        </a>
+        &nbsp;|&nbsp;
+        <a href="mailto:stunic@gdut.edu.cn">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+            </svg>
+            联系我们
+        </a>
+        &nbsp;|&nbsp;
+        <a target="_blank" href="https://docs.stunic.gdut.edu.cn/s/d6a3f671-45f2-4c51-9a51-c651f3a7d6ac/doc/5bm5bel6zwc5yop56uz5l255so5pah5qgj-XtDBSIgjtB">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+            </svg>
+            文档中心
+        </a>
+        &nbsp;|&nbsp;
+        <a target="_blank" href="pages/status.html">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            当前状态
+        </a>
+        &nbsp;|&nbsp;
+        <a target="_blank" href="https://speed.gdut.edu.cn">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+            </svg>
+            校内测速
+        </a>
+    </div>
+    <div style="margin-top: 12px; font-size: 0.875rem; color: var(--color-text-muted);">
+        © 2024 广东工业大学学生网管队 | Powered by Island UI & Nginx Fancy Index
+    </div>
+</footer>
+
+<script type="text/javascript" src="mirror.js"></script>
+</body>
+</html>
