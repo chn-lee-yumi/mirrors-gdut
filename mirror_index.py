@@ -203,6 +203,7 @@ FOOTER = """
                     <li><a target="_blank" href="about.html">关于我们</a></li>
                     <li><a target="_blank" href="https://docs.stunic.gdut.edu.cn/s/d6a3f671-45f2-4c51-9a51-c651f3a7d6ac/doc/5bm5bel6zwc5yop56uz5l255so5pah5qgj-XtDBSIgjtB">文档中心</a></li>
                     <li><a target="_blank" href="status.html">当前状态</a></li>
+                    <li><a target="_blank" rel="noopener noreferrer" href="https://registry.gdut.edu.cn">容器镜像库</a></li>
                     <li><a target="_blank" href="https://speed.gdut.edu.cn">校内测速</a></li>
                 </ul>
             </div>
@@ -246,6 +247,15 @@ FOOTER = """
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
             当前状态
+        </a>
+        &nbsp;|&nbsp;
+        <a target="_blank" rel="noopener noreferrer" href="https://registry.gdut.edu.cn">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z"/>
+                <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z"/>
+                <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z"/>
+            </svg>
+            容器镜像库
         </a>
         &nbsp;|&nbsp;
         <a target="_blank" href="https://speed.gdut.edu.cn">
