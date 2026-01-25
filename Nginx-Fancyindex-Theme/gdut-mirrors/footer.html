@@ -74,21 +74,38 @@
 
     if (!breadcrumb) return;
 
-    let html = '<a href="/">🏠 首页</a>';
+    // Create home link
+    const homeLink = document.createElement('a');
+    homeLink.href = '/';
+    homeLink.textContent = '🏠 首页';
+    breadcrumb.appendChild(homeLink);
+
     let currentPath = '';
 
     parts.forEach((part, index) => {
         currentPath += '/' + part;
-        html += '<span class="breadcrumb-separator">/</span>';
+        
+        // Add separator
+        const separator = document.createElement('span');
+        separator.className = 'breadcrumb-separator';
+        separator.textContent = '/';
+        breadcrumb.appendChild(separator);
 
+        const decodedPart = decodeURIComponent(part);
+        
         if (index === parts.length - 1) {
-            html += `<span>${decodeURIComponent(part)}</span>`;
+            // Last part - just text, no link
+            const span = document.createElement('span');
+            span.textContent = decodedPart;
+            breadcrumb.appendChild(span);
         } else {
-            html += `<a href="${currentPath}/">${decodeURIComponent(part)}</a>`;
+            // Create link for intermediate parts
+            const link = document.createElement('a');
+            link.href = currentPath + '/';
+            link.textContent = decodedPart;
+            breadcrumb.appendChild(link);
         }
     });
-
-    breadcrumb.innerHTML = html;
 })();
 
 // Style the fancyindex table - optimized for large directories
@@ -235,6 +252,8 @@
         // Helper function to update loading indicator content
         function updateLoadingIndicator() {
             loadingIndicator.style.display = 'block';
+            // Clear previous content safely
+            loadingIndicator.replaceChildren();
             // Use safer DOM manipulation instead of innerHTML
             const p = document.createElement('p');
             p.textContent = `显示 ${visibleCount} / ${rows.length} 项 - `;
@@ -243,7 +262,6 @@
             link.id = 'load-more';
             link.textContent = '加载更多';
             p.appendChild(link);
-            loadingIndicator.innerHTML = '';
             loadingIndicator.appendChild(p);
         }
         
