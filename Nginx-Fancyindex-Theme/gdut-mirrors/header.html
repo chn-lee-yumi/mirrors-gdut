@@ -109,6 +109,44 @@
         .fade-in-row {
             animation: fadeIn 0.3s ease;
         }
+        
+        /* Loading indicator styles */
+        .loading-indicator {
+            margin-top: var(--spacing-md);
+            padding: var(--spacing-md);
+            background: var(--color-hover);
+            border-radius: var(--radius-sm);
+            text-align: center;
+        }
+        
+        .loading-indicator p {
+            text-align: center;
+            padding: 1rem;
+            color: var(--color-text-muted);
+            margin: 0;
+        }
+        
+        .loading-indicator a {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .loading-indicator a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Performance optimization: Use GPU acceleration for large tables */
+        .fancyindex-list table {
+            transform: translateZ(0);
+            will-change: auto;
+        }
+        
+        /* Improve rendering performance */
+        .fancyindex-list tr {
+            contain: layout style;
+        }
     </style>
 </head>
 

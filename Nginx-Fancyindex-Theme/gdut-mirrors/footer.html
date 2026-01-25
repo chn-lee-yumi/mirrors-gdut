@@ -74,24 +74,41 @@
 
     if (!breadcrumb) return;
 
-    let html = '<a href="/">🏠 首页</a>';
+    // Create home link
+    const homeLink = document.createElement('a');
+    homeLink.href = '/';
+    homeLink.textContent = '🏠 首页';
+    breadcrumb.appendChild(homeLink);
+
     let currentPath = '';
 
     parts.forEach((part, index) => {
         currentPath += '/' + part;
-        html += '<span class="breadcrumb-separator">/</span>';
+        
+        // Add separator
+        const separator = document.createElement('span');
+        separator.className = 'breadcrumb-separator';
+        separator.textContent = '/';
+        breadcrumb.appendChild(separator);
 
+        const decodedPart = decodeURIComponent(part);
+        
         if (index === parts.length - 1) {
-            html += `<span>${decodeURIComponent(part)}</span>`;
+            // Last part - just text, no link
+            const span = document.createElement('span');
+            span.textContent = decodedPart;
+            breadcrumb.appendChild(span);
         } else {
-            html += `<a href="${currentPath}/">${decodeURIComponent(part)}</a>`;
+            // Create link for intermediate parts
+            const link = document.createElement('a');
+            link.href = currentPath + '/';
+            link.textContent = decodedPart;
+            breadcrumb.appendChild(link);
         }
     });
-
-    breadcrumb.innerHTML = html;
 })();
 
-// Style the fancyindex table
+// Style the fancyindex table - optimized for large directories
 (function() {
     const table = document.querySelector('table');
     if (!table) return;
@@ -99,16 +116,25 @@
     // Add class to style the table
     table.classList.add('fancy-table');
 
-    // Update table headers with icons
+    // Update table headers with icons (only headers, not all rows)
     const headers = table.querySelectorAll('th');
     if (headers.length >= 3) {
         headers[0].innerHTML = '<svg width="18" height="18" style="vertical-align: middle; margin-right: 4px;" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/></svg> 文件名';
         headers[1].innerHTML = '<svg width="18" height="18" style="vertical-align: middle; margin-right: 4px;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg> 修改时间';
         headers[2].innerHTML = '<svg width="18" height="18" style="vertical-align: middle; margin-right: 4px;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clip-rule="evenodd"/></svg> 大小';
     }
+    
+    // Add performance indicator for large directories
+    const tbody = table.querySelector('tbody');
+    if (tbody) {
+        const rowCount = tbody.querySelectorAll('tr').length;
+        if (rowCount > 500) {
+            console.log(`[Fancy Index] Large directory detected: ${rowCount} items. Using optimized rendering.`);
+        }
+    }
 })();
 
-// Fancy Index Search Functionality
+// Fancy Index Search Functionality with Performance Optimization
 (function() {
     const searchInput = document.getElementById('fancyindex-search');
     const table = document.querySelector('table');
@@ -120,30 +146,163 @@
     
     const rows = Array.from(tbody.querySelectorAll('tr'));
     
+    // Cache first cell references and file names for better performance
+    const rowData = rows.map(row => {
+        const firstCell = row.querySelector('td:first-child');
+        return {
+            row: row,
+            firstCell: firstCell,
+            fileName: firstCell?.textContent.trim().toLowerCase() || ''
+        };
+    });
+    
+    // Check if we have a large directory (>100 items)
+    const isLargeDirectory = rows.length > 100;
+    
+    // For large directories, use virtual scrolling
+    if (isLargeDirectory) {
+        initVirtualScrolling(tbody, rows);
+    }
+    
     // Debounce search for better performance
     let searchTimeout;
     searchInput.addEventListener('input', function() {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
-            performFancyIndexSearch(this.value, rows);
-        }, 150);
+            performFancyIndexSearch(this.value, rowData);
+        }, isLargeDirectory ? 300 : 150);
     });
     
-    function performFancyIndexSearch(query, rows) {
+    function performFancyIndexSearch(query, rowData) {
         const searchTerm = query.trim().toLowerCase();
         
-        rows.forEach(row => {
-            const firstCell = row.querySelector('td:first-child');
-            if (!firstCell) return;
+        // Use requestAnimationFrame for smooth UI updates
+        requestAnimationFrame(() => {
+            // Process rows in chunks to avoid blocking
+            const chunkSize = 50;
+            let index = 0;
             
-            const fileName = firstCell.textContent.trim().toLowerCase();
-            
-            if (searchTerm === '' || fileName.includes(searchTerm)) {
-                row.style.display = '';
-                row.style.animation = 'fadeIn 0.3s ease';
-            } else {
-                row.style.display = 'none';
+            function processChunk() {
+                const end = Math.min(index + chunkSize, rowData.length);
+                
+                for (let i = index; i < end; i++) {
+                    const data = rowData[i];
+                    if (!data.firstCell) continue;
+                    
+                    if (searchTerm === '' || data.fileName.includes(searchTerm)) {
+                        data.row.style.display = '';
+                        // Only add animation for smaller lists to avoid performance issues
+                        if (!isLargeDirectory) {
+                            data.row.style.animation = 'fadeIn 0.3s ease';
+                        }
+                    } else {
+                        data.row.style.display = 'none';
+                    }
+                }
+                
+                index = end;
+                
+                // Continue processing if there are more rows
+                if (index < rowData.length) {
+                    requestAnimationFrame(processChunk);
+                }
             }
+            
+            processChunk();
+        });
+    }
+    
+    // Virtual scrolling implementation for large directories
+    function initVirtualScrolling(tbody, rows) {
+        // Add a loading indicator
+        const loadingIndicator = document.createElement('div');
+        loadingIndicator.className = 'loading-indicator';
+        loadingIndicator.style.display = 'none';
+        tbody.parentNode.insertBefore(loadingIndicator, tbody.nextSibling);
+        
+        // Use event delegation for load more button to avoid duplicate listeners
+        loadingIndicator.addEventListener('click', function(e) {
+            if (e.target && e.target.id === 'load-more') {
+                e.preventDefault();
+                loadMoreItems();
+            }
+        });
+        
+        // Implement progressive rendering
+        let visibleCount = 0;
+        const initialBatch = 100; // Show first 100 items immediately
+        const batchSize = 50; // Load 50 items at a time after that
+        
+        // Hide all rows initially except the first batch
+        // Use empty string for data-lazy to indicate lazy-loadable rows
+        rows.forEach((row, i) => {
+            if (i >= initialBatch) {
+                row.style.display = 'none';
+                row.setAttribute('data-lazy', '');
+            } else {
+                visibleCount++;
+            }
+        });
+        
+        // Show loading indicator if there are more items
+        if (rows.length > initialBatch) {
+            updateLoadingIndicator();
+        }
+        
+        // Helper function to update loading indicator content
+        function updateLoadingIndicator() {
+            loadingIndicator.style.display = 'block';
+            // Clear previous content with fallback for older browsers
+            if (loadingIndicator.replaceChildren) {
+                loadingIndicator.replaceChildren();
+            } else {
+                loadingIndicator.innerHTML = '';
+            }
+            // Use safer DOM manipulation
+            const p = document.createElement('p');
+            p.textContent = `显示 ${visibleCount} / ${rows.length} 项 - `;
+            const link = document.createElement('a');
+            link.href = '#';
+            link.id = 'load-more';
+            link.textContent = '加载更多';
+            p.appendChild(link);
+            loadingIndicator.appendChild(p);
+        }
+        
+        function loadMoreItems() {
+            let loaded = 0;
+            
+            // Iterate through all rows and load those with data-lazy attribute
+            rows.forEach(row => {
+                if (loaded < batchSize && row.hasAttribute('data-lazy')) {
+                    row.style.display = '';
+                    row.removeAttribute('data-lazy');
+                    loaded++;
+                    visibleCount++;
+                }
+            });
+            
+            // Update or hide loading indicator
+            if (visibleCount >= rows.length) {
+                loadingIndicator.style.display = 'none';
+            } else {
+                updateLoadingIndicator();
+            }
+        }
+        
+        // Add scroll-based lazy loading
+        let scrollTimeout;
+        window.addEventListener('scroll', function() {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                // Check if near bottom of page
+                const scrollPosition = window.scrollY + window.innerHeight;
+                const pageHeight = document.documentElement.scrollHeight;
+                
+                if (scrollPosition > pageHeight - 500 && visibleCount < rows.length) {
+                    loadMoreItems();
+                }
+            }, 100);
         });
     }
 })();
