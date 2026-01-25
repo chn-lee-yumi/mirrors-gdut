@@ -129,6 +129,13 @@
     
     const rows = Array.from(tbody.querySelectorAll('tr'));
     
+    // Cache first cell references and file names for better performance
+    const rowData = rows.map(row => ({
+        row: row,
+        firstCell: row.querySelector('td:first-child'),
+        fileName: row.querySelector('td:first-child')?.textContent.trim().toLowerCase() || ''
+    }));
+    
     // Check if we have a large directory (>100 items)
     const isLargeDirectory = rows.length > 100;
     
@@ -142,11 +149,11 @@
     searchInput.addEventListener('input', function() {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
-            performFancyIndexSearch(this.value, rows);
+            performFancyIndexSearch(this.value, rowData);
         }, isLargeDirectory ? 300 : 150);
     });
     
-    function performFancyIndexSearch(query, rows) {
+    function performFancyIndexSearch(query, rowData) {
         const searchTerm = query.trim().toLowerCase();
         
         // Use requestAnimationFrame for smooth UI updates
@@ -156,30 +163,27 @@
             let index = 0;
             
             function processChunk() {
-                const end = Math.min(index + chunkSize, rows.length);
+                const end = Math.min(index + chunkSize, rowData.length);
                 
                 for (let i = index; i < end; i++) {
-                    const row = rows[i];
-                    const firstCell = row.querySelector('td:first-child');
-                    if (!firstCell) continue;
+                    const data = rowData[i];
+                    if (!data.firstCell) continue;
                     
-                    const fileName = firstCell.textContent.trim().toLowerCase();
-                    
-                    if (searchTerm === '' || fileName.includes(searchTerm)) {
-                        row.style.display = '';
+                    if (searchTerm === '' || data.fileName.includes(searchTerm)) {
+                        data.row.style.display = '';
                         // Only add animation for smaller lists to avoid performance issues
                         if (!isLargeDirectory) {
-                            row.style.animation = 'fadeIn 0.3s ease';
+                            data.row.style.animation = 'fadeIn 0.3s ease';
                         }
                     } else {
-                        row.style.display = 'none';
+                        data.row.style.display = 'none';
                     }
                 }
                 
                 index = end;
                 
                 // Continue processing if there are more rows
-                if (index < rows.length) {
+                if (index < rowData.length) {
                     requestAnimationFrame(processChunk);
                 }
             }
@@ -205,7 +209,7 @@
         rows.forEach((row, i) => {
             if (i >= initialBatch) {
                 row.style.display = 'none';
-                row.setAttribute('data-lazy', 'true');
+                row.dataset.lazy = 'true';
             } else {
                 visibleCount++;
             }
@@ -216,8 +220,8 @@
             updateLoadingIndicator();
         }
         
-        // Helper function to create and attach load more button
-        function attachLoadMoreHandler() {
+        // Helper function to attach load more button event listener
+        function attachLoadMoreListener() {
             const loadMoreBtn = loadingIndicator.querySelector('#load-more');
             if (loadMoreBtn) {
                 loadMoreBtn.addEventListener('click', function(e) {
@@ -231,7 +235,7 @@
         function updateLoadingIndicator() {
             loadingIndicator.style.display = 'block';
             loadingIndicator.innerHTML = `<p>显示 ${visibleCount} / ${rows.length} 项 - <a href="#" id="load-more">加载更多</a></p>`;
-            attachLoadMoreHandler();
+            attachLoadMoreListener();
         }
         
         function loadMoreItems() {
@@ -239,9 +243,9 @@
             
             for (let i = visibleCount; i < rows.length && loaded < batchSize; i++) {
                 const row = rows[i];
-                if (row.getAttribute('data-lazy') === 'true') {
+                if (row.dataset.lazy === 'true') {
                     row.style.display = '';
-                    row.removeAttribute('data-lazy');
+                    delete row.dataset.lazy;
                     loaded++;
                     visibleCount++;
                 }
