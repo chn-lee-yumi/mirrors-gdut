@@ -252,9 +252,13 @@
         // Helper function to update loading indicator content
         function updateLoadingIndicator() {
             loadingIndicator.style.display = 'block';
-            // Clear previous content safely
-            loadingIndicator.replaceChildren();
-            // Use safer DOM manipulation instead of innerHTML
+            // Clear previous content with fallback for older browsers
+            if (loadingIndicator.replaceChildren) {
+                loadingIndicator.replaceChildren();
+            } else {
+                loadingIndicator.innerHTML = '';
+            }
+            // Use safer DOM manipulation
             const p = document.createElement('p');
             p.textContent = `显示 ${visibleCount} / ${rows.length} 项 - `;
             const link = document.createElement('a');
@@ -268,16 +272,15 @@
         function loadMoreItems() {
             let loaded = 0;
             
-            for (let i = visibleCount; i < rows.length && loaded < batchSize; i++) {
-                const row = rows[i];
-                // Check if row has data-lazy attribute
-                if (row.hasAttribute('data-lazy')) {
+            // Iterate through all rows and load those with data-lazy attribute
+            rows.forEach(row => {
+                if (loaded < batchSize && row.hasAttribute('data-lazy')) {
                     row.style.display = '';
                     row.removeAttribute('data-lazy');
                     loaded++;
                     visibleCount++;
                 }
-            }
+            });
             
             // Update or hide loading indicator
             if (visibleCount >= rows.length) {
