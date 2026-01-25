@@ -130,11 +130,14 @@
     const rows = Array.from(tbody.querySelectorAll('tr'));
     
     // Cache first cell references and file names for better performance
-    const rowData = rows.map(row => ({
-        row: row,
-        firstCell: row.querySelector('td:first-child'),
-        fileName: row.querySelector('td:first-child')?.textContent.trim().toLowerCase() || ''
-    }));
+    const rowData = rows.map(row => {
+        const firstCell = row.querySelector('td:first-child');
+        return {
+            row: row,
+            firstCell: firstCell,
+            fileName: firstCell?.textContent.trim().toLowerCase() || ''
+        };
+    });
     
     // Check if we have a large directory (>100 items)
     const isLargeDirectory = rows.length > 100;
@@ -232,7 +235,16 @@
         // Helper function to update loading indicator content
         function updateLoadingIndicator() {
             loadingIndicator.style.display = 'block';
-            loadingIndicator.innerHTML = `<p>显示 ${visibleCount} / ${rows.length} 项 - <a href="#" id="load-more">加载更多</a></p>`;
+            // Use safer DOM manipulation instead of innerHTML
+            const p = document.createElement('p');
+            p.textContent = `显示 ${visibleCount} / ${rows.length} 项 - `;
+            const link = document.createElement('a');
+            link.href = '#';
+            link.id = 'load-more';
+            link.textContent = '加载更多';
+            p.appendChild(link);
+            loadingIndicator.innerHTML = '';
+            loadingIndicator.appendChild(p);
         }
         
         function loadMoreItems() {
