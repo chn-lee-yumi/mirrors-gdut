@@ -193,7 +193,6 @@
         // Add a loading indicator
         const loadingIndicator = document.createElement('div');
         loadingIndicator.className = 'loading-indicator';
-        loadingIndicator.innerHTML = '<p style="text-align: center; padding: 1rem; color: var(--color-text-muted);">加载中...</p>';
         loadingIndicator.style.display = 'none';
         tbody.parentNode.insertBefore(loadingIndicator, tbody.nextSibling);
         
@@ -214,10 +213,11 @@
         
         // Show loading indicator if there are more items
         if (rows.length > initialBatch) {
-            loadingIndicator.style.display = 'block';
-            loadingIndicator.innerHTML = `<p style="text-align: center; padding: 1rem; color: var(--color-text-muted);">显示 ${visibleCount} / ${rows.length} 项 - <a href="#" id="load-more" style="color: var(--color-primary); text-decoration: none;">加载更多</a></p>`;
-            
-            // Add click handler for "Load More"
+            updateLoadingIndicator();
+        }
+        
+        // Helper function to create and attach load more button
+        function attachLoadMoreHandler() {
             const loadMoreBtn = loadingIndicator.querySelector('#load-more');
             if (loadMoreBtn) {
                 loadMoreBtn.addEventListener('click', function(e) {
@@ -225,6 +225,13 @@
                     loadMoreItems();
                 });
             }
+        }
+        
+        // Helper function to update loading indicator content
+        function updateLoadingIndicator() {
+            loadingIndicator.style.display = 'block';
+            loadingIndicator.innerHTML = `<p>显示 ${visibleCount} / ${rows.length} 项 - <a href="#" id="load-more">加载更多</a></p>`;
+            attachLoadMoreHandler();
         }
         
         function loadMoreItems() {
@@ -244,15 +251,7 @@
             if (visibleCount >= rows.length) {
                 loadingIndicator.style.display = 'none';
             } else {
-                loadingIndicator.innerHTML = `<p style="text-align: center; padding: 1rem; color: var(--color-text-muted);">显示 ${visibleCount} / ${rows.length} 项 - <a href="#" id="load-more" style="color: var(--color-primary); text-decoration: none;">加载更多</a></p>`;
-                
-                const loadMoreBtn = loadingIndicator.querySelector('#load-more');
-                if (loadMoreBtn) {
-                    loadMoreBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        loadMoreItems();
-                    });
-                }
+                updateLoadingIndicator();
             }
         }
         
