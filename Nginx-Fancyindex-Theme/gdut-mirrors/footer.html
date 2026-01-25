@@ -200,16 +200,25 @@
         loadingIndicator.style.display = 'none';
         tbody.parentNode.insertBefore(loadingIndicator, tbody.nextSibling);
         
+        // Use event delegation for load more button to avoid duplicate listeners
+        loadingIndicator.addEventListener('click', function(e) {
+            if (e.target && e.target.id === 'load-more') {
+                e.preventDefault();
+                loadMoreItems();
+            }
+        });
+        
         // Implement progressive rendering
         let visibleCount = 0;
         const initialBatch = 100; // Show first 100 items immediately
         const batchSize = 50; // Load 50 items at a time after that
         
         // Hide all rows initially except the first batch
+        // Use empty string for data-lazy to indicate lazy-loadable rows
         rows.forEach((row, i) => {
             if (i >= initialBatch) {
                 row.style.display = 'none';
-                row.dataset.lazy = 'true';
+                row.setAttribute('data-lazy', '');
             } else {
                 visibleCount++;
             }
@@ -220,22 +229,10 @@
             updateLoadingIndicator();
         }
         
-        // Helper function to attach load more button event listener
-        function attachLoadMoreListener() {
-            const loadMoreBtn = loadingIndicator.querySelector('#load-more');
-            if (loadMoreBtn) {
-                loadMoreBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    loadMoreItems();
-                });
-            }
-        }
-        
         // Helper function to update loading indicator content
         function updateLoadingIndicator() {
             loadingIndicator.style.display = 'block';
             loadingIndicator.innerHTML = `<p>显示 ${visibleCount} / ${rows.length} 项 - <a href="#" id="load-more">加载更多</a></p>`;
-            attachLoadMoreListener();
         }
         
         function loadMoreItems() {
@@ -243,9 +240,10 @@
             
             for (let i = visibleCount; i < rows.length && loaded < batchSize; i++) {
                 const row = rows[i];
-                if (row.dataset.lazy === 'true') {
+                // Check if row has data-lazy attribute
+                if (row.hasAttribute('data-lazy')) {
                     row.style.display = '';
-                    delete row.dataset.lazy;
+                    row.removeAttribute('data-lazy');
                     loaded++;
                     visibleCount++;
                 }
