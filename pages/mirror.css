@@ -419,6 +419,7 @@ a:hover {
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--color-text);
+    margin: 0;
 }
 
 /* Compact Islands (Sidebar) */
@@ -428,7 +429,7 @@ a:hover {
 
 .island-compact .island-title {
     font-size: 1.125rem;
-    margin-bottom: var(--spacing-md);
+    margin: 0;
 }
 
 /* ==========================================
