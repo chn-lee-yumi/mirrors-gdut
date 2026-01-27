@@ -429,7 +429,7 @@ a:hover {
 
 .island-compact .island-title {
     font-size: 1.125rem;
-    margin: 0 0 var(--spacing-md) 0;
+    margin: 0;
 }
 
 /* ==========================================
