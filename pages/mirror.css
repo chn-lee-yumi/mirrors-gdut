@@ -454,6 +454,13 @@ a:hover {
     color: var(--color-text);
     border-bottom: 2px solid var(--color-border);
     white-space: nowrap;
+    vertical-align: middle;
+}
+
+#distro-table th svg {
+    vertical-align: middle;
+    display: inline-block;
+    margin-right: 4px;
 }
 
 #distro-table th:first-child {
