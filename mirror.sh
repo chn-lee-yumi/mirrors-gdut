@@ -22,7 +22,7 @@ usage() {
   cat <<EOF
 Usage: $0 [mirror]
 Example: $0 debian
-Supported mirrors: anolis archlinux archlinuxcn centos debian debian-cd docker-ce elpa epel
+Supported mirrors: anolis archlinux archlinuxcn centos CTAN debian debian-cd docker-ce elpa epel
                    freebsd gentoo homebrew-bottles kali-images kubernetes manjaro manjaro-cd
                    openeuler raspberrypi raspbian termux ubuntu ubuntu-releases
 EOF
@@ -76,6 +76,10 @@ archlinuxcn)
 centos)
   # 上游：北京外国语镜像
   rsync ${COMMON_OPTIONS} --exclude='6.10/*' --exclude='aarch64/' --exclude='ppc64/' --exclude='ppc64le/' --exclude='s390x/' mirrors.bfsu.edu.cn::centos /mnt/mirror/centos | tee ${LOG_FILE}
+  ;;
+CTAN)
+  # 上游：北京外国语镜像
+  rsync ${COMMON_OPTIONS} mirrors.bfsu.edu.cn::CTAN /mnt/mirror/CTAN | tee ${LOG_FILE}
   ;;
 debian)
   # 上游：清华镜像
