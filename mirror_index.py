@@ -292,7 +292,7 @@ html = HEADER
 odd_or_even = 'even'
 
 mirror_list = sorted(glob.glob('/mnt/mirror/*'))
-cdn_mirror_list = ['pypi', 'centos-vault', 'anaconda', 'anolis', 'crates.io-index', 'maven', 'npm', 'kali', 'ubuntu-ports', 'freebsd-pkg', 'docker', 'go', 'openwrt', 'opensuse', 'fedora']
+cdn_mirror_list = ['pypi', 'centos-stream', 'centos-vault', 'anaconda', 'anolis', 'crates.io-index', 'maven', 'npm', 'kali', 'ubuntu-ports', 'freebsd-pkg', 'docker', 'go', 'openwrt', 'opensuse', 'fedora']
 ignore_dir = ['static', 'font', 'help', 'Nginx-Fancyindex-Theme', 'certs', 'git', 'scripts', 'ubuntu-cloud-images']
 
 for mirror in mirror_list:
