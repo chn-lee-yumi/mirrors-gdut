@@ -148,9 +148,7 @@
         .pct-good { color: var(--color-success); }
         .pct-warn { color: var(--color-warning); }
         .pct-crit { color: var(--color-error); }
-        .usage-cell { display: flex; flex-direction: column; gap: 4px; min-width: 120px; }
-        .usage-bar-track { width: 100%; height: 8px; background: var(--color-border); border-radius: 4px; overflow: hidden; }
-        .usage-bar-fill { display: block; height: 100%; border-radius: 4px; transition: width var(--transition-base); }
+        .partition-row > td { background: transparent !important; }
 
         /* Charts */
         .chart-grid {
@@ -923,17 +921,38 @@
                     if (!host) return;
                     const u = isFinite(r.usage) ? r.usage : NaN;
                     var uClamped = Math.max(0, Math.min(100, isFinite(u) ? u : 0));
-                    html += '<tr>'
+                    var barColor = usageGradientColor(uClamped);
+                    html += '<tr class="partition-row" data-bar-w="' + uClamped.toFixed(1) + '" data-bar-c="' + barColor + '">'
                         + '<td class="col-site">' + host.name + '</td>'
                         + '<td>' + (r.mountpoint || '-') + '</td>'
                         + '<td>' + fmtBytes(r.total) + '</td>'
                         + '<td>' + fmtBytes(r.avail) + '</td>'
-                        + '<td><div class="usage-cell"><span class="pct-tag ' + pctClass(u) + '">' + fmtPct(u) + '</span>'
-                        + '<div class="usage-bar-track"><span class="usage-bar-fill" style="width:' + uClamped.toFixed(1) + '%;background:' + usageGradientColor(uClamped) + ';"></span></div></div></td>'
+                        + '<td class="pct-tag ' + pctClass(u) + '">' + fmtPct(u) + '</td>'
                         + '</tr>';
                 });
         });
         document.getElementById('partition-tbody').innerHTML = html;
+        // Animate progress bars from left to right
+        var barRows = document.querySelectorAll('#partition-tbody .partition-row');
+        barRows.forEach(function (tr) {
+            var targetW = parseFloat(tr.dataset.barW) || 0;
+            var color = tr.dataset.barC || 'transparent';
+            var tds = tr.querySelectorAll('td');
+            if (!tds.length) return;
+            var startTime = null;
+            function step(ts) {
+                if (!startTime) startTime = ts;
+                var progress = Math.min((ts - startTime) / 600, 1);
+                var eased = 1 - Math.pow(1 - progress, 3);
+                var curW = targetW * eased;
+                var bg = 'linear-gradient(90deg, ' + color + ' ' + curW.toFixed(1) + '%, transparent ' + curW.toFixed(1) + '%)';
+                for (var i = 0; i < tds.length; i++) {
+                    tds[i].style.background = bg;
+                }
+                if (progress < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        });
     }
 
     /* ===== Panel 5: CPU timeseries ===== */
