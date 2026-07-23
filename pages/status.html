@@ -1169,15 +1169,32 @@
                 };
             });
             if (!series.length) { showChartEmpty('chart-bargauge', '暂无数据'); return; }
-            setChart('chart-bargauge', {
-                backgroundColor: 'transparent',
-                tooltip: Object.assign(baseTooltip(), { trigger: 'item', valueFormatter: function (v) { return fmtPct(v); } }),
-                legend: { top: 0, textStyle: { color: themeColors().text } },
-                grid: { left: 60, right: 20, top: 36, bottom: 30 },
-                xAxis: baseAxis({ type: 'value', max: 100, axisLabel: { color: themeColors().text, formatter: '{value}%' } }),
-                yAxis: baseAxis({ type: 'category', data: cats, splitLine: { show: false } }),
-                series: series
-            });
+            var bargaugeIsland = document.getElementById('chart-bargauge').closest('.island');
+            function renderBargauge() {
+                setChart('chart-bargauge', {
+                    backgroundColor: 'transparent',
+                    animationDuration: 1200,
+                    animationEasing: 'cubicOut',
+                    animationDelay: function (idx) { return idx * 150; },
+                    tooltip: Object.assign(baseTooltip(), { trigger: 'item', valueFormatter: function (v) { return fmtPct(v); } }),
+                    legend: { top: 0, textStyle: { color: themeColors().text } },
+                    grid: { left: 60, right: 20, top: 36, bottom: 30 },
+                    xAxis: baseAxis({ type: 'value', max: 100, axisLabel: { color: themeColors().text, formatter: '{value}%' } }),
+                    yAxis: baseAxis({ type: 'category', data: cats, splitLine: { show: false } }),
+                    series: series
+                });
+            }
+            if (bargaugeIsland) {
+                var visObs = new IntersectionObserver(function (entries) {
+                    if (entries[0].isIntersecting) {
+                        visObs.disconnect();
+                        setTimeout(renderBargauge, 700);
+                    }
+                }, { threshold: 0.15 });
+                visObs.observe(bargaugeIsland);
+            } else {
+                renderBargauge();
+            }
         } catch (e) { showChartEmpty('chart-bargauge', '加载失败'); }
     }
 
