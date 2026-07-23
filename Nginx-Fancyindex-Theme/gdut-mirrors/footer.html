@@ -66,6 +66,20 @@
 
 <script type="text/javascript" src="/Nginx-Fancyindex-Theme/gdut-mirrors/mirror.js"></script>
 <script>
+// Remove Nginx-generated path text from fancyindex-list (CSS display:none may not catch bare text nodes)
+(function() {
+    const list = document.querySelector('.fancyindex-list');
+    if (!list) return;
+    const table = list.querySelector('table');
+    if (!table) return;
+    let node = list.firstChild;
+    while (node && node !== table) {
+        const next = node.nextSibling;
+        list.removeChild(node);
+        node = next;
+    }
+})();
+
 // Generate breadcrumb navigation from current path
 (function() {
     const path = window.location.pathname;
