@@ -663,7 +663,7 @@
 
     /* ===== Panel 10: Bargauge ===== */
     async function loadBargauge() {
-        showChartLoading('chart-bargauge');
+        if (chartFirstLoad.has('chart-bargauge')) showChartLoading('chart-bargauge');
         const inst = instanceSelector();
         const iv = TIME_RANGES[state.range].interval;
         const T = {
