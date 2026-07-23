@@ -667,8 +667,8 @@
         const inst = instanceSelector();
         const iv = TIME_RANGES[state.range].interval;
         const T = {
-            cpu: '100 - (avg(irate(node_cpu_seconds_total{instance=~"' + inst + '",mode="idle"}[' + iv + '])) * 100)',
-            iowait: 'avg(irate(node_cpu_seconds_total{instance=~"' + inst + '",mode="iowait"}[' + iv + '])) * 100',
+            cpu: '100 - (avg(irate(node_cpu_seconds_total{instance=~"' + inst + '",mode="idle"}[' + iv + '])) by (instance) * 100)',
+            iowait: 'avg(irate(node_cpu_seconds_total{instance=~"' + inst + '",mode="iowait"}[' + iv + '])) by (instance) * 100',
             mem: '(1 - (node_memory_MemAvailable_bytes{instance=~"' + inst + '"} / node_memory_MemTotal_bytes{instance=~"' + inst + '"}))* 100',
             disk: '(node_filesystem_size_bytes{instance=~"' + inst + '",fstype=~"ext.*|xfs",mountpoint="/home"}-node_filesystem_free_bytes{instance=~"' + inst + '",fstype=~"ext.*|xfs",mountpoint="/home"})*100/(node_filesystem_avail_bytes{instance=~"' + inst + '",fstype=~"ext.*|xfs",mountpoint="/home"}+(node_filesystem_size_bytes{instance=~"' + inst + '",fstype=~"ext.*|xfs",mountpoint="/home"}-node_filesystem_free_bytes{instance=~"' + inst + '",fstype=~"ext.*|xfs",mountpoint="/home"}))',
             swap: '(1 - ((node_memory_SwapFree_bytes{instance=~"' + inst + '"} + 1)/ (node_memory_SwapTotal_bytes{instance=~"' + inst + '"} + 1))) * 100'
