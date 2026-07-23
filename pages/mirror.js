@@ -229,10 +229,12 @@
     // ==========================================
 
     function initNavbarBrandVisibility() {
-        const hero = document.querySelector('.hero');
+        const heroTitle = document.querySelector('.hero-title');
+        const navbar = document.querySelector('.navbar');
         const navbarBrand = document.querySelector('.navbar-brand');
-        if (!hero || !navbarBrand) return;
+        if (!heroTitle || !navbarBrand || !navbar) return;
 
+        const navbarHeight = navbar.offsetHeight;
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -242,10 +244,11 @@
                 }
             });
         }, {
+            rootMargin: `-${navbarHeight}px 0px 0px 0px`,
             threshold: 0,
         });
 
-        observer.observe(hero);
+        observer.observe(heroTitle);
     }
 
     // ==========================================
