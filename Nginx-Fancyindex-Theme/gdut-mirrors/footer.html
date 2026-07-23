@@ -74,37 +74,34 @@
 
     if (!breadcrumb) return;
 
-    // Create home link
+    const homeSvg = '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
+
+    const homeItem = document.createElement('span');
+    homeItem.className = 'breadcrumb-item';
     const homeLink = document.createElement('a');
     homeLink.href = '/';
-    homeLink.textContent = '🏠 首页';
-    breadcrumb.appendChild(homeLink);
+    homeLink.innerHTML = homeSvg + ' 首页';
+    homeItem.appendChild(homeLink);
+    breadcrumb.appendChild(homeItem);
 
     let currentPath = '';
 
     parts.forEach((part, index) => {
         currentPath += '/' + part;
-        
-        // Add separator
-        const separator = document.createElement('span');
-        separator.className = 'breadcrumb-separator';
-        separator.textContent = '/';
-        breadcrumb.appendChild(separator);
-
         const decodedPart = decodeURIComponent(part);
-        
+
+        const item = document.createElement('span');
+        item.className = 'breadcrumb-item';
+
         if (index === parts.length - 1) {
-            // Last part - just text, no link
-            const span = document.createElement('span');
-            span.textContent = decodedPart;
-            breadcrumb.appendChild(span);
+            item.textContent = decodedPart;
         } else {
-            // Create link for intermediate parts
             const link = document.createElement('a');
             link.href = currentPath + '/';
             link.textContent = decodedPart;
-            breadcrumb.appendChild(link);
+            item.appendChild(link);
         }
+        breadcrumb.appendChild(item);
     });
 })();
 
