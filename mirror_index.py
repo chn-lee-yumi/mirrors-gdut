@@ -267,7 +267,7 @@ FOOTER = """
         </a>
     </div>
     <div style="margin-top: 12px; font-size: 0.875rem; color: var(--color-text-muted);">
-        © 2024 广东工业大学学生网管队 | Powered by Island UI
+        © <span id="copyright-year"></span> 广东工业大学学生网管队 | Powered by Island UI
     </div>
 </footer>
 

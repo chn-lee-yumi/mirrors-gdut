@@ -262,8 +262,10 @@
         enhanceTable();
         initSmoothScroll();
         initNavbarBrandVisibility();
-        
-        // Add fade-in class to body
+
+        const yearSpan = document.getElementById('copyright-year');
+        if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+
         document.body.classList.add('fade-in');
     }
     
