@@ -186,7 +186,7 @@
         const c = getChart(id);
         if (!c) return;
         chartOpts[id] = option;
-        c.setOption(option, true);
+        c.setOption(option, false);
         const wrap = document.getElementById('wrap-' + id.replace('chart-', ''));
         if (wrap) wrap.classList.add('loaded');
     }
@@ -219,7 +219,7 @@
                 return;
             }
         }
-        showChartLoading(id);
+        if (!option.animationDuration) showChartLoading(id);
         setChart(id, option);
     }
     function matrixToSeries(result, nameFn, colorFn, yFmt) {
