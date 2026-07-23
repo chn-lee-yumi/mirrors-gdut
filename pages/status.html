@@ -937,16 +937,23 @@
         barRows.forEach(function (tr) {
             var targetW = parseFloat(tr.dataset.barW) || 0;
             var color = tr.dataset.barC || 'transparent';
-            var startTime = null;
-            function step(ts) {
-                if (!startTime) startTime = ts;
-                var progress = Math.min((ts - startTime) / 600, 1);
-                var eased = 1 - Math.pow(1 - progress, 3);
-                var curW = targetW * eased;
-                tr.style.background = 'linear-gradient(90deg, ' + color + ' ' + curW.toFixed(1) + '%, transparent ' + curW.toFixed(1) + '%)';
-                if (progress < 1) requestAnimationFrame(step);
-            }
-            requestAnimationFrame(step);
+            // Set initial 0% state and force browser to paint it first
+            tr.style.background = 'linear-gradient(90deg, ' + color + ' 0%, transparent 0%)';
+            void tr.offsetWidth; // force reflow
+            // Double rAF: ensures browser paints 0% frame before animation starts
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function anim(ts) {
+                    var startTime = ts;
+                    function step(t) {
+                        var progress = Math.min((t - startTime) / 600, 1);
+                        var eased = 1 - Math.pow(1 - progress, 3);
+                        var curW = targetW * eased;
+                        tr.style.background = 'linear-gradient(90deg, ' + color + ' ' + curW.toFixed(1) + '%, transparent ' + curW.toFixed(1) + '%)';
+                        if (progress < 1) requestAnimationFrame(step);
+                    }
+                    requestAnimationFrame(step);
+                });
+            });
         });
     }
 
