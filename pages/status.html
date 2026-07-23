@@ -932,29 +932,47 @@
                 });
         });
         document.getElementById('partition-tbody').innerHTML = html;
-        // Animate progress bars from left to right
+        // Animate progress bars from left to right, but only after island is visible
+        var island = document.getElementById('partition-tbody').closest('.island');
         var barRows = document.querySelectorAll('#partition-tbody .partition-row');
+        // Set initial 0% state immediately
         barRows.forEach(function (tr) {
-            var targetW = parseFloat(tr.dataset.barW) || 0;
             var color = tr.dataset.barC || 'transparent';
-            // Set initial 0% state and force browser to paint it first
             tr.style.background = 'linear-gradient(90deg, ' + color + ' 0%, transparent 0%)';
-            void tr.offsetWidth; // force reflow
-            // Double rAF: ensures browser paints 0% frame before animation starts
-            requestAnimationFrame(function () {
-                requestAnimationFrame(function anim(ts) {
-                    var startTime = ts;
-                    function step(t) {
-                        var progress = Math.min((t - startTime) / 600, 1);
-                        var eased = 1 - Math.pow(1 - progress, 3);
-                        var curW = targetW * eased;
-                        tr.style.background = 'linear-gradient(90deg, ' + color + ' ' + curW.toFixed(1) + '%, transparent ' + curW.toFixed(1) + '%)';
-                        if (progress < 1) requestAnimationFrame(step);
-                    }
-                    requestAnimationFrame(step);
-                });
-            });
         });
+
+        function runBarAnimation() {
+            barRows.forEach(function (tr) {
+                var targetW = parseFloat(tr.dataset.barW) || 0;
+                var color = tr.dataset.barC || 'transparent';
+                var startTime = null;
+                function step(ts) {
+                    if (!startTime) startTime = ts;
+                    var progress = Math.min((ts - startTime) / 1200, 1);
+                    var eased = 1 - Math.pow(1 - progress, 3);
+                    var curW = targetW * eased;
+                    tr.style.background = 'linear-gradient(90deg, ' + color + ' ' + curW.toFixed(1) + '%, transparent ' + curW.toFixed(1) + '%)';
+                    if (progress < 1) requestAnimationFrame(step);
+                }
+                requestAnimationFrame(step);
+            });
+        }
+
+        if (island) {
+            var rect = island.getBoundingClientRect();
+            var alreadyVisible = rect.top < window.innerHeight && rect.bottom > 0;
+            if (alreadyVisible) {
+                runBarAnimation();
+            } else {
+                var visObs = new IntersectionObserver(function (entries) {
+                    if (entries[0].isIntersecting) {
+                        visObs.disconnect();
+                        runBarAnimation();
+                    }
+                }, { threshold: 0.1 });
+                visObs.observe(island);
+            }
+        }
     }
 
     /* ===== Panel 5: CPU timeseries ===== */
