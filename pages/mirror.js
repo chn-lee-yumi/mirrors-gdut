@@ -128,12 +128,17 @@
     function initIslandAnimations() {
         const islands = document.querySelectorAll('.island');
         
-        // Intersection Observer for scroll animations
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.style.opacity = '1';
                     entry.target.style.transform = 'translateY(0)';
+                    entry.target.addEventListener('transitionend', function handler() {
+                        entry.target.style.transform = '';
+                        entry.target.style.transition = '';
+                        entry.target.removeEventListener('transitionend', handler);
+                    });
+                    observer.unobserve(entry.target);
                 }
             });
         }, {

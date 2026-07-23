@@ -323,6 +323,12 @@ html.js .navbar-brand.autohide.is-visible {
 .search-box {
     position: relative;
     width: 100%;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.search-box:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
 }
 
 .search-input {
