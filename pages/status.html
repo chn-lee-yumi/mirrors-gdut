@@ -1,28 +1,1394 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-<style>
-  body, html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="广东工业大学开源镜像站服务器实时监控">
+    <link rel="stylesheet" type="text/css" href="/mirror.css" media="screen"/>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <title>镜像站状态 - 广东工业大学开源镜像站</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <style>
+        /* ===== Status Page Specific Styles ===== */
+        .error-banner {
+            background: var(--color-error);
+            color: #fff;
+            text-align: center;
+            padding: var(--spacing-sm) var(--spacing-xl);
+            font-size: 0.9375rem;
+            font-weight: 500;
+        }
+        .error-banner[hidden] { display: none; }
 
-  iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none; /* 可选，去掉边框 */
-  }
-</style>
+        .hero-controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+        .time-selector {
+            display: inline-flex;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-xl);
+            padding: 4px;
+            box-shadow: var(--shadow-sm);
+        }
+        .time-btn {
+            border: none;
+            background: transparent;
+            color: var(--color-text-secondary);
+            padding: 6px 18px;
+            border-radius: var(--radius-lg);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-family: inherit;
+        }
+        .time-btn:hover { color: var(--color-text); }
+        .time-btn.active {
+            background: var(--gradient-primary);
+            color: #fff;
+            box-shadow: var(--shadow-sm);
+        }
+        .site-selector {
+            padding: 7px 16px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-xl);
+            background: var(--color-surface);
+            color: var(--color-text);
+            font-size: 0.875rem;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            outline: none;
+            transition: border-color var(--transition-fast);
+        }
+        .site-selector:focus { border-color: var(--color-primary); }
+        .refresh-indicator {
+            font-size: 0.8125rem;
+            color: var(--color-text-muted);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .refresh-sep { opacity: 0.5; }
+
+        /* Overview stat cards */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+        .stat-card { padding: var(--spacing-lg); }
+        .stat-card .island-header { margin-bottom: var(--spacing-sm); }
+        .stat-label {
+            font-size: 0.8125rem;
+            color: var(--color-text-muted);
+            font-weight: 500;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.2;
+            color: var(--color-text);
+            font-family: 'Fira Code', monospace;
+        }
+        .stat-value.ok { color: var(--color-success); }
+        .stat-value.err { color: var(--color-error); }
+        .stat-sub { font-size: 0.8125rem; color: var(--color-text-muted); margin-top: 2px; }
+
+        /* Data tables */
+        .data-table-wrap { overflow-x: auto; }
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.875rem;
+        }
+        .data-table th {
+            padding: var(--spacing-sm) var(--spacing-md);
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-text);
+            border-bottom: 2px solid var(--color-border);
+            white-space: nowrap;
+            background: var(--color-hover);
+        }
+        .data-table th:first-child { border-top-left-radius: var(--radius-sm); }
+        .data-table th:last-child { border-top-right-radius: var(--radius-sm); }
+        .data-table td {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-bottom: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+            white-space: nowrap;
+            font-family: 'Fira Code', monospace;
+        }
+        .data-table tbody tr:last-child td { border-bottom: none; }
+        .data-table tbody tr:hover { background: var(--color-hover); }
+        .data-table .col-site { font-family: 'Inter', sans-serif; font-weight: 600; color: var(--color-text); }
+        .health-bar {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .health-track {
+            width: 60px;
+            height: 6px;
+            background: var(--color-border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .health-fill { height: 100%; border-radius: 3px; transition: width var(--transition-base); }
+        .pct-tag { font-weight: 600; }
+        .pct-good { color: var(--color-success); }
+        .pct-warn { color: var(--color-warning); }
+        .pct-crit { color: var(--color-error); }
+
+        /* Charts */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+        .chart-grid .island { padding: var(--spacing-lg); }
+        .chart-wrap { position: relative; height: 300px; }
+        .chart { width: 100%; height: 100%; }
+        .chart-wrap:not(.loaded) .chart { visibility: hidden; }
+        .chart-wrap.loaded .chart-loading { display: none; }
+        .chart-loading {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-muted);
+            font-size: 0.875rem;
+            background: var(--color-hover);
+            border-radius: var(--radius-sm);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        .chart-loading.static { animation: none; opacity: 0.7; }
+
+        .full-width { grid-column: span 2; }
+
+        .island-note {
+            font-size: 0.8125rem;
+            color: var(--color-text-muted);
+            margin-left: var(--spacing-sm);
+            font-weight: 400;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stat-grid { grid-template-columns: repeat(2, 1fr); }
+            .chart-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+            .hero-controls { flex-direction: column; gap: var(--spacing-sm); }
+        }
+        @media (max-width: 480px) {
+            .stat-grid { grid-template-columns: 1fr; }
+            .stat-value { font-size: 1.5rem; }
+        }
+    </style>
 </head>
-<body>
 
-<iframe src="https://grafana.gdutnic.com/d/9CWBz0bik/5bm_5bel6ZWc5YOP56uZ5pyN5Yqh54q25oCB?orgId=1"></iframe>
+<body class="fade-in">
 
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="/" class="navbar-brand">
+            <img src="/GDUT_Logo.png" alt="GDUT Logo">
+            <span>广东工业大学开源镜像站</span>
+        </a>
+        <div class="navbar-actions">
+            <button class="theme-toggle" aria-label="切换主题" title="切换深色/浅色主题">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Error Banner -->
+<div class="error-banner" id="error-banner" hidden>
+    <strong>无法连接 Prometheus</strong> &middot; 监控数据暂不可用，正在重试…
+</div>
+
+<!-- Hero -->
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">镜像站状态</h1>
+        <p class="hero-subtitle">广东工业大学开源镜像站服务器实时监控</p>
+        <div class="hero-controls">
+            <div class="time-selector" id="time-selector">
+                <button class="time-btn active" data-range="1h">1h</button>
+                <button class="time-btn" data-range="6h">6h</button>
+                <button class="time-btn" data-range="24h">24h</button>
+            </div>
+            <select class="site-selector" id="site-selector">
+                <option value="both" selected>两个都看</option>
+                <option value="ipv4">IPv4 站点</option>
+                <option value="ipv6">IPv6 站点</option>
+            </select>
+            <div class="refresh-indicator">
+                <span id="last-refresh">上次刷新: --</span>
+                <span class="refresh-sep">|</span>
+                <span id="next-refresh">下次刷新: 60s</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main -->
+<main class="main-container">
+    <div class="bento-grid">
+        <div class="bento-main" style="grid-column: span 12;">
+
+            <!-- Overview stat cards -->
+            <div class="stat-grid" id="stat-grid">
+                <div class="island stat-card">
+                    <div class="island-header"><span class="stat-label">IPv4 站点 · 状态</span></div>
+                    <div class="stat-value" id="ov-ipv4-status">--</div>
+                </div>
+                <div class="island stat-card">
+                    <div class="island-header"><span class="stat-label">IPv4 站点 · CPU</span></div>
+                    <div class="stat-value" id="ov-ipv4-cpu">--</div>
+                    <div class="stat-sub" id="ov-ipv4-cpu-sub"></div>
+                </div>
+                <div class="island stat-card">
+                    <div class="island-header"><span class="stat-label">IPv4 站点 · 内存</span></div>
+                    <div class="stat-value" id="ov-ipv4-mem">--</div>
+                    <div class="stat-sub" id="ov-ipv4-mem-sub"></div>
+                </div>
+                <div class="island stat-card">
+                    <div class="island-header"><span class="stat-label">IPv6 站点 · 状态</span></div>
+                    <div class="stat-value" id="ov-ipv6-status">--</div>
+                </div>
+                <div class="island stat-card">
+                    <div class="island-header"><span class="stat-label">IPv6 站点 · CPU</span></div>
+                    <div class="stat-value" id="ov-ipv6-cpu">--</div>
+                    <div class="stat-sub" id="ov-ipv6-cpu-sub"></div>
+                </div>
+                <div class="island stat-card">
+                    <div class="island-header"><span class="stat-label">IPv6 站点 · 内存</span></div>
+                    <div class="stat-value" id="ov-ipv6-mem">--</div>
+                    <div class="stat-sub" id="ov-ipv6-mem-sub"></div>
+                </div>
+            </div>
+
+            <!-- Resource overview table -->
+            <div class="island" style="margin-bottom: var(--spacing-lg);">
+                <div class="island-header">
+                    <svg class="island-icon" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+                    </svg>
+                    <h2 class="island-title">资源总览</h2>
+                </div>
+                <div class="data-table-wrap">
+                    <table class="data-table" id="resource-table">
+                        <thead><tr>
+                            <th>站点</th><th>运行时间(天)</th><th>CPU核数</th><th>内存总量</th>
+                            <th>CPU使用率</th><th>内存使用率</th><th>磁盘使用率</th><th>负载</th>
+                            <th>磁盘读速率</th><th>磁盘写速率</th><th>网络接收</th><th>网络发送</th><th>健康分</th>
+                        </tr></thead>
+                        <tbody id="resource-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 7-day P99 table -->
+            <div class="island" style="margin-bottom: var(--spacing-lg);">
+                <div class="island-header">
+                    <svg class="island-icon" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/>
+                    </svg>
+                    <h2 class="island-title">7天 P99 使用率<span class="island-note">最近7天</span></h2>
+                </div>
+                <div class="data-table-wrap">
+                    <table class="data-table" id="p99-table">
+                        <thead><tr><th>站点</th><th>CPU P99 (%)</th><th>内存 P99 (%)</th></tr></thead>
+                        <tbody id="p99-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Partition table -->
+            <div class="island" style="margin-bottom: var(--spacing-lg);">
+                <div class="island-header">
+                    <svg class="island-icon" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0018 0V5"/><path d="M3 12a9 3 0 0018 0"/>
+                    </svg>
+                    <h2 class="island-title">分区可用空间</h2>
+                </div>
+                <div class="data-table-wrap">
+                    <table class="data-table" id="partition-table">
+                        <thead><tr><th>站点</th><th>挂载点</th><th>总量</th><th>可用</th><th>使用率</th></tr></thead>
+                        <tbody id="partition-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Time series charts (2-col) -->
+            <div class="chart-grid">
+                <div class="island">
+                    <div class="island-header">
+                        <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/>
+                        </svg>
+                        <h2 class="island-title">CPU 使用率</h2>
+                    </div>
+                    <div class="chart-wrap" id="wrap-cpu"><div class="chart-loading">加载中…</div><div class="chart" id="chart-cpu"></div></div>
+                </div>
+                <div class="island">
+                    <div class="island-header">
+                        <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10v4M10 10v4M14 10v4M18 10v4"/>
+                        </svg>
+                        <h2 class="island-title">内存信息</h2>
+                    </div>
+                    <div class="chart-wrap" id="wrap-mem"><div class="chart-loading">加载中…</div><div class="chart" id="chart-mem"></div></div>
+                </div>
+                <div class="island">
+                    <div class="island-header">
+                        <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0018 0V5"/>
+                        </svg>
+                        <h2 class="island-title">磁盘使用率</h2>
+                    </div>
+                    <div class="chart-wrap" id="wrap-disk"><div class="chart-loading">加载中…</div><div class="chart" id="chart-disk"></div></div>
+                </div>
+                <div class="island">
+                    <div class="island-header">
+                        <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M3 12h4l3-9 4 18 3-9h4"/>
+                        </svg>
+                        <h2 class="island-title">系统平均负载</h2>
+                    </div>
+                    <div class="chart-wrap" id="wrap-load"><div class="chart-loading">加载中…</div><div class="chart" id="chart-load"></div></div>
+                </div>
+                <div class="island">
+                    <div class="island-header">
+                        <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                        <h2 class="island-title">网络带宽</h2>
+                    </div>
+                    <div class="chart-wrap" id="wrap-net"><div class="chart-loading">加载中…</div><div class="chart" id="chart-net"></div></div>
+                </div>
+                <div class="island">
+                    <div class="island-header">
+                        <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M3 3v18h18"/><rect x="7" y="10" width="4" height="8"/><rect x="13" y="6" width="4" height="12"/>
+                        </svg>
+                        <h2 class="island-title">使用率概览</h2>
+                    </div>
+                    <div class="chart-wrap" id="wrap-bargauge"><div class="chart-loading">加载中…</div><div class="chart" id="chart-bargauge"></div></div>
+                </div>
+            </div>
+
+            <!-- Aggregate trends -->
+            <div class="chart-grid">
+                <div class="island full-width">
+                    <div class="island-header">
+                        <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/>
+                        </svg>
+                        <h2 class="island-title">整体总负载与平均 CPU</h2>
+                    </div>
+                    <div class="chart-wrap" id="wrap-agg-load"><div class="chart-loading">加载中…</div><div class="chart" id="chart-agg-load"></div></div>
+                </div>
+                <div class="island">
+                    <div class="island-header">
+                        <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <rect x="2" y="6" width="20" height="12" rx="2"/>
+                        </svg>
+                        <h2 class="island-title">总内存</h2>
+                    </div>
+                    <div class="chart-wrap" id="wrap-agg-mem"><div class="chart-loading">加载中…</div><div class="chart" id="chart-agg-mem"></div></div>
+                </div>
+                <div class="island">
+                    <div class="island-header">
+                        <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0018 0V5"/>
+                        </svg>
+                        <h2 class="island-title">总磁盘</h2>
+                    </div>
+                    <div class="chart-wrap" id="wrap-agg-disk"><div class="chart-loading">加载中…</div><div class="chart" id="chart-agg-disk"></div></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer id="footer">
+    <div>
+        <a target="_blank" href="http://www.gdut.edu.cn/">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+            </svg>
+            广东工业大学首页
+        </a>
+        &nbsp;|&nbsp;
+        <a target="_blank" href="about.html">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>
+            关于我们
+        </a>
+        &nbsp;|&nbsp;
+        <a href="mailto:stunic@gdut.edu.cn">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+            </svg>
+            联系我们
+        </a>
+        &nbsp;|&nbsp;
+        <a target="_blank" href="https://docs.stunic.gdut.edu.cn/s/d6a3f671-45f2-4c51-9a51-c651f3a7d6ac/doc/5bm5bel6zwc5yop56uz5l255so5pah5qgj-XtDBSIgjtB">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+            </svg>
+            文档中心
+        </a>
+        &nbsp;|&nbsp;
+        <a target="_blank" href="status.html">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            当前状态
+        </a>
+        &nbsp;|&nbsp;
+        <a target="_blank" rel="noopener noreferrer" href="https://registry.gdut.edu.cn">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z"/>
+                <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z"/>
+                <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z"/>
+            </svg>
+            容器镜像库
+        </a>
+        &nbsp;|&nbsp;
+        <a target="_blank" href="https://speed.gdut.edu.cn">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+            </svg>
+            校内测速
+        </a>
+    </div>
+    <div style="margin-top: 12px; font-size: 0.875rem; color: var(--color-text-muted);">
+        © <span id="copyright-year">2024</span> 广东工业大学学生网管队 | Powered by Island UI
+    </div>
+</footer>
+
+<script type="text/javascript" src="mirror.js"></script>
+<script>
+(function () {
+    'use strict';
+
+    /* ===== Constants ===== */
+    const PROM_URL = 'https://prometheus.gdutnic.com/api/v1';
+    const IPV4 = '202.116.132.67:9101';
+    const IPV6 = '10.0.8.83:9101';
+    const HOSTS = {
+        [IPV4]: { name: 'IPv4 站点', short: 'IPv4', color: '#971943' },
+        [IPV6]: { name: 'IPv6 站点', short: 'IPv6', color: '#3b82f6' }
+    };
+    const TIME_RANGES = {
+        '1h':  { interval: '1m',  step: 15,  seconds: 3600 },
+        '6h':  { interval: '5m',  step: 60,  seconds: 21600 },
+        '24h': { interval: '10m', step: 120, seconds: 86400 }
+    };
+    const REFRESH_INTERVAL = 60;
+
+    /* ===== State ===== */
+    const state = { range: '1h', site: 'both', promOK: true };
+    const charts = {};   // id -> echarts instance
+    const chartOpts = {}; // id -> last option (for re-theme)
+
+    /* ===== Formatters ===== */
+    function fmtBytes(b) {
+        b = Number(b);
+        if (!isFinite(b) || b < 0) return '-';
+        const u = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+        let i = 0;
+        while (b >= 1024 && i < u.length - 1) { b /= 1024; i++; }
+        return b.toFixed(i === 0 ? 0 : 2) + ' ' + u[i];
+    }
+    function fmtBps(b) {
+        b = Number(b);
+        if (!isFinite(b) || b < 0) return '-';
+        const u = ['bps', 'Kbps', 'Mbps', 'Gbps', 'Tbps'];
+        let i = 0;
+        while (b >= 1000 && i < u.length - 1) { b /= 1000; i++; }
+        return b.toFixed(2) + ' ' + u[i];
+    }
+    function fmtPct(p) {
+        p = Number(p);
+        if (!isFinite(p)) return '-';
+        return p.toFixed(1) + '%';
+    }
+    function fmtUptime(days) {
+        days = Number(days);
+        if (!isFinite(days) || days < 0) return '-';
+        const d = Math.floor(days);
+        const h = Math.round((days - d) * 24);
+        return d + '天' + h + '时';
+    }
+    function pctClass(p) {
+        p = Number(p);
+        if (!isFinite(p)) return '';
+        if (p >= 85) return 'pct-crit';
+        if (p >= 65) return 'pct-warn';
+        return 'pct-good';
+    }
+    function healthColor(p) {
+        p = Number(p);
+        if (p >= 85) return '#ef4444';
+        if (p >= 65) return '#f59e0b';
+        return '#10b981';
+    }
+
+    /* ===== CSS var helper ===== */
+    function cssVar(name) {
+        return getComputedStyle(document.body).getPropertyValue(name).trim();
+    }
+
+    /* ===== Prometheus query helpers ===== */
+    async function promInstant(query) {
+        const url = PROM_URL + '/query?query=' + encodeURIComponent(query);
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Prometheus HTTP ' + res.status);
+        const json = await res.json();
+        if (json.status !== 'success') throw new Error('Prometheus query failed: ' + (json.error || ''));
+        return json.data.result;
+    }
+    async function promRange(query, start, end, step) {
+        const url = PROM_URL + '/query_range?query=' + encodeURIComponent(query) +
+                    '&start=' + start + '&end=' + end + '&step=' + step;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Prometheus HTTP ' + res.status);
+        const json = await res.json();
+        if (json.status !== 'success') throw new Error('Prometheus query failed: ' + (json.error || ''));
+        return json.data.result;
+    }
+    function substitute(tpl, instance, interval) {
+        let s = tpl;
+        if (instance !== undefined) s = s.split('{INSTANCE}').join(instance);
+        if (interval !== undefined) s = s.split('{INTERVAL}').join(interval);
+        return s;
+    }
+
+    /* ===== Instance selector from site choice ===== */
+    function instanceSelector() {
+        if (state.site === 'ipv4') return IPV4;
+        if (state.site === 'ipv6') return IPV6;
+        return IPV4 + '|' + IPV6;
+    }
+    function selectedInstances() {
+        if (state.site === 'ipv4') return [IPV4];
+        if (state.site === 'ipv6') return [IPV6];
+        return [IPV4, IPV6];
+    }
+
+    /* ===== Chart helpers ===== */
+    function getChart(id) {
+        if (!charts[id]) {
+            const el = document.getElementById(id);
+            if (!el) return null;
+            charts[id] = echarts.init(el);
+        }
+        return charts[id];
+    }
+    function themeColors() {
+        return {
+            text: cssVar('--color-text-muted'),
+            border: cssVar('--color-border'),
+            surface: cssVar('--color-surface'),
+            textStrong: cssVar('--color-text')
+        };
+    }
+    function baseTooltip() {
+        const t = themeColors();
+        return {
+            trigger: 'axis',
+            backgroundColor: t.surface,
+            borderColor: t.border,
+            textStyle: { color: t.textStrong },
+            borderWidth: 1
+        };
+    }
+    function baseAxis(extra) {
+        const t = themeColors();
+        return Object.assign({
+            axisLine: { lineStyle: { color: t.border } },
+            axisLabel: { color: t.text },
+            splitLine: { lineStyle: { color: t.border, type: 'dashed' } }
+        }, extra || {});
+    }
+    function timeXAxis() {
+        return baseAxis({ type: 'time' });
+    }
+    // Tooltip formatter for dual-axis aggregate charts: '%' series get pct, others bytes or plain.
+    function aggTooltipFormatter(isBytes) {
+        return function (params) {
+            const tc = themeColors();
+            let html = '<div style="color:' + tc.textStrong + ';margin-bottom:4px;font-weight:600;">' +
+                new Date(params[0].value[0]).toLocaleString() + '</div>';
+            params.forEach(function (p) {
+                const v = p.value[1];
+                let s;
+                if (p.seriesName === '使用率' || p.seriesName === '平均CPU%') s = fmtPct(v);
+                else if (isBytes) s = fmtBytes(v);
+                else s = isFinite(v) ? v.toFixed(2) : '-';
+                html += '<div style="color:' + tc.text + ';">' + p.marker + ' ' + p.seriesName + ': ' + s + '</div>';
+            });
+            return html;
+        };
+    }
+    function setChart(id, option) {
+        const c = getChart(id);
+        if (!c) return;
+        chartOpts[id] = option;
+        c.setOption(option, true);
+        const wrap = document.getElementById('wrap-' + id.replace('chart-', ''));
+        if (wrap) wrap.classList.add('loaded');
+    }
+    function showChartEmpty(id, msg) {
+        const wrap = document.getElementById('wrap-' + id.replace('chart-', ''));
+        if (!wrap) return;
+        wrap.classList.remove('loaded');
+        const el = wrap.querySelector('.chart-loading');
+        if (el) { el.textContent = msg; el.classList.add('static'); }
+    }
+    function showChartLoading(id) {
+        const wrap = document.getElementById('wrap-' + id.replace('chart-', ''));
+        if (!wrap) return;
+        wrap.classList.remove('loaded');
+        const el = wrap.querySelector('.chart-loading');
+        if (el) { el.textContent = '加载中…'; el.classList.remove('static'); }
+    }
+    function matrixToSeries(result, nameFn, colorFn, yFmt) {
+        return result.map(function (item) {
+            const inst = item.metric.instance;
+            const host = HOSTS[inst];
+            return {
+                name: nameFn(item, host),
+                type: 'line',
+                showSymbol: false,
+                smooth: true,
+                lineStyle: { width: 2 },
+                itemStyle: { color: colorFn(item, host) },
+                data: item.values.map(function (v) { return [v[0] * 1000, parseFloat(v[1])]; }),
+                yAxisIndex: 0
+            };
+        });
+    }
+
+    /* ===== Skeleton helpers for tables ===== */
+    function tableSkeleton(tbodyId, cols) {
+        const tb = document.getElementById(tbodyId);
+        if (!tb) return;
+        let html = '';
+        for (let r = 0; r < 2; r++) {
+            html += '<tr>';
+            for (let c = 0; c < cols; c++) {
+                html += '<td><div style="height:14px;background:var(--color-border);border-radius:4px;animation:pulse 1.5s infinite;"></div></td>';
+            }
+            html += '</tr>';
+        }
+        tb.innerHTML = html;
+    }
+    function tableEmpty(tbodyId, msg, cols) {
+        const tb = document.getElementById(tbodyId);
+        if (!tb) return;
+        tb.innerHTML = '<tr><td colspan="' + cols + '" style="text-align:center;color:var(--color-text-muted);padding:var(--spacing-lg);">' + msg + '</td></tr>';
+    }
+
+    /* ===== Panel 1: Overview cards (always both hosts) ===== */
+    async function loadOverview() {
+        const queries = [
+            { key: 'up4', q: 'up{instance="' + IPV4 + '"}' },
+            { key: 'cpu4', q: '(1 - avg(irate(node_cpu_seconds_total{instance="' + IPV4 + '",mode="idle"}[1m])) by (instance)) * 100' },
+            { key: 'mem4', q: '(1 - (node_memory_MemAvailable_bytes{instance="' + IPV4 + '"} / node_memory_MemTotal_bytes{instance="' + IPV4 + '"})) * 100' },
+            { key: 'up6', q: 'up{instance="' + IPV6 + '"}' },
+            { key: 'cpu6', q: '(1 - avg(irate(node_cpu_seconds_total{instance="' + IPV6 + '",mode="idle"}[1m])) by (instance)) * 100' },
+            { key: 'mem6', q: '(1 - (node_memory_MemAvailable_bytes{instance="' + IPV6 + '"} / node_memory_MemTotal_bytes{instance="' + IPV6 + '"})) * 100' }
+        ];
+        const results = await Promise.all(queries.map(function (q) { return promInstant(q.q).catch(function () { return []; }); }));
+        const map = {};
+        queries.forEach(function (q, i) { map[q.key] = results[i]; });
+
+        function val(arr) { return arr && arr[0] ? parseFloat(arr[0].value[1]) : NaN; }
+
+        // IPv4 status
+        const up4 = val(map.up4);
+        const el4s = document.getElementById('ov-ipv4-status');
+        if (isFinite(up4)) {
+            el4s.textContent = up4 === 1 ? '在线' : '离线';
+            el4s.className = 'stat-value ' + (up4 === 1 ? 'ok' : 'err');
+        } else { el4s.textContent = '--'; el4s.className = 'stat-value'; }
+
+        const cpu4 = val(map.cpu4);
+        document.getElementById('ov-ipv4-cpu').textContent = isFinite(cpu4) ? fmtPct(cpu4) : '--';
+        document.getElementById('ov-ipv4-cpu').className = 'stat-value ' + (up4 === 1 ? '' : 'err');
+        document.getElementById('ov-ipv4-cpu-sub').textContent = (up4 === 1 && isFinite(cpu4)) ? pctClass(cpu4).replace('pct-', '') : '';
+
+        const mem4 = val(map.mem4);
+        document.getElementById('ov-ipv4-mem').textContent = isFinite(mem4) ? fmtPct(mem4) : '--';
+        document.getElementById('ov-ipv4-mem').className = 'stat-value ' + (up4 === 1 ? '' : 'err');
+        document.getElementById('ov-ipv4-mem-sub').textContent = (up4 === 1 && isFinite(mem4)) ? pctClass(mem4).replace('pct-', '') : '';
+
+        // IPv6 status
+        const up6 = val(map.up6);
+        const el6s = document.getElementById('ov-ipv6-status');
+        if (isFinite(up6)) {
+            el6s.textContent = up6 === 1 ? '在线' : '离线';
+            el6s.className = 'stat-value ' + (up6 === 1 ? 'ok' : 'err');
+        } else { el6s.textContent = '--'; el6s.className = 'stat-value'; }
+
+        const cpu6 = val(map.cpu6);
+        document.getElementById('ov-ipv6-cpu').textContent = isFinite(cpu6) ? fmtPct(cpu6) : '--';
+        document.getElementById('ov-ipv6-cpu').className = 'stat-value ' + (up6 === 1 ? '' : 'err');
+        document.getElementById('ov-ipv6-cpu-sub').textContent = (up6 === 1 && isFinite(cpu6)) ? pctClass(cpu6).replace('pct-', '') : '';
+
+        const mem6 = val(map.mem6);
+        document.getElementById('ov-ipv6-mem').textContent = isFinite(mem6) ? fmtPct(mem6) : '--';
+        document.getElementById('ov-ipv6-mem').className = 'stat-value ' + (up6 === 1 ? '' : 'err');
+        document.getElementById('ov-ipv6-mem-sub').textContent = (up6 === 1 && isFinite(mem6)) ? pctClass(mem6).replace('pct-', '') : '';
+    }
+
+    /* ===== Panel 2: Resource overview table ===== */
+    async function loadResourceTable() {
+        const inst = instanceSelector();
+        const iv = TIME_RANGES[state.range].interval;
+        tableSkeleton('resource-tbody', 13);
+        const T = {
+            uptime: 'sum(time() - node_boot_time_seconds{instance=~"{INSTANCE}"}) by (instance)/86400',
+            memtotal: 'node_memory_MemTotal_bytes{instance=~"{INSTANCE}"} - 0',
+            cpucount: "count(node_cpu_seconds_total{instance=~\"{INSTANCE}\",mode='system'}) by (instance)",
+            load5: 'node_load5{instance=~"{INSTANCE}"}',
+            cpuusage: '(1 - avg(irate(node_cpu_seconds_total{instance=~"{INSTANCE}",mode="idle"}[{INTERVAL}])) by (instance)) * 100',
+            memusage: '(1 - (node_memory_MemAvailable_bytes{instance=~"{INSTANCE}"} / node_memory_MemTotal_bytes{instance=~"{INSTANCE}"}))* 100',
+            diskusage: 'max((node_filesystem_size_bytes{instance=~"{INSTANCE}",fstype=~"ext.?|xfs",mountpoint=~"/|/home"}-node_filesystem_free_bytes{instance=~"{INSTANCE}",fstype=~"ext.?|xfs",mountpoint=~"/|/home"}) *100/(node_filesystem_avail_bytes{instance=~"{INSTANCE}",fstype=~"ext.?|xfs",mountpoint=~"/|/home"}+(node_filesystem_size_bytes{instance=~"{INSTANCE}",fstype=~"ext.?|xfs",mountpoint=~"/|/home"}-node_filesystem_free_bytes{instance=~"{INSTANCE}",fstype=~"ext.?|xfs",mountpoint=~"/|/home"})))by(instance)',
+            diskread: 'max(irate(node_disk_read_bytes_total{instance=~"{INSTANCE}"}[{INTERVAL}])) by (instance)',
+            diskwrite: 'max(irate(node_disk_written_bytes_total{instance=~"{INSTANCE}"}[{INTERVAL}])) by (instance)',
+            netrx: 'max(irate(node_network_receive_bytes_total{instance=~"{INSTANCE}",device!~"lo|veth.*|wg.*|docker.*|cni.*|br.*|kube.*"}[{INTERVAL}])*8) by (instance)',
+            nettx: 'max(irate(node_network_transmit_bytes_total{instance=~"{INSTANCE}",device!~"lo|veth.*|wg.*|docker.*|cni.*|br.*|kube.*"}[{INTERVAL}])*8) by (instance)'
+        };
+        const keys = Object.keys(T);
+        const results = await Promise.all(keys.map(function (k) {
+            return promInstant(substitute(T[k], inst, iv)).catch(function () { return []; });
+        }));
+        const data = {};
+        keys.forEach(function (k, i) {
+            const m = {};
+            results[i].forEach(function (r) { m[r.metric.instance] = parseFloat(r.value[1]); });
+            data[k] = m;
+        });
+        const instances = selectedInstances();
+        let html = '';
+        let any = false;
+        instances.forEach(function (inst2) {
+            const host = HOSTS[inst2];
+            if (!host) return;
+            any = true;
+            const cpu = data.cpuusage[inst2];
+            const mem = data.memusage[inst2];
+            const disk = data.diskusage[inst2];
+            const health = (isFinite(cpu) ? cpu : 0) * 0.5 + (isFinite(mem) ? mem : 0) * 0.3 + (isFinite(disk) ? disk : 0) * 0.2;
+            html += '<tr>'
+                + '<td class="col-site">' + host.name + '</td>'
+                + '<td>' + fmtUptime(data.uptime[inst2]) + '</td>'
+                + '<td>' + (isFinite(data.cpucount[inst2]) ? Math.round(data.cpucount[inst2]) : '-') + '</td>'
+                + '<td>' + fmtBytes(data.memtotal[inst2]) + '</td>'
+                + '<td class="pct-tag ' + pctClass(cpu) + '">' + fmtPct(cpu) + '</td>'
+                + '<td class="pct-tag ' + pctClass(mem) + '">' + fmtPct(mem) + '</td>'
+                + '<td class="pct-tag ' + pctClass(disk) + '">' + fmtPct(disk) + '</td>'
+                + '<td>' + (isFinite(data.load5[inst2]) ? data.load5[inst2].toFixed(2) : '-') + '</td>'
+                + '<td>' + (isFinite(data.diskread[inst2]) ? fmtBytes(data.diskread[inst2]) + '/s' : '-') + '</td>'
+                + '<td>' + (isFinite(data.diskwrite[inst2]) ? fmtBytes(data.diskwrite[inst2]) + '/s' : '-') + '</td>'
+                + '<td>' + fmtBps(data.netrx[inst2]) + '</td>'
+                + '<td>' + fmtBps(data.nettx[inst2]) + '</td>'
+                + '<td><span class="health-bar"><span class="health-track"><span class="health-fill" style="width:' + health.toFixed(1) + '%;background:' + healthColor(health) + ';"></span></span><span class="pct-tag ' + pctClass(health) + '">' + health.toFixed(1) + '</span></span></td>'
+                + '</tr>';
+        });
+        if (!any) { tableEmpty('resource-tbody', '暂无数据', 13); return; }
+        document.getElementById('resource-tbody').innerHTML = html;
+    }
+
+    /* ===== Panel 3: 7-day P99 table ===== */
+    async function loadP99Table() {
+        const inst = instanceSelector();
+        tableSkeleton('p99-tbody', 3);
+        const T = {
+            cpu: 'quantile_over_time(0.99, cpu:usage:rate1m{instance=~"{INSTANCE}"}[7d:1h])',
+            mem: 'quantile_over_time(0.99, mem:usage:rate1m{instance=~"{INSTANCE}"}[7d:1h])'
+        };
+        const results = await Promise.all([
+            promInstant(substitute(T.cpu, inst)).catch(function () { return []; }),
+            promInstant(substitute(T.mem, inst)).catch(function () { return []; })
+        ]);
+        const cpuMap = {}, memMap = {};
+        results[0].forEach(function (r) { cpuMap[r.metric.instance] = parseFloat(r.value[1]); });
+        results[1].forEach(function (r) { memMap[r.metric.instance] = parseFloat(r.value[1]); });
+        const instances = selectedInstances();
+        let html = '', any = false;
+        instances.forEach(function (inst2) {
+            const host = HOSTS[inst2];
+            if (!host) return;
+            if (!isFinite(cpuMap[inst2]) && !isFinite(memMap[inst2])) return;
+            any = true;
+            const cpu = cpuMap[inst2], mem = memMap[inst2];
+            html += '<tr>'
+                + '<td class="col-site">' + host.name + '</td>'
+                + '<td class="pct-tag ' + pctClass(cpu) + '">' + (isFinite(cpu) ? fmtPct(cpu) : '-') + '</td>'
+                + '<td class="pct-tag ' + pctClass(mem) + '">' + (isFinite(mem) ? fmtPct(mem) : '-') + '</td>'
+                + '</tr>';
+        });
+        if (!any) { tableEmpty('p99-tbody', '暂无数据（recording rules 可能未配置）', 3); return; }
+        document.getElementById('p99-tbody').innerHTML = html;
+    }
+
+    /* ===== Panel 4: Partition table ===== */
+    async function loadPartitionTable() {
+        const inst = instanceSelector();
+        tableSkeleton('partition-tbody', 5);
+        const T = {
+            total: 'node_filesystem_size_bytes{instance=~"{INSTANCE}",fstype=~"ext.*|xfs",mountpoint=~"/|/home"}-0',
+            avail: 'node_filesystem_avail_bytes{instance=~"{INSTANCE}",fstype=~"ext.*|xfs",mountpoint=~"/|/home"}-0',
+            usage: '(node_filesystem_size_bytes{instance=~"{INSTANCE}",fstype=~"ext.*|xfs",mountpoint=~"/|/home"}-node_filesystem_free_bytes{instance=~"{INSTANCE}",fstype=~"ext.*|xfs",mountpoint=~"/|/home"}) *100/(node_filesystem_avail_bytes{instance=~"{INSTANCE}",fstype=~"ext.*|xfs",mountpoint=~"/|/home"}+(node_filesystem_size_bytes{instance=~"{INSTANCE}",fstype=~"ext.*|xfs",mountpoint=~"/|/home"}-node_filesystem_free_bytes{instance=~"{INSTANCE}",fstype=~"ext.*|xfs",mountpoint=~"/|/home"}))'
+        };
+        const results = await Promise.all([
+            promInstant(substitute(T.total, inst)).catch(function () { return []; }),
+            promInstant(substitute(T.avail, inst)).catch(function () { return []; }),
+            promInstant(substitute(T.usage, inst)).catch(function () { return []; })
+        ]);
+        // Build map keyed by instance|mountpoint
+        const rows = {};
+        results[0].forEach(function (r) {
+            const k = r.metric.instance + '|' + r.metric.mountpoint;
+            rows[k] = { instance: r.metric.instance, mountpoint: r.metric.mountpoint, total: parseFloat(r.value[1]) };
+        });
+        results[1].forEach(function (r) {
+            const k = r.metric.instance + '|' + r.metric.mountpoint;
+            if (rows[k]) rows[k].avail = parseFloat(r.value[1]);
+        });
+        results[2].forEach(function (r) {
+            const k = r.metric.instance + '|' + r.metric.mountpoint;
+            if (rows[k]) rows[k].usage = parseFloat(r.value[1]);
+        });
+        const keys = Object.keys(rows);
+        if (!keys.length) { tableEmpty('partition-tbody', '暂无数据', 5); return; }
+        // Order by instance order then mountpoint
+        const insts = selectedInstances();
+        let html = '';
+        insts.forEach(function (inst2) {
+            keys.filter(function (k) { return rows[k].instance === inst2; })
+                .sort(function (a, b) { return rows[a].mountpoint.localeCompare(rows[b].mountpoint); })
+                .forEach(function (k) {
+                    const r = rows[k];
+                    const host = HOSTS[r.instance];
+                    if (!host) return;
+                    const u = isFinite(r.usage) ? r.usage : NaN;
+                    html += '<tr>'
+                        + '<td class="col-site">' + host.name + '</td>'
+                        + '<td>' + (r.mountpoint || '-') + '</td>'
+                        + '<td>' + fmtBytes(r.total) + '</td>'
+                        + '<td>' + fmtBytes(r.avail) + '</td>'
+                        + '<td class="pct-tag ' + pctClass(u) + '">' + fmtPct(u) + '</td>'
+                        + '</tr>';
+                });
+        });
+        document.getElementById('partition-tbody').innerHTML = html;
+    }
+
+    /* ===== Panel 5: CPU timeseries ===== */
+    async function loadCpuChart() {
+        showChartLoading('chart-cpu');
+        const inst = instanceSelector();
+        const iv = TIME_RANGES[state.range].interval;
+        const step = TIME_RANGES[state.range].step;
+        const end = Math.floor(Date.now() / 1000);
+        const start = end - TIME_RANGES[state.range].seconds;
+        const q = '(1 - avg(irate(node_cpu_seconds_total{instance=~"' + inst + '",mode="idle"}[' + iv + '])) by (instance))*100';
+        try {
+            const result = await promRange(q, start, end, step);
+            if (!result.length) { showChartEmpty('chart-cpu', '暂无数据'); return; }
+            const series = matrixToSeries(result,
+                function (item, host) { return host ? host.short : item.metric.instance; },
+                function (item, host) { return host ? host.color : '#999'; });
+            setChart('chart-cpu', {
+                backgroundColor: 'transparent',
+                tooltip: Object.assign(baseTooltip(), { valueFormatter: function (v) { return fmtPct(v); } }),
+                legend: { top: 0, textStyle: { color: themeColors().text } },
+                grid: { left: 50, right: 20, top: 36, bottom: 30 },
+                xAxis: timeXAxis(),
+                yAxis: baseAxis({ type: 'value', axisLabel: { color: themeColors().text, formatter: '{value}%' }, max: 100 }),
+                series: series
+            });
+        } catch (e) { showChartEmpty('chart-cpu', '加载失败'); }
+    }
+
+    /* ===== Panel 6: Memory timeseries ===== */
+    async function loadMemChart() {
+        showChartLoading('chart-mem');
+        const inst = instanceSelector();
+        const step = TIME_RANGES[state.range].step;
+        const end = Math.floor(Date.now() / 1000);
+        const start = end - TIME_RANGES[state.range].seconds;
+        const qUsed = 'node_memory_MemTotal_bytes{instance=~"' + inst + '"} - node_memory_MemAvailable_bytes{instance=~"' + inst + '"}';
+        const qTotal = 'node_memory_MemTotal_bytes{instance=~"' + inst + '"}';
+        try {
+            const results = await Promise.all([
+                promRange(qUsed, start, end, step).catch(function () { return []; }),
+                promRange(qTotal, start, end, step).catch(function () { return []; })
+            ]);
+            const usedSeries = matrixToSeries(results[0],
+                function (item, host) { return host ? host.short + ' 已用' : item.metric.instance; },
+                function (item, host) { return host ? host.color : '#999'; });
+            const totalSeries = results[1].map(function (item) {
+                const host = HOSTS[item.metric.instance];
+                return {
+                    name: host ? host.short + ' 总量' : item.metric.instance,
+                    type: 'line', showSymbol: false, smooth: true,
+                    lineStyle: { width: 1, type: 'dashed' },
+                    itemStyle: { color: host ? host.color : '#999' },
+                    data: item.values.map(function (v) { return [v[0] * 1000, parseFloat(v[1])]; })
+                };
+            });
+            if (!usedSeries.length && !totalSeries.length) { showChartEmpty('chart-mem', '暂无数据'); return; }
+            setChart('chart-mem', {
+                backgroundColor: 'transparent',
+                tooltip: Object.assign(baseTooltip(), { valueFormatter: function (v) { return fmtBytes(v); } }),
+                legend: { top: 0, textStyle: { color: themeColors().text } },
+                grid: { left: 60, right: 20, top: 36, bottom: 30 },
+                xAxis: timeXAxis(),
+                yAxis: baseAxis({ type: 'value', axisLabel: { color: themeColors().text, formatter: function (v) { return fmtBytes(v); } } }),
+                series: usedSeries.concat(totalSeries)
+            });
+        } catch (e) { showChartEmpty('chart-mem', '加载失败'); }
+    }
+
+    /* ===== Panel 7: Disk timeseries ===== */
+    async function loadDiskChart() {
+        showChartLoading('chart-disk');
+        const inst = instanceSelector();
+        const step = TIME_RANGES[state.range].step;
+        const end = Math.floor(Date.now() / 1000);
+        const start = end - TIME_RANGES[state.range].seconds;
+        const q = '(node_filesystem_size_bytes{instance=~"' + inst + '",fstype=~"ext.*|xfs",mountpoint=~"/|/home"}-node_filesystem_free_bytes{instance=~"' + inst + '",fstype=~"ext.*|xfs",mountpoint=~"/|/home"}) *100/(node_filesystem_avail_bytes{instance=~"' + inst + '",fstype=~"ext.*|xfs",mountpoint=~"/|/home"}+(node_filesystem_size_bytes{instance=~"' + inst + '",fstype=~"ext.*|xfs",mountpoint=~"/|/home"}-node_filesystem_free_bytes{instance=~"' + inst + '",fstype=~"ext.*|xfs",mountpoint=~"/|/home"}))';
+        try {
+            const result = await promRange(q, start, end, step);
+            if (!result.length) { showChartEmpty('chart-disk', '暂无数据'); return; }
+            const series = result.map(function (item) {
+                const host = HOSTS[item.metric.instance];
+                const mp = item.metric.mountpoint || '';
+                return {
+                    name: (host ? host.short : item.metric.instance) + ' ' + mp,
+                    type: 'line', showSymbol: false, smooth: true,
+                    lineStyle: { width: 2 },
+                    itemStyle: { color: host ? host.color : '#999' },
+                    data: item.values.map(function (v) { return [v[0] * 1000, parseFloat(v[1])]; })
+                };
+            });
+            setChart('chart-disk', {
+                backgroundColor: 'transparent',
+                tooltip: Object.assign(baseTooltip(), { valueFormatter: function (v) { return fmtPct(v); } }),
+                legend: { top: 0, textStyle: { color: themeColors().text } },
+                grid: { left: 50, right: 20, top: 36, bottom: 30 },
+                xAxis: timeXAxis(),
+                yAxis: baseAxis({ type: 'value', axisLabel: { color: themeColors().text, formatter: '{value}%' }, max: 100 }),
+                series: series
+            });
+        } catch (e) { showChartEmpty('chart-disk', '加载失败'); }
+    }
+
+    /* ===== Panel 8: Load timeseries ===== */
+    async function loadLoadChart() {
+        showChartLoading('chart-load');
+        const inst = instanceSelector();
+        const step = TIME_RANGES[state.range].step;
+        const end = Math.floor(Date.now() / 1000);
+        const start = end - TIME_RANGES[state.range].seconds;
+        const q = 'node_load5{instance=~"' + inst + '"}';
+        try {
+            const result = await promRange(q, start, end, step);
+            if (!result.length) { showChartEmpty('chart-load', '暂无数据'); return; }
+            const series = matrixToSeries(result,
+                function (item, host) { return host ? host.short : item.metric.instance; },
+                function (item, host) { return host ? host.color : '#999'; });
+            setChart('chart-load', {
+                backgroundColor: 'transparent',
+                tooltip: baseTooltip(),
+                legend: { top: 0, textStyle: { color: themeColors().text } },
+                grid: { left: 50, right: 20, top: 36, bottom: 30 },
+                xAxis: timeXAxis(),
+                yAxis: baseAxis({ type: 'value' }),
+                series: series
+            });
+        } catch (e) { showChartEmpty('chart-load', '加载失败'); }
+    }
+
+    /* ===== Panel 9: Network bandwidth ===== */
+    async function loadNetChart() {
+        showChartLoading('chart-net');
+        const inst = instanceSelector();
+        const iv = TIME_RANGES[state.range].interval;
+        const step = TIME_RANGES[state.range].step;
+        const end = Math.floor(Date.now() / 1000);
+        const start = end - TIME_RANGES[state.range].seconds;
+        const devFilter = 'device!~"lo|veth.*|wg.*|docker.*|cni.*|br.*|kube.*"';
+        const qRx = 'sum(irate(node_network_receive_bytes_total{instance=~"' + inst + '",' + devFilter + '}[' + iv + '])*8) by (instance)';
+        const qTx = 'sum(irate(node_network_transmit_bytes_total{instance=~"' + inst + '",' + devFilter + '}[' + iv + '])*8) by (instance)';
+        try {
+            const results = await Promise.all([
+                promRange(qRx, start, end, step).catch(function () { return []; }),
+                promRange(qTx, start, end, step).catch(function () { return []; })
+            ]);
+            const rxSeries = matrixToSeries(results[0],
+                function (item, host) { return host ? host.short + ' 接收' : item.metric.instance; },
+                function (item, host) { return host ? host.color : '#999'; });
+            const txSeries = matrixToSeries(results[1],
+                function (item, host) { return host ? host.short + ' 发送' : item.metric.instance; },
+                function (item, host) { return host ? host.color : '#999'; });
+            // Distinguish tx by dashed line
+            txSeries.forEach(function (s) { s.lineStyle = { width: 2, type: 'dashed' }; });
+            if (!rxSeries.length && !txSeries.length) { showChartEmpty('chart-net', '暂无数据'); return; }
+            setChart('chart-net', {
+                backgroundColor: 'transparent',
+                tooltip: Object.assign(baseTooltip(), { valueFormatter: function (v) { return fmtBps(v); } }),
+                legend: { top: 0, textStyle: { color: themeColors().text } },
+                grid: { left: 60, right: 20, top: 36, bottom: 30 },
+                xAxis: timeXAxis(),
+                yAxis: baseAxis({ type: 'value', axisLabel: { color: themeColors().text, formatter: function (v) { return fmtBps(v); } } }),
+                series: rxSeries.concat(txSeries)
+            });
+        } catch (e) { showChartEmpty('chart-net', '加载失败'); }
+    }
+
+    /* ===== Panel 10: Bargauge ===== */
+    async function loadBargauge() {
+        showChartLoading('chart-bargauge');
+        const inst = instanceSelector();
+        const iv = TIME_RANGES[state.range].interval;
+        const T = {
+            cpu: '100 - (avg(irate(node_cpu_seconds_total{instance=~"' + inst + '",mode="idle"}[' + iv + '])) * 100)',
+            iowait: 'avg(irate(node_cpu_seconds_total{instance=~"' + inst + '",mode="iowait"}[' + iv + '])) * 100',
+            mem: '(1 - (node_memory_MemAvailable_bytes{instance=~"' + inst + '"} / node_memory_MemTotal_bytes{instance=~"' + inst + '"}))* 100',
+            disk: '(node_filesystem_size_bytes{instance=~"' + inst + '",fstype=~"ext.*|xfs",mountpoint="/home"}-node_filesystem_free_bytes{instance=~"' + inst + '",fstype=~"ext.*|xfs",mountpoint="/home"})*100/(node_filesystem_avail_bytes{instance=~"' + inst + '",fstype=~"ext.*|xfs",mountpoint="/home"}+(node_filesystem_size_bytes{instance=~"' + inst + '",fstype=~"ext.*|xfs",mountpoint="/home"}-node_filesystem_free_bytes{instance=~"' + inst + '",fstype=~"ext.*|xfs",mountpoint="/home"}))',
+            swap: '(1 - ((node_memory_SwapFree_bytes{instance=~"' + inst + '"} + 1)/ (node_memory_SwapTotal_bytes{instance=~"' + inst + '"} + 1))) * 100'
+        };
+        const keys = Object.keys(T);
+        try {
+            const results = await Promise.all(keys.map(function (k) { return promInstant(T[k]).catch(function () { return []; }); }));
+            const cats = ['CPU', 'iowait', '内存', '磁盘', 'swap'];
+            const insts = selectedInstances();
+            const series = insts.map(function (inst2) {
+                const host = HOSTS[inst2];
+                const vals = keys.map(function (k, i) {
+                    const arr = results[i];
+                    const found = arr.find(function (r) { return r.metric.instance === inst2; });
+                    return found ? parseFloat(found.value[1]) : 0;
+                });
+                return {
+                    name: host ? host.name : inst2,
+                    type: 'bar',
+                    barMaxWidth: 24,
+                    itemStyle: { color: host ? host.color : '#999', borderRadius: [0, 4, 4, 0] },
+                    data: vals
+                };
+            });
+            if (!series.length) { showChartEmpty('chart-bargauge', '暂无数据'); return; }
+            setChart('chart-bargauge', {
+                backgroundColor: 'transparent',
+                tooltip: Object.assign(baseTooltip(), { trigger: 'item', valueFormatter: function (v) { return fmtPct(v); } }),
+                legend: { top: 0, textStyle: { color: themeColors().text } },
+                grid: { left: 60, right: 20, top: 36, bottom: 30 },
+                xAxis: baseAxis({ type: 'value', max: 100, axisLabel: { color: themeColors().text, formatter: '{value}%' } }),
+                yAxis: baseAxis({ type: 'category', data: cats, splitLine: { show: false } }),
+                series: series
+            });
+        } catch (e) { showChartEmpty('chart-bargauge', '加载失败'); }
+    }
+
+    /* ===== Panel 11: Aggregate total load + avg CPU ===== */
+    async function loadAggLoad() {
+        showChartLoading('chart-agg-load');
+        const inst = instanceSelector();
+        const iv = TIME_RANGES[state.range].interval;
+        const step = TIME_RANGES[state.range].step;
+        const end = Math.floor(Date.now() / 1000);
+        const start = end - TIME_RANGES[state.range].seconds;
+        const T = {
+            load: 'sum(node_load5{instance=~"' + inst + '"})',
+            cores: 'count(node_cpu_seconds_total{instance=~"' + inst + '",mode=\'system\'})',
+            avgcpu: 'avg(1 - avg(irate(node_cpu_seconds_total{instance=~"' + inst + '",mode="idle"}[' + iv + '])) by (instance)) * 100'
+        };
+        try {
+            const results = await Promise.all([
+                promRange(T.load, start, end, step).catch(function () { return []; }),
+                promRange(T.cores, start, end, step).catch(function () { return []; }),
+                promRange(T.avgcpu, start, end, step).catch(function () { return []; })
+            ]);
+            const tc = themeColors();
+            function toData(res) {
+                if (!res[0] || !res[0].values) return [];
+                return res[0].values.map(function (v) { return [v[0] * 1000, parseFloat(v[1])]; });
+            }
+            const series = [
+                { name: '总负载', type: 'line', showSymbol: false, smooth: true, yAxisIndex: 0, itemStyle: { color: '#971943' }, lineStyle: { width: 2 }, data: toData(results[0]) },
+                { name: 'CPU核数', type: 'line', showSymbol: false, smooth: true, yAxisIndex: 0, itemStyle: { color: '#8b5cf6' }, lineStyle: { width: 2, type: 'dashed' }, data: toData(results[1]) },
+                { name: '平均CPU%', type: 'line', showSymbol: false, smooth: true, yAxisIndex: 1, itemStyle: { color: '#3b82f6' }, lineStyle: { width: 2 }, data: toData(results[2]) }
+            ];
+            if (!series[0].data.length && !series[2].data.length) { showChartEmpty('chart-agg-load', '暂无数据'); return; }
+            setChart('chart-agg-load', {
+                backgroundColor: 'transparent',
+                tooltip: Object.assign(baseTooltip(), { formatter: aggTooltipFormatter(false) }),
+                legend: { top: 0, textStyle: { color: tc.text } },
+                grid: { left: 60, right: 60, top: 36, bottom: 30 },
+                xAxis: timeXAxis(),
+                yAxis: [
+                    baseAxis({ type: 'value', name: '负载/核数', nameTextStyle: { color: tc.text }, position: 'left' }),
+                    baseAxis({ type: 'value', name: 'CPU%', max: 100, nameTextStyle: { color: tc.text }, position: 'right', axisLabel: { color: tc.text, formatter: '{value}%' } })
+                ],
+                series: series
+            });
+        } catch (e) { showChartEmpty('chart-agg-load', '加载失败'); }
+    }
+
+    /* ===== Panel 12: Total memory ===== */
+    async function loadAggMem() {
+        showChartLoading('chart-agg-mem');
+        const inst = instanceSelector();
+        const step = TIME_RANGES[state.range].step;
+        const end = Math.floor(Date.now() / 1000);
+        const start = end - TIME_RANGES[state.range].seconds;
+        const qUsed = 'sum(node_memory_MemTotal_bytes{instance=~"' + inst + '"} - node_memory_MemAvailable_bytes{instance=~"' + inst + '"})';
+        const qTotal = 'sum(node_memory_MemTotal_bytes{instance=~"' + inst + '"})';
+        const qUsage = '(sum(node_memory_MemTotal_bytes{instance=~"' + inst + '"} - node_memory_MemAvailable_bytes{instance=~"' + inst + '"}) / sum(node_memory_MemTotal_bytes{instance=~"' + inst + '"}))*100';
+        try {
+            const results = await Promise.all([
+                promRange(qUsed, start, end, step).catch(function () { return []; }),
+                promRange(qTotal, start, end, step).catch(function () { return []; }),
+                promRange(qUsage, start, end, step).catch(function () { return []; })
+            ]);
+            const tc = themeColors();
+            function toData(res) {
+                if (!res[0] || !res[0].values) return [];
+                return res[0].values.map(function (v) { return [v[0] * 1000, parseFloat(v[1])]; });
+            }
+            const series = [
+                { name: '已用', type: 'line', showSymbol: false, smooth: true, yAxisIndex: 0, itemStyle: { color: '#971943' }, lineStyle: { width: 2 }, data: toData(results[0]) },
+                { name: '总量', type: 'line', showSymbol: false, smooth: true, yAxisIndex: 0, itemStyle: { color: '#8b5cf6' }, lineStyle: { width: 2, type: 'dashed' }, data: toData(results[1]) },
+                { name: '使用率', type: 'line', showSymbol: false, smooth: true, yAxisIndex: 1, itemStyle: { color: '#3b82f6' }, lineStyle: { width: 2 }, data: toData(results[2]) }
+            ];
+            if (!series[0].data.length && !series[1].data.length) { showChartEmpty('chart-agg-mem', '暂无数据'); return; }
+            setChart('chart-agg-mem', {
+                backgroundColor: 'transparent',
+                tooltip: Object.assign(baseTooltip(), { formatter: aggTooltipFormatter(true) }),
+                legend: { top: 0, textStyle: { color: tc.text } },
+                grid: { left: 70, right: 50, top: 36, bottom: 30 },
+                xAxis: timeXAxis(),
+                yAxis: [
+                    baseAxis({ type: 'value', name: '内存', nameTextStyle: { color: tc.text }, axisLabel: { color: tc.text, formatter: function (v) { return fmtBytes(v); } } }),
+                    baseAxis({ type: 'value', name: '%', max: 100, nameTextStyle: { color: tc.text }, position: 'right', axisLabel: { color: tc.text, formatter: '{value}%' } })
+                ],
+                series: series
+            });
+        } catch (e) { showChartEmpty('chart-agg-mem', '加载失败'); }
+    }
+
+    /* ===== Panel 13: Total disk ===== */
+    async function loadAggDisk() {
+        showChartLoading('chart-agg-disk');
+        const inst = instanceSelector();
+        const step = TIME_RANGES[state.range].step;
+        const end = Math.floor(Date.now() / 1000);
+        const start = end - TIME_RANGES[state.range].seconds;
+        const qUsed = 'sum(avg(node_filesystem_size_bytes{instance=~"' + inst + '",fstype=~"xfs|ext.*",mountpoint=~"/|/home"})by(device,instance)) - sum(avg(node_filesystem_free_bytes{instance=~"' + inst + '",fstype=~"xfs|ext.*",mountpoint=~"/|/home"})by(device,instance))';
+        const qTotal = 'sum(avg(node_filesystem_size_bytes{instance=~"' + inst + '",fstype=~"xfs|ext.*",mountpoint=~"/|/home"})by(device,instance))';
+        const qUsage = '(sum(avg(node_filesystem_size_bytes{instance=~"' + inst + '",fstype=~"xfs|ext.*",mountpoint=~"/|/home"})by(device,instance)) - sum(avg(node_filesystem_free_bytes{instance=~"' + inst + '",fstype=~"xfs|ext.*",mountpoint=~"/|/home"})by(device,instance))) / sum(avg(node_filesystem_size_bytes{instance=~"' + inst + '",fstype=~"xfs|ext.*",mountpoint=~"/|/home"})by(device,instance)) * 100';
+        try {
+            const results = await Promise.all([
+                promRange(qUsed, start, end, step).catch(function () { return []; }),
+                promRange(qTotal, start, end, step).catch(function () { return []; }),
+                promRange(qUsage, start, end, step).catch(function () { return []; })
+            ]);
+            const tc = themeColors();
+            function toData(res) {
+                if (!res[0] || !res[0].values) return [];
+                return res[0].values.map(function (v) { return [v[0] * 1000, parseFloat(v[1])]; });
+            }
+            const series = [
+                { name: '已用', type: 'line', showSymbol: false, smooth: true, yAxisIndex: 0, itemStyle: { color: '#971943' }, lineStyle: { width: 2 }, data: toData(results[0]) },
+                { name: '总量', type: 'line', showSymbol: false, smooth: true, yAxisIndex: 0, itemStyle: { color: '#8b5cf6' }, lineStyle: { width: 2, type: 'dashed' }, data: toData(results[1]) },
+                { name: '使用率', type: 'line', showSymbol: false, smooth: true, yAxisIndex: 1, itemStyle: { color: '#3b82f6' }, lineStyle: { width: 2 }, data: toData(results[2]) }
+            ];
+            if (!series[0].data.length && !series[1].data.length) { showChartEmpty('chart-agg-disk', '暂无数据'); return; }
+            setChart('chart-agg-disk', {
+                backgroundColor: 'transparent',
+                tooltip: Object.assign(baseTooltip(), { formatter: aggTooltipFormatter(true) }),
+                legend: { top: 0, textStyle: { color: tc.text } },
+                grid: { left: 70, right: 50, top: 36, bottom: 30 },
+                xAxis: timeXAxis(),
+                yAxis: [
+                    baseAxis({ type: 'value', name: '磁盘', nameTextStyle: { color: tc.text }, axisLabel: { color: tc.text, formatter: function (v) { return fmtBytes(v); } } }),
+                    baseAxis({ type: 'value', name: '%', max: 100, nameTextStyle: { color: tc.text }, position: 'right', axisLabel: { color: tc.text, formatter: '{value}%' } })
+                ],
+                series: series
+            });
+        } catch (e) { showChartEmpty('chart-agg-disk', '加载失败'); }
+    }
+
+    /* ===== Theme re-apply for all charts ===== */
+    function rethemeCharts() {
+        Object.keys(chartOpts).forEach(function (id) {
+            const c = charts[id];
+            if (!c) return;
+            // Re-set option with refreshed theme colors by re-running the option builder is complex;
+            // simplest: re-apply axis/tooltip/legend colors via merge.
+            const tc = themeColors();
+            const opt = chartOpts[id];
+            if (opt.tooltip) {
+                opt.tooltip.backgroundColor = tc.surface;
+                opt.tooltip.borderColor = tc.border;
+                opt.tooltip.textStyle = { color: tc.textStrong };
+            }
+            if (opt.legend && opt.legend.textStyle) opt.legend.textStyle.color = tc.text;
+            function fixAxis(ax) {
+                if (!ax) return;
+                const arr = Array.isArray(ax) ? ax : [ax];
+                arr.forEach(function (a) {
+                    if (a.axisLabel) a.axisLabel.color = tc.text;
+                    if (a.axisLine && a.axisLine.lineStyle) a.axisLine.lineStyle.color = tc.border;
+                    if (a.splitLine && a.splitLine.lineStyle) a.splitLine.lineStyle.color = tc.border;
+                    if (a.nameTextStyle) a.nameTextStyle.color = tc.text;
+                });
+            }
+            fixAxis(opt.xAxis);
+            fixAxis(opt.yAxis);
+            c.setOption(opt, false);
+        });
+    }
+
+    /* ===== Refresh orchestration ===== */
+    let refreshTimer = null;
+    let countdown = REFRESH_INTERVAL;
+
+    async function refreshAll() {
+        const banner = document.getElementById('error-banner');
+        try {
+            await loadOverview();
+            state.promOK = true;
+            banner.hidden = true;
+        } catch (e) {
+            state.promOK = false;
+            banner.hidden = false;
+            return;
+        }
+        // Parallel load of all selector-dependent panels
+        await Promise.all([
+            loadResourceTable().catch(function () {}),
+            loadP99Table().catch(function () {}),
+            loadPartitionTable().catch(function () {}),
+            loadCpuChart().catch(function () {}),
+            loadMemChart().catch(function () {}),
+            loadDiskChart().catch(function () {}),
+            loadLoadChart().catch(function () {}),
+            loadNetChart().catch(function () {}),
+            loadBargauge().catch(function () {}),
+            loadAggLoad().catch(function () {}),
+            loadAggMem().catch(function () {}),
+            loadAggDisk().catch(function () {})
+        ]);
+        const now = new Date();
+        document.getElementById('last-refresh').textContent = '上次刷新: ' +
+            String(now.getHours()).padStart(2, '0') + ':' +
+            String(now.getMinutes()).padStart(2, '0') + ':' +
+            String(now.getSeconds()).padStart(2, '0');
+        countdown = REFRESH_INTERVAL;
+    }
+
+    function startRefreshTimer() {
+        if (refreshTimer) clearInterval(refreshTimer);
+        countdown = REFRESH_INTERVAL;
+        refreshTimer = setInterval(function () {
+            countdown--;
+            document.getElementById('next-refresh').textContent = '下次刷新: ' + countdown + 's';
+            if (countdown <= 0) { refreshAll(); }
+        }, 1000);
+    }
+
+    /* ===== Selector handlers ===== */
+    function bindControls() {
+        document.getElementById('time-selector').addEventListener('click', function (e) {
+            const btn = e.target.closest('.time-btn');
+            if (!btn) return;
+            document.querySelectorAll('.time-btn').forEach(function (b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            state.range = btn.dataset.range;
+            refreshAll();
+        });
+        document.getElementById('site-selector').addEventListener('change', function (e) {
+            state.site = e.target.value;
+            // Reload selector-dependent panels only (not overview)
+            Promise.all([
+                loadResourceTable().catch(function () {}),
+                loadP99Table().catch(function () {}),
+                loadPartitionTable().catch(function () {}),
+                loadCpuChart().catch(function () {}),
+                loadMemChart().catch(function () {}),
+                loadDiskChart().catch(function () {}),
+                loadLoadChart().catch(function () {}),
+                loadNetChart().catch(function () {}),
+                loadBargauge().catch(function () {}),
+                loadAggLoad().catch(function () {}),
+                loadAggMem().catch(function () {}),
+                loadAggDisk().catch(function () {})
+            ]);
+        });
+    }
+
+    /* ===== Resize handling ===== */
+    let resizeTO = null;
+    window.addEventListener('resize', function () {
+        clearTimeout(resizeTO);
+        resizeTO = setTimeout(function () {
+            Object.keys(charts).forEach(function (id) { if (charts[id]) charts[id].resize(); });
+        }, 200);
+    });
+
+    /* ===== Theme observer ===== */
+    const themeObs = new MutationObserver(function (mutations) {
+        mutations.forEach(function (m) {
+            if (m.attributeName === 'class') { rethemeCharts(); }
+        });
+    });
+    themeObs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+    /* ===== Init ===== */
+    function init() {
+        document.getElementById('copyright-year').textContent = new Date().getFullYear();
+        bindControls();
+        refreshAll();
+        startRefreshTimer();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+</script>
 </body>
 </html>
