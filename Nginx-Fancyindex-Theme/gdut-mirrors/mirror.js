@@ -225,6 +225,33 @@
     }
 
     // ==========================================
+    // Navbar Brand Visibility
+    // ==========================================
+
+    function initNavbarBrandVisibility() {
+        const heroTitle = document.querySelector('.hero-title');
+        const navbar = document.querySelector('.navbar');
+        const navbarBrand = document.querySelector('.navbar-brand.autohide');
+        if (!heroTitle || !navbarBrand || !navbar) return;
+
+        const navbarHeight = navbar.offsetHeight;
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navbarBrand.classList.remove('is-visible');
+                } else {
+                    navbarBrand.classList.add('is-visible');
+                }
+            });
+        }, {
+            rootMargin: `-${navbarHeight}px 0px 0px 0px`,
+            threshold: 0,
+        });
+
+        observer.observe(heroTitle);
+    }
+
+    // ==========================================
     // Initialize Everything
     // ==========================================
     
@@ -234,6 +261,7 @@
         initIslandAnimations();
         enhanceTable();
         initSmoothScroll();
+        initNavbarBrandVisibility();
         
         // Add fade-in class to body
         document.body.classList.add('fade-in');
