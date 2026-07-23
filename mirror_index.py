@@ -19,6 +19,7 @@ HEADER = """
     <link rel="stylesheet" type="text/css" href="/mirror.css" media="screen" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <title>广东工业大学开源镜像站</title>
+    <script>document.documentElement.classList.add('js');</script>
 </head>
 
 <body class="fade-in">
@@ -28,7 +29,7 @@ HEADER = """
     <div class="navbar-container">
         <a href="/" class="navbar-brand">
             <img src="/GDUT_Logo.png" alt="GDUT Logo">
-            <span>GDUT 开源镜像站</span>
+            <span>广东工业大学开源镜像站</span>
         </a>
         <div class="navbar-actions">
             <button class="theme-toggle" aria-label="切换主题" title="切换深色/浅色主题">
