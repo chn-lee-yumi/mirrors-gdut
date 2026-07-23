@@ -413,6 +413,7 @@ html.js .navbar-brand.autohide.is-visible {
 .island:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-xl);
+    border-color: var(--color-primary);
 }
 
 .island:hover::before {
