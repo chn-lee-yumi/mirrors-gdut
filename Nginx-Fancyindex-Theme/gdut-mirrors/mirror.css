@@ -231,6 +231,19 @@ a:hover {
     border-radius: var(--radius-sm);
 }
 
+html.js .navbar-brand.autohide {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform var(--transition-slow), opacity var(--transition-slow);
+}
+
+html.js .navbar-brand.autohide.is-visible {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
 .navbar-actions {
     display: flex;
     align-items: center;
@@ -423,6 +436,7 @@ a:hover {
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--color-text);
+    margin: 0;
 }
 
 /* Compact Islands (Sidebar) */
@@ -432,7 +446,7 @@ a:hover {
 
 .island-compact .island-title {
     font-size: 1.125rem;
-    margin-bottom: var(--spacing-md);
+    margin: 0;
 }
 
 /* ==========================================

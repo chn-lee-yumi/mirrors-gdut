@@ -108,6 +108,8 @@ body {
         radial-gradient(at 0% 0%, rgba(151, 25, 67, 0.05) 0px, transparent 50%),
         radial-gradient(at 100% 100%, rgba(151, 25, 67, 0.05) 0px, transparent 50%);
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     transition: background-color var(--transition-base), color var(--transition-base);
 }
 
@@ -229,14 +231,14 @@ a:hover {
     border-radius: var(--radius-sm);
 }
 
-html.js .navbar-brand {
+html.js .navbar-brand.autohide {
     transform: translateY(100%);
     opacity: 0;
     pointer-events: none;
     transition: transform var(--transition-slow), opacity var(--transition-slow);
 }
 
-html.js .navbar-brand.is-visible {
+html.js .navbar-brand.autohide.is-visible {
     transform: translateY(0);
     opacity: 1;
     pointer-events: auto;
@@ -356,8 +358,10 @@ html.js .navbar-brand.is-visible {
 
 .main-container {
     max-width: 1400px;
+    width: 100%;
     margin: 0 auto;
     padding: var(--spacing-2xl) var(--spacing-xl);
+    flex: 1;
 }
 
 .bento-grid {

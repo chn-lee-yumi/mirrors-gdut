@@ -231,7 +231,7 @@
     function initNavbarBrandVisibility() {
         const heroTitle = document.querySelector('.hero-title');
         const navbar = document.querySelector('.navbar');
-        const navbarBrand = document.querySelector('.navbar-brand');
+        const navbarBrand = document.querySelector('.navbar-brand.autohide');
         if (!heroTitle || !navbarBrand || !navbar) return;
 
         const navbarHeight = navbar.offsetHeight;

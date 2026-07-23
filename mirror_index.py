@@ -27,7 +27,7 @@ HEADER = """
 <!-- Glassmorphic Navigation Bar -->
 <nav class="navbar">
     <div class="navbar-container">
-        <a href="/" class="navbar-brand">
+        <a href="/" class="navbar-brand autohide">
             <img src="/GDUT_Logo.png" alt="GDUT Logo">
             <span>广东工业大学开源镜像站</span>
         </a>
