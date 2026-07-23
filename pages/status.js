@@ -20,6 +20,7 @@
     const state = { range: '1h', site: 'both', promOK: true };
     const charts = {};   // id -> echarts instance
     const chartOpts = {}; // id -> last option (for re-theme)
+    const chartFirstLoad = new Set(); // ids that haven't been rendered yet
 
     /* ===== Formatters ===== */
     function fmtBytes(b) {
@@ -202,6 +203,24 @@
         wrap.classList.remove('loaded');
         const el = wrap.querySelector('.chart-loading');
         if (el) { el.textContent = '加载中…'; el.classList.remove('static'); }
+    }
+    function renderChart(id, option) {
+        if (chartFirstLoad.has(id)) {
+            chartFirstLoad.delete(id);
+            var island = document.getElementById(id) && document.getElementById(id).closest('.island');
+            if (island) {
+                var obs = new IntersectionObserver(function (entries) {
+                    if (entries[0].isIntersecting) {
+                        obs.disconnect();
+                        setTimeout(function () { setChart(id, option); }, 700);
+                    }
+                }, { threshold: 0.15 });
+                obs.observe(island);
+                return;
+            }
+        }
+        showChartLoading(id);
+        setChart(id, option);
     }
     function matrixToSeries(result, nameFn, colorFn, yFmt) {
         return result.map(function (item) {
@@ -493,7 +512,7 @@
             const series = matrixToSeries(result,
                 function (item, host) { return host ? host.short : item.metric.instance; },
                 function (item, host) { return host ? host.color : '#999'; });
-            setChart('chart-cpu', {
+            renderChart('chart-cpu', {
                 backgroundColor: 'transparent',
                 tooltip: Object.assign(baseTooltip(), { valueFormatter: function (v) { return fmtPct(v); } }),
                 legend: { top: 0, textStyle: { color: themeColors().text } },
@@ -533,7 +552,7 @@
                 };
             });
             if (!usedSeries.length && !totalSeries.length) { showChartEmpty('chart-mem', '暂无数据'); return; }
-            setChart('chart-mem', {
+            renderChart('chart-mem', {
                 backgroundColor: 'transparent',
                 tooltip: Object.assign(baseTooltip(), { valueFormatter: function (v) { return fmtBytes(v); } }),
                 legend: { top: 0, textStyle: { color: themeColors().text } },
@@ -567,7 +586,7 @@
                     data: item.values.map(function (v) { return [v[0] * 1000, parseFloat(v[1])]; })
                 };
             });
-            setChart('chart-disk', {
+            renderChart('chart-disk', {
                 backgroundColor: 'transparent',
                 tooltip: Object.assign(baseTooltip(), { valueFormatter: function (v) { return fmtPct(v); } }),
                 legend: { top: 0, textStyle: { color: themeColors().text } },
@@ -593,7 +612,7 @@
             const series = matrixToSeries(result,
                 function (item, host) { return host ? host.short : item.metric.instance; },
                 function (item, host) { return host ? host.color : '#999'; });
-            setChart('chart-load', {
+            renderChart('chart-load', {
                 backgroundColor: 'transparent',
                 tooltip: baseTooltip(),
                 legend: { top: 0, textStyle: { color: themeColors().text } },
@@ -630,7 +649,7 @@
             // Distinguish tx by dashed line
             txSeries.forEach(function (s) { s.lineStyle = { width: 2, type: 'dashed' }; });
             if (!rxSeries.length && !txSeries.length) { showChartEmpty('chart-net', '暂无数据'); return; }
-            setChart('chart-net', {
+            renderChart('chart-net', {
                 backgroundColor: 'transparent',
                 tooltip: Object.assign(baseTooltip(), { valueFormatter: function (v) { return fmtBps(v); } }),
                 legend: { top: 0, textStyle: { color: themeColors().text } },
@@ -675,32 +694,18 @@
                 };
             });
             if (!series.length) { showChartEmpty('chart-bargauge', '暂无数据'); return; }
-            var bargaugeIsland = document.getElementById('chart-bargauge').closest('.island');
-            function renderBargauge() {
-                setChart('chart-bargauge', {
-                    backgroundColor: 'transparent',
-                    animationDuration: 1200,
-                    animationEasing: 'cubicOut',
-                    animationDelay: function (idx) { return idx * 150; },
-                    tooltip: Object.assign(baseTooltip(), { trigger: 'item', valueFormatter: function (v) { return fmtPct(v); } }),
-                    legend: { top: 0, textStyle: { color: themeColors().text } },
-                    grid: { left: 60, right: 20, top: 36, bottom: 30 },
-                    xAxis: baseAxis({ type: 'value', max: 100, axisLabel: { color: themeColors().text, formatter: '{value}%' } }),
-                    yAxis: baseAxis({ type: 'category', data: cats, splitLine: { show: false } }),
-                    series: series
-                });
-            }
-            if (bargaugeIsland) {
-                var visObs = new IntersectionObserver(function (entries) {
-                    if (entries[0].isIntersecting) {
-                        visObs.disconnect();
-                        setTimeout(renderBargauge, 700);
-                    }
-                }, { threshold: 0.15 });
-                visObs.observe(bargaugeIsland);
-            } else {
-                renderBargauge();
-            }
+            renderChart('chart-bargauge', {
+                backgroundColor: 'transparent',
+                animationDuration: 1200,
+                animationEasing: 'cubicOut',
+                animationDelay: function (idx) { return idx * 150; },
+                tooltip: Object.assign(baseTooltip(), { trigger: 'item', valueFormatter: function (v) { return fmtPct(v); } }),
+                legend: { top: 0, textStyle: { color: themeColors().text } },
+                grid: { left: 60, right: 20, top: 36, bottom: 30 },
+                xAxis: baseAxis({ type: 'value', max: 100, axisLabel: { color: themeColors().text, formatter: '{value}%' } }),
+                yAxis: baseAxis({ type: 'category', data: cats, splitLine: { show: false } }),
+                series: series
+            });
         } catch (e) { showChartEmpty('chart-bargauge', '加载失败'); }
     }
 
@@ -734,7 +739,7 @@
                 { name: '平均CPU%', type: 'line', showSymbol: false, smooth: true, yAxisIndex: 1, itemStyle: { color: '#3b82f6' }, lineStyle: { width: 2 }, data: toData(results[2]) }
             ];
             if (!series[0].data.length && !series[2].data.length) { showChartEmpty('chart-agg-load', '暂无数据'); return; }
-            setChart('chart-agg-load', {
+            renderChart('chart-agg-load', {
                 backgroundColor: 'transparent',
                 tooltip: Object.assign(baseTooltip(), { formatter: aggTooltipFormatter(false) }),
                 legend: { top: 0, textStyle: { color: tc.text } },
@@ -776,7 +781,7 @@
                 { name: '使用率', type: 'line', showSymbol: false, smooth: true, yAxisIndex: 1, itemStyle: { color: '#3b82f6' }, lineStyle: { width: 2 }, data: toData(results[2]) }
             ];
             if (!series[0].data.length && !series[1].data.length) { showChartEmpty('chart-agg-mem', '暂无数据'); return; }
-            setChart('chart-agg-mem', {
+            renderChart('chart-agg-mem', {
                 backgroundColor: 'transparent',
                 tooltip: Object.assign(baseTooltip(), { formatter: aggTooltipFormatter(true) }),
                 legend: { top: 0, textStyle: { color: tc.text } },
@@ -818,7 +823,7 @@
                 { name: '使用率', type: 'line', showSymbol: false, smooth: true, yAxisIndex: 1, itemStyle: { color: '#3b82f6' }, lineStyle: { width: 2 }, data: toData(results[2]) }
             ];
             if (!series[0].data.length && !series[1].data.length) { showChartEmpty('chart-agg-disk', '暂无数据'); return; }
-            setChart('chart-agg-disk', {
+            renderChart('chart-agg-disk', {
                 backgroundColor: 'transparent',
                 tooltip: Object.assign(baseTooltip(), { formatter: aggTooltipFormatter(true) }),
                 legend: { top: 0, textStyle: { color: tc.text } },
@@ -962,6 +967,8 @@
     /* ===== Init ===== */
     function init() {
         document.getElementById('copyright-year').textContent = new Date().getFullYear();
+        var chartIds = ['chart-cpu','chart-mem','chart-disk','chart-load','chart-net','chart-bargauge','chart-agg-load','chart-agg-mem','chart-agg-disk'];
+        chartIds.forEach(function (id) { chartFirstLoad.add(id); });
         bindControls();
         refreshAll();
         startRefreshTimer();
