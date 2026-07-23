@@ -229,6 +229,19 @@ a:hover {
     border-radius: var(--radius-sm);
 }
 
+html.js .navbar-brand {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform var(--transition-slow), opacity var(--transition-slow);
+}
+
+html.js .navbar-brand.is-visible {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
 .navbar-actions {
     display: flex;
     align-items: center;

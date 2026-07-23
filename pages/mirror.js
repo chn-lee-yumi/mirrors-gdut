@@ -225,6 +225,30 @@
     }
 
     // ==========================================
+    // Navbar Brand Visibility
+    // ==========================================
+
+    function initNavbarBrandVisibility() {
+        const hero = document.querySelector('.hero');
+        const navbarBrand = document.querySelector('.navbar-brand');
+        if (!hero || !navbarBrand) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navbarBrand.classList.remove('is-visible');
+                } else {
+                    navbarBrand.classList.add('is-visible');
+                }
+            });
+        }, {
+            threshold: 0,
+        });
+
+        observer.observe(hero);
+    }
+
+    // ==========================================
     // Initialize Everything
     // ==========================================
     
@@ -234,6 +258,7 @@
         initIslandAnimations();
         enhanceTable();
         initSmoothScroll();
+        initNavbarBrandVisibility();
         
         // Add fade-in class to body
         document.body.classList.add('fade-in');
