@@ -1281,6 +1281,16 @@
         }, 1000);
     }
 
+    /* ===== Slide indicator ===== */
+    function moveIndicator(container) {
+        if (!container) return;
+        var active = container.querySelector('.active');
+        var indicator = container.querySelector('.slide-indicator');
+        if (!active || !indicator) return;
+        indicator.style.transform = 'translateX(' + active.offsetLeft + 'px)';
+        indicator.style.width = active.offsetWidth + 'px';
+    }
+
     /* ===== Selector handlers ===== */
     function bindControls() {
         document.getElementById('time-selector').addEventListener('click', function (e) {
@@ -1288,6 +1298,7 @@
             if (!btn) return;
             document.querySelectorAll('.time-btn').forEach(function (b) { b.classList.remove('active'); });
             btn.classList.add('active');
+            moveIndicator(document.getElementById('time-selector'));
             state.range = btn.dataset.range;
             if (state.activeTab === 'harbor') {
                 refreshHarbor();
@@ -1332,6 +1343,7 @@
         document.querySelectorAll('.tab-link').forEach(function (link) {
             link.classList.toggle('active', link.dataset.tab === tab);
         });
+        moveIndicator(document.getElementById('tab-nav'));
         var panelMirrors = document.getElementById('panel-mirrors');
         var panelHarbor = document.getElementById('panel-harbor');
         var siteSel = document.getElementById('site-selector');
@@ -1368,6 +1380,8 @@
         clearTimeout(resizeTO);
         resizeTO = setTimeout(function () {
             Object.keys(charts).forEach(function (id) { if (charts[id]) charts[id].resize(); });
+            moveIndicator(document.getElementById('time-selector'));
+            moveIndicator(document.getElementById('tab-nav'));
         }, 200);
     });
 
@@ -1386,6 +1400,8 @@
                         'chart-hb-api','chart-hb-inflight','chart-hb-queue','chart-hb-latency'];
         chartIds.forEach(function (id) { chartFirstLoad.add(id); });
         bindControls();
+        moveIndicator(document.getElementById('time-selector'));
+        moveIndicator(document.getElementById('tab-nav'));
         window.addEventListener('hashchange', function () {
             var hash = (window.location.hash || '#mirrors').slice(1);
             switchTab(hash);

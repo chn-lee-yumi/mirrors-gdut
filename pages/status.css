@@ -26,6 +26,7 @@
     box-shadow: var(--shadow-sm);
     height: 39px;
     box-sizing: border-box;
+    position: relative;
 }
 .time-btn {
     border: none;
@@ -36,15 +37,13 @@
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: color var(--transition-fast);
     font-family: inherit;
+    position: relative;
+    z-index: 1;
 }
 .time-btn:hover { color: var(--color-text); }
-.time-btn.active {
-    background: var(--gradient-primary);
-    color: #fff;
-    box-shadow: var(--shadow-sm);
-}
+.time-btn.active { color: #fff; }
 .site-selector {
     padding: 0 36px 0 16px;
     border: 1px solid var(--color-border);
@@ -214,6 +213,7 @@
     padding: 4px;
     box-shadow: var(--shadow-sm);
     margin-top: var(--spacing-lg);
+    position: relative;
 }
 .tab-link {
     padding: 8px 28px;
@@ -222,14 +222,26 @@
     color: var(--color-text-secondary);
     text-decoration: none;
     border-radius: var(--radius-lg);
-    transition: all var(--transition-fast);
+    transition: color var(--transition-fast);
     cursor: pointer;
+    position: relative;
+    z-index: 1;
 }
 .tab-link:hover { color: var(--color-text); }
-.tab-link.active {
+.tab-link.active { color: #fff; }
+
+/* Slide indicator (shared by time-selector and tab-nav) */
+.slide-indicator {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    height: calc(100% - 8px);
+    border-radius: var(--radius-lg);
     background: var(--gradient-primary);
-    color: #fff;
     box-shadow: var(--shadow-sm);
+    z-index: 0;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
 }
 .tab-panel { animation: tabFadeIn 0.3s ease-out; }
 .tab-panel[hidden] { display: none; }
