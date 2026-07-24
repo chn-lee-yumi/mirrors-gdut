@@ -41,6 +41,12 @@ def du_dir_map(path, timeout=600):
             ['du', '-b', '--max-depth=1', path],
             capture_output=True, text=True, timeout=timeout
         )
+        print('[du_dir_map] path=%s returncode=%d stdout_lines=%d stderr_lines=%d' %
+              (path, proc.returncode, len(proc.stdout.strip().split('\n')), len(proc.stderr.strip().split('\n'))))
+        if proc.stderr.strip():
+            print('[du_dir_map] stderr (first 500 chars): ' + proc.stderr.strip()[:500])
+        if proc.stdout.strip():
+            print('[du_dir_map] stdout (first 500 chars): ' + proc.stdout.strip()[:500])
         for line in proc.stdout.strip().split('\n'):
             parts = line.split('\t')
             if len(parts) == 2:
@@ -51,7 +57,7 @@ def du_dir_map(path, timeout=600):
                     except ValueError:
                         pass
     except subprocess.TimeoutExpired:
-        pass
+        print('[du_dir_map] TIMEOUT for path=' + path)
     return result
 
 
