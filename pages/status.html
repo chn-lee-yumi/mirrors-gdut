@@ -249,6 +249,32 @@
                 </div>
             </div>
 
+            <!-- Mirror stats table -->
+            <div class="island" style="margin-top: var(--spacing-lg);">
+                <div class="island-header">
+                    <svg class="island-icon" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z"/>
+                        <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z"/>
+                        <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z"/>
+                    </svg>
+                    <h2 class="island-title">镜像统计<span class="island-note" id="mirror-stats-time">--</span></h2>
+                </div>
+                <div class="data-table-wrap">
+                    <table class="data-table mirror-stats-table" id="mirror-stats-table">
+                        <thead><tr>
+                            <th class="sortable" data-sort="name">镜像名称</th>
+                            <th class="sortable" data-sort="type">类型</th>
+                            <th class="sortable" data-sort="sync_status">同步状态</th>
+                            <th class="sortable" data-sort="sync_time">最近同步</th>
+                            <th class="sortable" data-sort="disk_usage_gb">磁盘占用</th>
+                            <th class="sortable" data-sort="total_requests">累计请求</th>
+                            <th class="sortable" data-sort="daily_requests">当日请求</th>
+                        </tr></thead>
+                        <tbody id="mirror-stats-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
   </div><!-- /panel-mirrors -->
