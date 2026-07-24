@@ -15,3 +15,7 @@ Single-context layout — one `CONTEXT.md` + `docs/adr/` at the repo root. See `
 ### File sync rules
 
 `pages/mirror.css` and `pages/mirror.js` are shared with `Nginx-Fancyindex-Theme/gdut-mirrors/mirror.css` and `Nginx-Fancyindex-Theme/gdut-mirrors/mirror.js`. Any change to one copy MUST be synced to the other before committing.
+
+### Frontend layout QA
+
+After any frontend layout change (CSS, HTML structure, spacing, alignment), MUST verify alignment with Playwright before committing — check element positions, heights, gaps, and centering via `browser_evaluate` or screenshots. Do NOT rely on code review alone to catch misalignment.

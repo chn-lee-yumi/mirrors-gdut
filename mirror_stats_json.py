@@ -6,6 +6,8 @@ import glob
 import json
 import os
 import subprocess
+import sys
+import time
 from datetime import datetime
 
 MIRROR_DIR = '/mnt/mirror'
@@ -34,14 +36,27 @@ CACHE_DIR_MAP = {
 }
 
 
+def log(msg):
+    print('[%s] %s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), msg), flush=True)
+
+
 def du_dir_map(path, timeout=600):
     result = {}
+    log('du_dir_map: 开始扫描 %s' % path)
+    start = time.time()
     try:
         proc = subprocess.run(
             ['du', '-bL', '--max-depth=1', path],
             capture_output=True, text=True, timeout=timeout
         )
-        for line in proc.stdout.strip().split('\n'):
+        elapsed = time.time() - start
+        lines = [l for l in proc.stdout.strip().split('\n') if l]
+        log('du_dir_map: %s 完成，耗时 %.1fs，returncode=%d，stdout %d 行，stderr %d 行' %
+            (path, elapsed, proc.returncode, len(lines), len(proc.stderr.strip().split('\n'))))
+        if proc.stderr.strip():
+            for line in proc.stderr.strip().split('\n')[:5]:
+                log('du_dir_map: stderr: %s' % line)
+        for line in lines:
             parts = line.split('\t')
             if len(parts) == 2:
                 name = os.path.basename(parts[1])
@@ -49,9 +64,10 @@ def du_dir_map(path, timeout=600):
                     try:
                         result[name] = int(parts[0])
                     except ValueError:
-                        pass
+                        log('du_dir_map: 跳过无法解析的行: %s' % line)
+        log('du_dir_map: %s 解析出 %d 个子目录' % (path, len(result)))
     except subprocess.TimeoutExpired:
-        pass
+        log('du_dir_map: %s 超时（%ds）' % (path, timeout))
     return result
 
 
@@ -59,8 +75,9 @@ def read_csv_stats():
     total = {}
     daily = {}
 
+    total_path = os.path.join(LOG_DIR, 'total.csv')
     try:
-        with open(os.path.join(LOG_DIR, 'total.csv'), 'r') as f:
+        with open(total_path, 'r') as f:
             reader = csv.reader(f)
             next(reader, None)
             for row in reader:
@@ -69,8 +86,9 @@ def read_csv_stats():
                         total[row[0]] = int(row[1])
                     except ValueError:
                         pass
+        log('read_csv_stats: 读取 %s，%d 条记录' % (total_path, len(total)))
     except (FileNotFoundError, StopIteration):
-        pass
+        log('read_csv_stats: %s 不存在或为空' % total_path)
 
     daily_csv = os.path.join(LOG_DIR, 'daily_%s.csv' % datetime.now().strftime('%Y%m%d'))
     try:
@@ -83,8 +101,9 @@ def read_csv_stats():
                         daily[row[0]] = int(row[1])
                     except ValueError:
                         pass
+        log('read_csv_stats: 读取 %s，%d 条记录' % (daily_csv, len(daily)))
     except (FileNotFoundError, StopIteration):
-        pass
+        log('read_csv_stats: %s 不存在或为空' % daily_csv)
 
     return total, daily
 
@@ -109,17 +128,22 @@ def get_sync_info(mirror_name, is_cache):
 
 
 def main():
+    log('==== 镜像统计开始 ====')
+    overall_start = time.time()
+
     total_stats, daily_stats = read_csv_stats()
     mirror_disk = du_dir_map(MIRROR_DIR)
     cache_disk = du_dir_map(CACHE_DIR)
 
     mirrors = []
+    skipped = 0
     for mirror_path in sorted(glob.glob(os.path.join(MIRROR_DIR, '*'))):
         if not os.path.isdir(mirror_path):
             continue
 
         mirror_name = os.path.basename(mirror_path)
         if mirror_name in IGNORE_DIR:
+            skipped += 1
             continue
 
         is_cache = mirror_name in CDN_MIRROR_LIST
@@ -134,6 +158,9 @@ def main():
         else:
             disk_bytes = mirror_disk.get(mirror_name)
             disk_usage = round(disk_bytes / (1024 ** 3), 1) if disk_bytes else None
+
+        if not is_proxy and disk_usage is None:
+            log('警告: %s 磁盘占用为空 (type=%s)' % (mirror_name, 'cache' if is_cache else 'full'))
 
         sync_time, sync_status = get_sync_info(mirror_name, is_cache)
 
@@ -162,7 +189,9 @@ def main():
     with open(OUTPUT_FILE, 'w') as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
 
-    print('统计完成：%d 个镜像，输出到 %s' % (len(mirrors), OUTPUT_FILE))
+    elapsed = time.time() - overall_start
+    log('==== 统计完成：%d 个镜像（跳过 %d），总耗时 %.1fs，输出到 %s ====' %
+        (len(mirrors), skipped, elapsed, OUTPUT_FILE))
 
 
 if __name__ == '__main__':
