@@ -309,7 +309,7 @@ for mirror in mirror_list:
 
         # 判断镜像是否缓存镜像
         if mirror_name in cdn_mirror_list:  # 缓存镜像（nginx反向代理）
-            sync_time = ''
+            sync_time = '—'
             sync_status = '<svg class="status-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg> 缓存加速'
             is_syncing = 'false'
         else:  # 非缓存镜像（保存在服务器硬盘）
@@ -321,7 +321,7 @@ for mirror in mirror_list:
                 else:
                     sync_status = '<svg class="status-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> 同步完成'
             except FileNotFoundError:
-                sync_time = ''
+                sync_time = '—'
                 sync_status = '<svg class="status-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> 从未同步'
 
         # 生成镜像链接（缓存镜像除了docker都不显示链接）
