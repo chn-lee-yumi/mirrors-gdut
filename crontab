@@ -27,7 +27,7 @@
 59 23 * * * /bin/python3 /home/mirror/mirror_daily_summary.py > /mnt/mirror/daily_stat.txt
 # 每周日23:30发送磁盘数据
 30 23 * * 0  /bin/python3 /home/mirror/mirror_disk_summary.py
-# 每小时整点生成镜像统计数据JSON（供status.html前端消费）
-0 * * * * /bin/python3 /home/mirror/mirrors-gdut/mirror_stats_json.py
+# 每两小时生成镜像统计数据JSON（供status.html前端消费）
+0 */2 * * * /bin/python3 /home/mirror/mirrors-gdut/mirror_stats_json.py
 # 缓存预热
 # 0 4 * * *  cd /home/mirror/tmp; python3 /home/mirror/mirrors-gdut/mirror_auto_cache.py > /tmp/mirror_auto_cache.log
