@@ -51,31 +51,27 @@
         }
         
         /* Directory and file icons */
-        .fancyindex-list a[href$="/"]::before {
+        .fancyindex-list a[href$="/"]:not([href="../"])::before,
+        .fancyindex-list a:not([href$="/"]):not([href=".."])::before {
             content: '';
             display: inline-block;
             width: 18px;
             height: 18px;
             flex-shrink: 0;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        
+        .fancyindex-list a[href$="/"]:not([href="../"])::before {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='%23718096' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z'/%3E%3C/svg%3E");
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
         }
         
-        .fancyindex-list a:not([href$="/"])::before {
-            content: '';
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            flex-shrink: 0;
+        .fancyindex-list a:not([href$="/"]):not([href=".."])::before {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='%23718096' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3C/svg%3E");
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
         }
         
-        /* Parent directory link */
+        .fancyindex-list a[href="../"]::before,
         .fancyindex-list a[href=".."]::before {
             content: '';
             display: inline-block;
