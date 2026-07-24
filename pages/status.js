@@ -919,6 +919,90 @@
         } catch (e) { showChartEmpty('chart-agg-disk', '加载失败'); }
     }
 
+    /* ===== Mirror stats table ===== */
+    var mirrorStatsSort = { key: 'disk_usage_gb', dir: 'desc' };
+    var mirrorStatsData = [];
+    var mirrorStatsLoaded = false;
+
+    function fmtMirrorType(type) {
+        var map = { full: '全量', cache: '缓存', proxy: '代理' };
+        return '<span class="type-badge ' + type + '">' + (map[type] || type) + '</span>';
+    }
+    function fmtSyncStatus(status) {
+        var map = {
+            completed: '✅ 同步完成',
+            syncing: '▶️ 同步中',
+            never: '❌ 从未同步',
+            cache: '⏩ 缓存加速'
+        };
+        return map[status] || status;
+    }
+    function fmtDiskUsage(gb, maxGb) {
+        if (gb === null || gb === undefined) return '—';
+        var pct = maxGb > 0 ? Math.min(100, (gb / maxGb) * 100) : 0;
+        return '<span class="disk-bar"><span class="disk-bar-track"><span class="disk-bar-fill" style="width:' + pct.toFixed(1) + '%;"></span></span>' + gb.toFixed(1) + ' GB</span>';
+    }
+    function renderMirrorStatsTable() {
+        var mirrors = mirrorStatsData.slice();
+        var key = mirrorStatsSort.key;
+        var dir = mirrorStatsSort.dir === 'asc' ? 1 : -1;
+        mirrors.sort(function (a, b) {
+            var va = a[key], vb = b[key];
+            if (va === null || va === undefined) va = -1;
+            if (vb === null || vb === undefined) vb = -1;
+            if (typeof va === 'string' && typeof vb === 'string') return va.localeCompare(vb) * dir;
+            return (va - vb) * dir;
+        });
+        var maxDisk = 0;
+        mirrors.forEach(function (m) { if (m.disk_usage_gb && m.disk_usage_gb > maxDisk) maxDisk = m.disk_usage_gb; });
+        var html = '';
+        mirrors.forEach(function (m) {
+            html += '<tr>'
+                + '<td class="mirror-name">' + m.name + '</td>'
+                + '<td>' + fmtMirrorType(m.type) + '</td>'
+                + '<td>' + fmtSyncStatus(m.sync_status) + '</td>'
+                + '<td>' + (m.sync_time || '—') + '</td>'
+                + '<td>' + fmtDiskUsage(m.disk_usage_gb, maxDisk) + '</td>'
+                + '<td>' + (m.total_requests > 0 ? m.total_requests.toLocaleString() : '—') + '</td>'
+                + '<td>' + (m.daily_requests > 0 ? m.daily_requests.toLocaleString() : '—') + '</td>'
+                + '</tr>';
+        });
+        document.getElementById('mirror-stats-tbody').innerHTML = html;
+        document.querySelectorAll('.mirror-stats-table th.sortable').forEach(function (th) {
+            th.classList.remove('sorted-asc', 'sorted-desc');
+            if (th.dataset.sort === key) th.classList.add(mirrorStatsSort.dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+        });
+    }
+    function bindMirrorStatsSort() {
+        document.querySelectorAll('.mirror-stats-table th.sortable').forEach(function (th) {
+            th.addEventListener('click', function () {
+                var key = th.dataset.sort;
+                if (mirrorStatsSort.key === key) {
+                    mirrorStatsSort.dir = mirrorStatsSort.dir === 'asc' ? 'desc' : 'asc';
+                } else {
+                    mirrorStatsSort.key = key;
+                    mirrorStatsSort.dir = 'asc';
+                }
+                renderMirrorStatsTable();
+            });
+        });
+    }
+    async function loadMirrorStats() {
+        if (!mirrorStatsLoaded) tableSkeleton('mirror-stats-tbody', 7);
+        try {
+            var res = await fetch('/mirror_stats.json');
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            var json = await res.json();
+            mirrorStatsData = json.mirrors || [];
+            mirrorStatsLoaded = true;
+            var timeEl = document.getElementById('mirror-stats-time');
+            if (timeEl && json.generated_at) timeEl.textContent = json.generated_at.replace('T', ' ');
+            renderMirrorStatsTable();
+        } catch (e) {
+            if (!mirrorStatsLoaded) tableEmpty('mirror-stats-tbody', '统计数据暂不可用', 7);
+        }
+    }
+
     /* ===== Harbor: Overview stat cards ===== */
     async function loadHarborOverview() {
         var sel = '{' + HARBOR_JOB + '}';
@@ -1258,7 +1342,8 @@
             loadBargauge().catch(function () {}),
             loadAggLoad().catch(function () {}),
             loadAggMem().catch(function () {}),
-            loadAggDisk().catch(function () {})
+            loadAggDisk().catch(function () {}),
+            loadMirrorStats().catch(function () {})
         ]);
         const now = new Date();
         document.getElementById('last-refresh').textContent = '上次刷新: ' +
@@ -1400,6 +1485,7 @@
                         'chart-hb-api','chart-hb-inflight','chart-hb-queue','chart-hb-latency'];
         chartIds.forEach(function (id) { chartFirstLoad.add(id); });
         bindControls();
+        bindMirrorStatsSort();
         moveIndicator(document.getElementById('time-selector'));
         moveIndicator(document.getElementById('tab-nav'));
         window.addEventListener('hashchange', function () {
