@@ -84,6 +84,26 @@
     margin-bottom: var(--spacing-lg);
 }
 .stat-card { padding: var(--spacing-lg); }
+.stat-card.has-spark {
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 48px;
+}
+.stat-card.has-spark .island-header,
+.stat-card.has-spark .stat-value,
+.stat-card.has-spark .stat-sub {
+    position: relative;
+    z-index: 1;
+}
+.stat-spark {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 42px;
+    z-index: 0;
+    pointer-events: none;
+}
 .stat-card .island-header { margin-bottom: var(--spacing-sm); }
 .stat-label {
     font-size: 0.8125rem;
