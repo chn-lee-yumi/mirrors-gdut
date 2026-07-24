@@ -187,20 +187,20 @@
             const text = cell.textContent.trim();
             let badgeClass = '';
             
-            if (text.includes('同步完成') || text.includes('✅')) {
+            if (text.includes('同步完成')) {
                 badgeClass = 'status-success';
-            } else if (text.includes('同步中') || text.includes('▶️')) {
+            } else if (text.includes('同步中')) {
                 badgeClass = 'status-syncing';
-            } else if (text.includes('缓存') || text.includes('⏩')) {
+            } else if (text.includes('缓存')) {
                 badgeClass = 'status-cache';
-            } else if (text.includes('从未') || text.includes('❌')) {
+            } else if (text.includes('从未')) {
                 badgeClass = 'status-error';
             }
             
             if (badgeClass) {
                 const badge = document.createElement('span');
                 badge.className = `status-badge ${badgeClass}`;
-                badge.textContent = text;
+                badge.innerHTML = text;
                 cell.textContent = '';
                 cell.appendChild(badge);
             }
