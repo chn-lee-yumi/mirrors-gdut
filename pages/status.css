@@ -213,6 +213,7 @@
     border-radius: var(--radius-xl);
     padding: 4px;
     box-shadow: var(--shadow-sm);
+    margin-top: var(--spacing-lg);
 }
 .tab-link {
     padding: 8px 28px;
