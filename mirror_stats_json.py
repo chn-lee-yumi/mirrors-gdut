@@ -40,13 +40,13 @@ def log(msg):
     print('[%s] %s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), msg), flush=True)
 
 
-def du_dir_map(path, timeout=600):
+def du_dir_map(path, timeout=120):
     result = {}
-    log('du_dir_map: 开始扫描 %s' % path)
+    log('du_dir_map: 开始批量扫描 %s' % path)
     start = time.time()
     try:
         proc = subprocess.run(
-            ['du', '-bL', '--max-depth=1', path],
+            ['du', '-b', '--max-depth=1', path],
             capture_output=True, text=True, timeout=timeout
         )
         elapsed = time.time() - start
@@ -69,6 +69,27 @@ def du_dir_map(path, timeout=600):
     except subprocess.TimeoutExpired:
         log('du_dir_map: %s 超时（%ds）' % (path, timeout))
     return result
+
+
+def du_single(path, timeout=600):
+    start = time.time()
+    try:
+        proc = subprocess.run(
+            ['du', '-sbL', path],
+            capture_output=True, text=True, timeout=timeout
+        )
+        elapsed = time.time() - start
+        if proc.stdout.strip():
+            bytes_size = int(proc.stdout.split()[0])
+            gb = round(bytes_size / (1024 ** 3), 1)
+            log('  du %s: %.1f GB (%.1fs)' % (os.path.basename(path), gb, elapsed))
+            return gb
+        log('  du %s: 无输出 (%.1fs)' % (os.path.basename(path), elapsed))
+    except subprocess.TimeoutExpired:
+        log('  du %s: 超时（%ds）' % (os.path.basename(path), timeout))
+    except (ValueError, IndexError):
+        log('  du %s: 解析失败' % os.path.basename(path))
+    return None
 
 
 def read_csv_stats():
@@ -132,9 +153,9 @@ def main():
     overall_start = time.time()
 
     total_stats, daily_stats = read_csv_stats()
-    mirror_disk = du_dir_map(MIRROR_DIR)
     cache_disk = du_dir_map(CACHE_DIR)
 
+    log('开始逐个扫描全量镜像目录（-L 跟随符号链接）')
     mirrors = []
     skipped = 0
     for mirror_path in sorted(glob.glob(os.path.join(MIRROR_DIR, '*'))):
@@ -156,11 +177,7 @@ def main():
             disk_bytes = cache_disk.get(cache_name)
             disk_usage = round(disk_bytes / (1024 ** 3), 1) if disk_bytes else None
         else:
-            disk_bytes = mirror_disk.get(mirror_name)
-            disk_usage = round(disk_bytes / (1024 ** 3), 1) if disk_bytes else None
-
-        if not is_proxy and disk_usage is None:
-            log('警告: %s 磁盘占用为空 (type=%s)' % (mirror_name, 'cache' if is_cache else 'full'))
+            disk_usage = du_single(mirror_path)
 
         sync_time, sync_status = get_sync_info(mirror_name, is_cache)
 
