@@ -312,6 +312,68 @@
         document.getElementById('ov-ipv6-mem-sub').textContent = (up6 === 1 && isFinite(mem6)) ? pctClass(mem6).replace('pct-', '') : '';
     }
 
+    /* ===== Overview sparklines (background area charts) ===== */
+    function hexToRgba(hex, alpha) {
+        var r = parseInt(hex.slice(1, 3), 16);
+        var g = parseInt(hex.slice(3, 5), 16);
+        var b = parseInt(hex.slice(5, 7), 16);
+        return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+    }
+    function renderSpark(id, data, color) {
+        var c = getChart(id);
+        if (!c) return;
+        if (!data || !data.length) { c.clear(); delete chartOpts[id]; return; }
+        setChart(id, {
+            backgroundColor: 'transparent',
+            animation: true,
+            animationDuration: 800,
+            animationDurationUpdate: 800,
+            animationEasing: 'cubicOut',
+            grid: { left: 0, right: 0, top: 2, bottom: 0 },
+            xAxis: { type: 'time', show: false },
+            yAxis: { type: 'value', show: false, scale: true },
+            series: [{
+                type: 'line',
+                showSymbol: false,
+                smooth: true,
+                data: data,
+                lineStyle: { width: 1.5, color: color },
+                areaStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: hexToRgba(color, 0.35) },
+                        { offset: 1, color: hexToRgba(color, 0) }
+                    ])
+                }
+            }]
+        });
+    }
+    async function loadOverviewSparks() {
+        var iv = TIME_RANGES[state.range].interval;
+        var step = TIME_RANGES[state.range].step;
+        var end = Math.floor(Date.now() / 1000);
+        var start = end - TIME_RANGES[state.range].seconds;
+        var instBoth = IPV4 + '|' + IPV6;
+        var qCpu = '(1 - avg(irate(node_cpu_seconds_total{instance=~"' + instBoth + '",mode="idle"}[' + iv + '])) by (instance)) * 100';
+        var qMem = '(1 - (node_memory_MemAvailable_bytes{instance=~"' + instBoth + '"} / node_memory_MemTotal_bytes{instance=~"' + instBoth + '"})) * 100';
+        var results = await Promise.all([
+            promRange(qCpu, start, end, step).catch(function () { return []; }),
+            promRange(qMem, start, end, step).catch(function () { return []; })
+        ]);
+        function toMap(res) {
+            var m = {};
+            res.forEach(function (item) {
+                m[item.metric.instance] = item.values.map(function (v) { return [v[0] * 1000, parseFloat(v[1])]; });
+            });
+            return m;
+        }
+        var cpuMap = toMap(results[0]);
+        var memMap = toMap(results[1]);
+        renderSpark('spark-ipv4-cpu', cpuMap[IPV4], HOSTS[IPV4].color);
+        renderSpark('spark-ipv4-mem', memMap[IPV4], HOSTS[IPV4].color);
+        renderSpark('spark-ipv6-cpu', cpuMap[IPV6], HOSTS[IPV6].color);
+        renderSpark('spark-ipv6-mem', memMap[IPV6], HOSTS[IPV6].color);
+    }
+
     /* ===== Panel 2: Resource overview table ===== */
     async function loadResourceTable() {
         const inst = instanceSelector();
@@ -886,6 +948,7 @@
         }
         // Parallel load of all selector-dependent panels
         await Promise.all([
+            loadOverviewSparks().catch(function () {}),
             loadResourceTable().catch(function () {}),
             loadP99Table().catch(function () {}),
             loadPartitionTable().catch(function () {}),
