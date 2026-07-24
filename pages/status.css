@@ -195,6 +195,11 @@
 .type-badge.cache { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
 .type-badge.proxy { background: rgba(245, 158, 11, 0.15); color: var(--color-warning); }
 .sync-icon { flex-shrink: 0; vertical-align: middle; }
+.sync-text { display: inline-flex; align-items: center; gap: 4px; font-weight: 500; }
+.sync-ok { color: var(--color-success); }
+.sync-run { color: var(--color-syncing); }
+.sync-cac { color: var(--color-info); }
+.sync-err { color: var(--color-error); }
 .mirror-name { font-family: 'Inter', sans-serif; font-weight: 600; color: var(--color-text); }
 .disk-bar {
     display: inline-flex;

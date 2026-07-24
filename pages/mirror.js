@@ -184,6 +184,7 @@
     function enhanceStatusBadges() {
         const statusCells = document.querySelectorAll('#distro-table td:nth-child(3)');
         statusCells.forEach(cell => {
+            const html = cell.innerHTML.trim();
             const text = cell.textContent.trim();
             let badgeClass = '';
             
@@ -200,7 +201,7 @@
             if (badgeClass) {
                 const badge = document.createElement('span');
                 badge.className = `status-badge ${badgeClass}`;
-                badge.innerHTML = text;
+                badge.innerHTML = html;
                 cell.textContent = '';
                 cell.appendChild(badge);
             }
