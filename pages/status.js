@@ -1032,11 +1032,10 @@
     async function loadHarborApiChart() {
         showChartLoading('chart-hb-api');
         var sel = '{' + HARBOR_JOB + '}';
-        var iv = TIME_RANGES[state.range].interval;
         var step = TIME_RANGES[state.range].step;
         var end = Math.floor(Date.now() / 1000);
         var start = end - TIME_RANGES[state.range].seconds;
-        var q = 'sum by (method) (rate(harbor_core_http_request_total' + sel + '[' + iv + ']))';
+        var q = 'sum by (method) (rate(harbor_core_http_request_total' + sel + '[5m]))';
         try {
             var result = await k8sRange(q, start, end, step);
             if (!result.length) { showChartEmpty('chart-hb-api', '暂无数据'); return; }
