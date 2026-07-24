@@ -125,7 +125,7 @@ SECTION_TEMPLATE = Template("""
                             </svg>
                             ${mirror_link}
                         </td>
-                        <td><code>${sync_time}</code></td>
+                        <td><code style="display: inline-flex; align-items: center; gap: 4px;">${sync_time}</code></td>
                         <td>${sync_status}</td>
                         <td>${download_count}</td>
                         <td>
