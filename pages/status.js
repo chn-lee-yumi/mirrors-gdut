@@ -930,10 +930,10 @@
     }
     function fmtSyncStatus(status) {
         var map = {
-            completed: '✅ 同步完成',
-            syncing: '▶️ 同步中',
-            never: '❌ 从未同步',
-            cache: '⏩ 缓存加速'
+            completed: '<svg class="sync-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> 同步完成',
+            syncing: '<svg class="sync-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 11-6.219-8.56"/><path d="M21 3v6h-6"/></svg> 同步中',
+            never: '<svg class="sync-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> 从未同步',
+            cache: '<svg class="sync-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg> 缓存加速'
         };
         return map[status] || status;
     }

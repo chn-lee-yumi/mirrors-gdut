@@ -517,6 +517,9 @@ html.js .navbar-brand.autohide.is-visible {
     font-size: 0.875rem;
     font-weight: 500;
 }
+.status-badge .status-icon {
+    flex-shrink: 0;
+}
 
 .status-success {
     background: rgba(16, 185, 129, 0.1);

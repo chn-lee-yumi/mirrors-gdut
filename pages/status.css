@@ -194,6 +194,7 @@
 .type-badge.full { background: rgba(16, 185, 129, 0.15); color: var(--color-success); }
 .type-badge.cache { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
 .type-badge.proxy { background: rgba(245, 158, 11, 0.15); color: var(--color-warning); }
+.sync-icon { flex-shrink: 0; vertical-align: middle; }
 .mirror-name { font-family: 'Inter', sans-serif; font-weight: 600; color: var(--color-text); }
 .disk-bar {
     display: inline-flex;
