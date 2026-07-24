@@ -41,6 +41,10 @@
         <h1 class="hero-title">镜像站状态</h1>
         <p class="hero-subtitle">广东工业大学开源镜像站服务器实时监控</p>
         <div class="hero-controls">
+            <nav class="tab-nav" id="tab-nav">
+                <a class="tab-link active" href="#mirrors" data-tab="mirrors">镜像站服务器</a>
+                <a class="tab-link" href="#harbor" data-tab="harbor">容器镜像库</a>
+            </nav>
             <div class="time-selector" id="time-selector">
                 <button class="time-btn active" data-range="1h">1h</button>
                 <button class="time-btn" data-range="6h">6h</button>
@@ -59,14 +63,6 @@
         </div>
     </div>
 </section>
-
-<!-- Tab navigation -->
-<div class="tab-nav-wrap">
-    <nav class="tab-nav">
-        <a class="tab-link active" href="#mirrors" data-tab="mirrors">镜像站服务器</a>
-        <a class="tab-link" href="#harbor" data-tab="harbor">容器镜像库</a>
-    </nav>
-</div>
 
 <!-- Main -->
 <main class="main-container">
