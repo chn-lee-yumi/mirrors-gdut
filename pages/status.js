@@ -3,6 +3,8 @@
 
     /* ===== Constants ===== */
     const PROM_URL = 'https://prometheus.gdutnic.com/api/v1';
+    const PROM_K8S_URL = 'https://prometheus-k8s.gdutnic.com/api/v1';
+    const HARBOR_JOB = 'job="harbor",namespace="gdut-mirrors"';
     const IPV4 = '202.116.132.67:9101';
     const IPV6 = '10.0.8.83:9101';
     const HOSTS = {
@@ -17,7 +19,7 @@
     const REFRESH_INTERVAL = 60;
 
     /* ===== State ===== */
-    const state = { range: '1h', site: 'both', promOK: true };
+    const state = { range: '1h', site: 'both', promOK: true, activeTab: 'mirrors' };
     const charts = {};   // id -> echarts instance
     const chartOpts = {}; // id -> last option (for re-theme)
     const chartFirstLoad = new Set(); // ids that haven't been rendered yet
@@ -113,6 +115,23 @@
         if (instance !== undefined) s = s.split('{INSTANCE}').join(instance);
         if (interval !== undefined) s = s.split('{INTERVAL}').join(interval);
         return s;
+    }
+    async function k8sInstant(query) {
+        const url = PROM_K8S_URL + '/query?query=' + encodeURIComponent(query);
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('k8s Prometheus HTTP ' + res.status);
+        const json = await res.json();
+        if (json.status !== 'success') throw new Error('k8s Prometheus query failed: ' + (json.error || ''));
+        return json.data.result;
+    }
+    async function k8sRange(query, start, end, step) {
+        const url = PROM_K8S_URL + '/query_range?query=' + encodeURIComponent(query) +
+                    '&start=' + start + '&end=' + end + '&step=' + step;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('k8s Prometheus HTTP ' + res.status);
+        const json = await res.json();
+        if (json.status !== 'success') throw new Error('k8s Prometheus query failed: ' + (json.error || ''));
+        return json.data.result;
     }
 
     /* ===== Instance selector from site choice ===== */
@@ -900,6 +919,286 @@
         } catch (e) { showChartEmpty('chart-agg-disk', '加载失败'); }
     }
 
+    /* ===== Harbor: Overview stat cards ===== */
+    async function loadHarborOverview() {
+        var sel = '{' + HARBOR_JOB + '}';
+        var queries = [
+            { key: 'up', q: 'harbor_up' + sel },
+            { key: 'projects', q: 'harbor_statistics_total_project_amount' + sel },
+            { key: 'repos', q: 'harbor_statistics_total_repo_amount' + sel },
+            { key: 'storage', q: 'harbor_statistics_total_storage_consumption' + sel },
+            { key: 'priv_proj', q: 'harbor_statistics_private_project_amount' + sel },
+            { key: 'pub_proj', q: 'harbor_statistics_public_project_amount' + sel },
+            { key: 'priv_repo', q: 'harbor_statistics_private_repo_amount' + sel },
+            { key: 'pub_repo', q: 'harbor_statistics_public_repo_amount' + sel }
+        ];
+        var results = await Promise.all(queries.map(function (q) { return k8sInstant(q.q).catch(function () { return []; }); }));
+        var map = {};
+        queries.forEach(function (q, i) { map[q.key] = results[i]; });
+
+        var upResults = map.up || [];
+        var upCount = upResults.filter(function (r) { return r.value[1] === '1'; }).length;
+        var totalComponents = upResults.length;
+        var elHealth = document.getElementById('hb-health');
+        if (totalComponents > 0) {
+            elHealth.textContent = upCount + '/' + totalComponents;
+            elHealth.className = 'stat-value ' + (upCount === totalComponents ? 'ok' : 'err');
+        } else { elHealth.textContent = '--'; elHealth.className = 'stat-value'; }
+        document.getElementById('hb-health-sub').textContent = totalComponents > 0 ? (upCount === totalComponents ? '全部在线' : (totalComponents - upCount) + ' 个离线') : '';
+
+        function val(arr) { return arr && arr[0] ? parseFloat(arr[0].value[1]) : NaN; }
+        var projects = val(map.projects);
+        document.getElementById('hb-projects').textContent = isFinite(projects) ? String(projects) : '--';
+        document.getElementById('hb-projects-sub').textContent = isFinite(projects) ? '私有 ' + (val(map.priv_proj) | 0) + ' · 公开 ' + (val(map.pub_proj) | 0) : '';
+
+        var repos = val(map.repos);
+        document.getElementById('hb-repos').textContent = isFinite(repos) ? String(repos) : '--';
+        document.getElementById('hb-repos-sub').textContent = isFinite(repos) ? '私有 ' + (val(map.priv_repo) | 0) + ' · 公开 ' + (val(map.pub_repo) | 0) : '';
+
+        var storage = val(map.storage);
+        document.getElementById('hb-storage').textContent = isFinite(storage) ? fmtBytes(storage) : '--';
+        document.getElementById('hb-storage-sub').textContent = '';
+    }
+
+    /* ===== Harbor: Project storage table ===== */
+    async function loadHarborProjectTable() {
+        tableSkeleton('harbor-project-tbody', 5);
+        var sel = '{' + HARBOR_JOB + '}';
+        var results = await Promise.all([
+            k8sInstant('harbor_project_quota_usage_byte' + sel).catch(function () { return []; }),
+            k8sInstant('harbor_project_quota_byte' + sel).catch(function () { return []; }),
+            k8sInstant('harbor_artifact_pulled' + sel).catch(function () { return []; })
+        ]);
+        var usageMap = {}, quotaMap = {}, pullMap = {};
+        results[0].forEach(function (r) { usageMap[r.metric.project_name] = parseFloat(r.value[1]); });
+        results[1].forEach(function (r) { quotaMap[r.metric.project_name] = parseFloat(r.value[1]); });
+        results[2].forEach(function (r) { pullMap[r.metric.project_name] = parseFloat(r.value[1]); });
+        var projects = Object.keys(usageMap);
+        if (!projects.length) { tableEmpty('harbor-project-tbody', '暂无数据', 5); return; }
+        projects.sort(function (a, b) { return (usageMap[b] || 0) - (usageMap[a] || 0); });
+        var html = '';
+        projects.forEach(function (name) {
+            var used = usageMap[name] || 0;
+            var quota = quotaMap[name] || 0;
+            var pulls = pullMap[name] || 0;
+            var pct = quota > 0 ? (used / quota * 100) : 0;
+            var uClamped = Math.max(0, Math.min(100, pct));
+            var barColor = usageGradientColor(uClamped);
+            html += '<tr class="partition-row" data-bar-w="' + uClamped.toFixed(1) + '" data-bar-c="' + barColor + '">'
+                + '<td class="col-site">' + name + '</td>'
+                + '<td>' + fmtBytes(used) + '</td>'
+                + '<td>' + (quota > 0 ? fmtBytes(quota) : '-') + '</td>'
+                + '<td class="pct-tag ' + pctClass(pct) + '">' + (quota > 0 ? fmtPct(pct) : '-') + '</td>'
+                + '<td>' + (pulls > 0 ? String(pulls) : '-') + '</td>'
+                + '</tr>';
+        });
+        document.getElementById('harbor-project-tbody').innerHTML = html;
+        var barRows = document.querySelectorAll('#harbor-project-tbody .partition-row');
+        barRows.forEach(function (tr) {
+            var color = tr.dataset.barC || 'transparent';
+            tr.style.background = 'linear-gradient(90deg, ' + color + ' 0%, transparent 0%)';
+        });
+        var island = document.getElementById('harbor-project-tbody').closest('.island');
+        function runBarAnimation() {
+            barRows.forEach(function (tr, idx) {
+                var targetW = parseFloat(tr.dataset.barW) || 0;
+                var color = tr.dataset.barC || 'transparent';
+                setTimeout(function () {
+                    var startTime = null;
+                    function step(ts) {
+                        if (!startTime) startTime = ts;
+                        var progress = Math.min((ts - startTime) / 1200, 1);
+                        var eased = 1 - Math.pow(1 - progress, 3);
+                        var curW = targetW * eased;
+                        tr.style.background = 'linear-gradient(90deg, ' + color + ' ' + curW.toFixed(1) + '%, transparent ' + curW.toFixed(1) + '%)';
+                        if (progress < 1) requestAnimationFrame(step);
+                    }
+                    requestAnimationFrame(step);
+                }, idx * 80);
+            });
+        }
+        if (island) {
+            var visObs = new IntersectionObserver(function (entries) {
+                if (entries[0].isIntersecting) {
+                    visObs.disconnect();
+                    setTimeout(runBarAnimation, 700);
+                }
+            }, { threshold: 0.15 });
+            visObs.observe(island);
+        }
+    }
+
+    /* ===== Harbor: API request rate chart ===== */
+    async function loadHarborApiChart() {
+        showChartLoading('chart-hb-api');
+        var sel = '{' + HARBOR_JOB + '}';
+        var iv = TIME_RANGES[state.range].interval;
+        var step = TIME_RANGES[state.range].step;
+        var end = Math.floor(Date.now() / 1000);
+        var start = end - TIME_RANGES[state.range].seconds;
+        var q = 'sum by (method) (rate(harbor_core_http_request_total' + sel + '[' + iv + ']))';
+        try {
+            var result = await k8sRange(q, start, end, step);
+            if (!result.length) { showChartEmpty('chart-hb-api', '暂无数据'); return; }
+            var palette = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+            var series = result.map(function (item, i) {
+                var method = item.metric.method || 'unknown';
+                return {
+                    name: method,
+                    type: 'line',
+                    showSymbol: false,
+                    smooth: true,
+                    lineStyle: { width: 2 },
+                    itemStyle: { color: palette[i % palette.length] },
+                    data: item.values.map(function (v) { return [v[0] * 1000, parseFloat(v[1])]; })
+                };
+            });
+            renderChart('chart-hb-api', {
+                backgroundColor: 'transparent',
+                tooltip: Object.assign(baseTooltip(), { valueFormatter: function (v) { return v.toFixed(2) + ' req/s'; } }),
+                legend: { top: 0, textStyle: { color: themeColors().text } },
+                grid: { left: 60, right: 20, top: 36, bottom: 30 },
+                xAxis: timeXAxis(),
+                yAxis: baseAxis({ type: 'value', axisLabel: { color: themeColors().text, formatter: '{value}' } }),
+                series: series
+            });
+        } catch (e) { showChartEmpty('chart-hb-api', '加载失败'); }
+    }
+
+    /* ===== Harbor: Inflight requests chart ===== */
+    async function loadHarborInflightChart() {
+        showChartLoading('chart-hb-inflight');
+        var sel = '{' + HARBOR_JOB + '}';
+        var step = TIME_RANGES[state.range].step;
+        var end = Math.floor(Date.now() / 1000);
+        var start = end - TIME_RANGES[state.range].seconds;
+        var q = 'harbor_core_http_inflight_requests' + sel;
+        try {
+            var result = await k8sRange(q, start, end, step);
+            if (!result.length) { showChartEmpty('chart-hb-inflight', '暂无数据'); return; }
+            var series = result.map(function (item) {
+                return {
+                    name: item.metric.instance || 'harbor',
+                    type: 'line',
+                    showSymbol: false,
+                    smooth: true,
+                    lineStyle: { width: 2 },
+                    itemStyle: { color: '#3b82f6' },
+                    areaStyle: { color: hexToRgba('#3b82f6', 0.15) },
+                    data: item.values.map(function (v) { return [v[0] * 1000, parseFloat(v[1])]; })
+                };
+            });
+            renderChart('chart-hb-inflight', {
+                backgroundColor: 'transparent',
+                tooltip: baseTooltip(),
+                legend: { top: 0, textStyle: { color: themeColors().text } },
+                grid: { left: 50, right: 20, top: 36, bottom: 30 },
+                xAxis: timeXAxis(),
+                yAxis: baseAxis({ type: 'value', axisLabel: { color: themeColors().text } }),
+                series: series
+            });
+        } catch (e) { showChartEmpty('chart-hb-inflight', '加载失败'); }
+    }
+
+    /* ===== Harbor: Task queue size chart ===== */
+    async function loadHarborQueueChart() {
+        showChartLoading('chart-hb-queue');
+        var sel = '{' + HARBOR_JOB + '}';
+        var step = TIME_RANGES[state.range].step;
+        var end = Math.floor(Date.now() / 1000);
+        var start = end - TIME_RANGES[state.range].seconds;
+        var q = 'sum by (type) (harbor_task_queue_size' + sel + ')';
+        try {
+            var result = await k8sRange(q, start, end, step);
+            if (!result.length) { showChartEmpty('chart-hb-queue', '暂无数据'); return; }
+            var palette = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6'];
+            var series = result.map(function (item, i) {
+                var qtype = item.metric.type || 'unknown';
+                return {
+                    name: qtype,
+                    type: 'line',
+                    showSymbol: false,
+                    smooth: true,
+                    stack: 'total',
+                    lineStyle: { width: 1.5 },
+                    itemStyle: { color: palette[i % palette.length] },
+                    areaStyle: { opacity: 0.3 },
+                    data: item.values.map(function (v) { return [v[0] * 1000, parseFloat(v[1])]; })
+                };
+            });
+            renderChart('chart-hb-queue', {
+                backgroundColor: 'transparent',
+                tooltip: baseTooltip(),
+                legend: { top: 0, textStyle: { color: themeColors().text }, type: 'scroll' },
+                grid: { left: 50, right: 20, top: 36, bottom: 30 },
+                xAxis: timeXAxis(),
+                yAxis: baseAxis({ type: 'value', axisLabel: { color: themeColors().text } }),
+                series: series
+            });
+        } catch (e) { showChartEmpty('chart-hb-queue', '加载失败'); }
+    }
+
+    /* ===== Harbor: Task queue latency chart ===== */
+    async function loadHarborLatencyChart() {
+        showChartLoading('chart-hb-latency');
+        var sel = '{' + HARBOR_JOB + '}';
+        var step = TIME_RANGES[state.range].step;
+        var end = Math.floor(Date.now() / 1000);
+        var start = end - TIME_RANGES[state.range].seconds;
+        var q = 'harbor_task_queue_latency' + sel;
+        try {
+            var result = await k8sRange(q, start, end, step);
+            if (!result.length) { showChartEmpty('chart-hb-latency', '暂无数据'); return; }
+            var palette = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6'];
+            var series = result.map(function (item, i) {
+                var qtype = item.metric.type || 'unknown';
+                return {
+                    name: qtype,
+                    type: 'line',
+                    showSymbol: false,
+                    smooth: true,
+                    lineStyle: { width: 2 },
+                    itemStyle: { color: palette[i % palette.length] },
+                    data: item.values.map(function (v) { return [v[0] * 1000, parseFloat(v[1])]; })
+                };
+            });
+            renderChart('chart-hb-latency', {
+                backgroundColor: 'transparent',
+                tooltip: Object.assign(baseTooltip(), { valueFormatter: function (v) { return v.toFixed(2) + ' s'; } }),
+                legend: { top: 0, textStyle: { color: themeColors().text }, type: 'scroll' },
+                grid: { left: 60, right: 20, top: 36, bottom: 30 },
+                xAxis: timeXAxis(),
+                yAxis: baseAxis({ type: 'value', axisLabel: { color: themeColors().text, formatter: '{value}s' } }),
+                series: series
+            });
+        } catch (e) { showChartEmpty('chart-hb-latency', '加载失败'); }
+    }
+
+    /* ===== Harbor: Refresh orchestration ===== */
+    async function refreshHarbor() {
+        var banner = document.getElementById('error-banner');
+        try {
+            await loadHarborOverview();
+            banner.hidden = true;
+        } catch (e) {
+            banner.hidden = false;
+            return;
+        }
+        await Promise.all([
+            loadHarborProjectTable().catch(function () {}),
+            loadHarborApiChart().catch(function () {}),
+            loadHarborInflightChart().catch(function () {}),
+            loadHarborQueueChart().catch(function () {}),
+            loadHarborLatencyChart().catch(function () {})
+        ]);
+        var now = new Date();
+        document.getElementById('last-refresh').textContent = '上次刷新: ' +
+            String(now.getHours()).padStart(2, '0') + ':' +
+            String(now.getMinutes()).padStart(2, '0') + ':' +
+            String(now.getSeconds()).padStart(2, '0');
+        countdown = REFRESH_INTERVAL;
+    }
+
     /* ===== Theme re-apply for all charts ===== */
     function rethemeCharts() {
         Object.keys(chartOpts).forEach(function (id) {
@@ -976,7 +1275,10 @@
         refreshTimer = setInterval(function () {
             countdown--;
             document.getElementById('next-refresh').textContent = '下次刷新: ' + countdown + 's';
-            if (countdown <= 0) { refreshAll(); }
+            if (countdown <= 0) {
+                if (state.activeTab === 'harbor') { refreshHarbor(); }
+                else { refreshAll(); }
+            }
         }, 1000);
     }
 
@@ -988,11 +1290,14 @@
             document.querySelectorAll('.time-btn').forEach(function (b) { b.classList.remove('active'); });
             btn.classList.add('active');
             state.range = btn.dataset.range;
-            refreshAll();
+            if (state.activeTab === 'harbor') {
+                refreshHarbor();
+            } else {
+                refreshAll();
+            }
         });
         document.getElementById('site-selector').addEventListener('change', function (e) {
             state.site = e.target.value;
-            // Reload selector-dependent panels only (not overview)
             Promise.all([
                 loadResourceTable().catch(function () {}),
                 loadP99Table().catch(function () {}),
@@ -1008,6 +1313,43 @@
                 loadAggDisk().catch(function () {})
             ]);
         });
+    }
+
+    /* ===== Tab routing ===== */
+    function switchTab(tab) {
+        if (tab !== 'mirrors' && tab !== 'harbor') tab = 'mirrors';
+        state.activeTab = tab;
+        document.querySelectorAll('.tab-link').forEach(function (link) {
+            link.classList.toggle('active', link.dataset.tab === tab);
+        });
+        var panelMirrors = document.getElementById('panel-mirrors');
+        var panelHarbor = document.getElementById('panel-harbor');
+        var siteSel = document.getElementById('site-selector');
+        if (tab === 'harbor') {
+            panelMirrors.hidden = true;
+            panelHarbor.hidden = false;
+            siteSel.style.display = 'none';
+        } else {
+            panelMirrors.hidden = false;
+            panelHarbor.hidden = true;
+            siteSel.style.display = '';
+        }
+        if (refreshTimer) clearInterval(refreshTimer);
+        document.getElementById('next-refresh').textContent = '下次刷新: ' + REFRESH_INTERVAL + 's';
+        var panel = tab === 'harbor' ? panelHarbor : panelMirrors;
+        var panelCharts = panel.querySelectorAll('.chart');
+        setTimeout(function () {
+            panelCharts.forEach(function (el) {
+                var inst = echarts.getInstanceByDom(el);
+                if (inst) inst.resize();
+            });
+        }, 50);
+        if (tab === 'harbor') {
+            refreshHarbor();
+        } else {
+            refreshAll();
+        }
+        startRefreshTimer();
     }
 
     /* ===== Resize handling ===== */
@@ -1030,11 +1372,24 @@
     /* ===== Init ===== */
     function init() {
         document.getElementById('copyright-year').textContent = new Date().getFullYear();
-        var chartIds = ['chart-cpu','chart-mem','chart-disk','chart-load','chart-net','chart-bargauge','chart-agg-load','chart-agg-mem','chart-agg-disk'];
+        var chartIds = ['chart-cpu','chart-mem','chart-disk','chart-load','chart-net','chart-bargauge','chart-agg-load','chart-agg-mem','chart-agg-disk',
+                        'chart-hb-api','chart-hb-inflight','chart-hb-queue','chart-hb-latency'];
         chartIds.forEach(function (id) { chartFirstLoad.add(id); });
         bindControls();
-        refreshAll();
-        startRefreshTimer();
+        window.addEventListener('hashchange', function () {
+            var hash = (window.location.hash || '#mirrors').slice(1);
+            switchTab(hash);
+        });
+        var initialTab = (window.location.hash || '#mirrors').slice(1);
+        if (initialTab === 'harbor') {
+            switchTab('harbor');
+        } else {
+            if (window.location.hash && initialTab !== 'mirrors') {
+                window.location.hash = '#mirrors';
+            }
+            refreshAll();
+            startRefreshTimer();
+        }
     }
 
     if (document.readyState === 'loading') {
