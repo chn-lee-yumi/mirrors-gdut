@@ -234,7 +234,7 @@
 .slide-indicator {
     position: absolute;
     top: 4px;
-    left: 4px;
+    left: 0;
     height: calc(100% - 8px);
     border-radius: var(--radius-lg);
     background: var(--gradient-primary);
