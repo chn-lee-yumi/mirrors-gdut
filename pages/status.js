@@ -1295,6 +1295,17 @@
                 refreshAll();
             }
         });
+        document.querySelectorAll('.tab-link').forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                var tab = link.dataset.tab;
+                if (tab === state.activeTab) return;
+                if (window.location.hash !== '#' + tab) {
+                    history.pushState(null, '', '#' + tab);
+                }
+                switchTab(tab);
+            });
+        });
         document.getElementById('site-selector').addEventListener('change', function (e) {
             state.site = e.target.value;
             Promise.all([
