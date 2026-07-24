@@ -34,18 +34,26 @@ CACHE_DIR_MAP = {
 }
 
 
-def get_disk_usage_gb(path):
+def du_dir_map(path, timeout=600):
+    result = {}
     try:
-        result = subprocess.run(
-            ['du', '-sb', path],
-            capture_output=True, text=True, timeout=300
+        proc = subprocess.run(
+            ['du', '-sb', '--max-depth=1', path],
+            capture_output=True, text=True, timeout=timeout
         )
-        if result.returncode == 0:
-            bytes_size = int(result.stdout.split()[0])
-            return round(bytes_size / (1024 ** 3), 1)
-    except (subprocess.TimeoutExpired, ValueError, IndexError):
+        if proc.returncode == 0:
+            for line in proc.stdout.strip().split('\n'):
+                parts = line.split('\t')
+                if len(parts) == 2:
+                    name = os.path.basename(parts[1])
+                    if name and name != os.path.basename(path):
+                        try:
+                            result[name] = int(parts[0])
+                        except ValueError:
+                            pass
+    except subprocess.TimeoutExpired:
         pass
-    return None
+    return result
 
 
 def read_csv_stats():
@@ -103,6 +111,8 @@ def get_sync_info(mirror_name, is_cache):
 
 def main():
     total_stats, daily_stats = read_csv_stats()
+    mirror_disk = du_dir_map(MIRROR_DIR)
+    cache_disk = du_dir_map(CACHE_DIR)
 
     mirrors = []
     for mirror_path in sorted(glob.glob(os.path.join(MIRROR_DIR, '*'))):
@@ -120,9 +130,11 @@ def main():
             disk_usage = None
         elif is_cache:
             cache_name = CACHE_DIR_MAP.get(mirror_name, mirror_name)
-            disk_usage = get_disk_usage_gb(os.path.join(CACHE_DIR, cache_name))
+            disk_bytes = cache_disk.get(cache_name)
+            disk_usage = round(disk_bytes / (1024 ** 3), 1) if disk_bytes else None
         else:
-            disk_usage = get_disk_usage_gb(mirror_path)
+            disk_bytes = mirror_disk.get(mirror_name)
+            disk_usage = round(disk_bytes / (1024 ** 3), 1) if disk_bytes else None
 
         sync_time, sync_status = get_sync_info(mirror_name, is_cache)
 
