@@ -6,41 +6,17 @@
 >
 > 由广东工业大学学生网管队建立与维护，致力于为校内用户提供高速、稳定的开源软件镜像服务。
 
+交流群：`VVZIbnZxVHZ2Sm80T1RNM09USTVORFVLCg==`
+
 ## 截图预览
 
-### 主页
-
-☀️ 浅色主题 | 🌙 深色主题
-
-![主页-浅色](screenshots/index-light.png)
-![主页-深色](screenshots/index-dark.png)
-
-主页采用 Bento Grid 布局，左侧展示镜像列表（名称 / 同步时间 / 同步状态 / 下载次数 / 使用帮助），右侧侧边栏提供快速下载、域名选择、联系方式和相关链接。顶部导航栏支持浅色 / 深色主题一键切换。
-
-### 目录浏览
-
-![目录浏览-浅色](screenshots/catalogue-light.png)
-![目录浏览-深色](screenshots/catalogue-dark.png)
-
-基于 Nginx Fancy Index 的目录浏览页，支持面包屑导航、文件搜索、虚拟滚动（大目录性能优化），文件夹 / 文件 / 返回上级均使用 SVG 图标。
-
-### 状态监控
-
-![状态页-浅色](screenshots/status-light.png)
-![状态页-深色](screenshots/status-dark.png)
-
-原生状态监控页面，直接查询 Prometheus 数据源，使用 ECharts 绘制时序图表。涵盖镜像站服务器和容器镜像库两个 Tab，展示 CPU / 内存 / 磁盘 / 负载 / 网络流量 / 镜像统计等指标。
-
-### Docker 镜像使用帮助
-
-![Docker帮助-浅色](screenshots/docker-light.png)
-![Docker帮助-深色](screenshots/docker-dark.png)
-
-各镜像源均提供详细的使用帮助页面，包含配置命令示例和代理地址对照表。
-
----
-
-交流群：`VVZIbnZxVHZ2Sm80T1RNM09USTVORFVLCg==`
+| 页面 | ☀️ 浅色主题 | 🌙 深色主题 | 说明 |
+|------|------------|------------|------|
+| 主页 | ![主页-浅色](screenshots/index-light.png) | ![主页-深色](screenshots/index-dark.png) | Bento Grid 布局，左侧镜像列表（名称 / 同步时间 / 同步状态 / 下载次数 / 使用帮助），右侧侧边栏提供快速下载、域名选择、联系方式和相关链接 |
+| 目录浏览 | ![目录浏览-浅色](screenshots/catalogue-light.png) | ![目录浏览-深色](screenshots/catalogue-dark.png) | 基于 Nginx Fancy Index，支持面包屑导航、文件搜索、虚拟滚动（大目录性能优化），文件夹 / 文件 / 返回上级均使用 SVG 图标 |
+| 状态监控 | ![状态页-浅色](screenshots/status-light.png) | ![状态页-深色](screenshots/status-dark.png) | 原生页面直查 Prometheus，ECharts 绘制时序图表。涵盖镜像站服务器和容器镜像库两个 Tab，展示 CPU / 内存 / 磁盘 / 负载 / 网络流量 / 镜像统计等指标 |
+| Docker 镜像使用帮助 | ![Docker帮助-浅色](screenshots/docker-light.png) | ![Docker帮助-深色](screenshots/docker-dark.png) | Docker 镜像源配置文档，包含前缀添加模式和域名置换模式的命令示例及代理地址对照表 |
+| 使用帮助文档 | ![帮助文档-浅色](screenshots/help-light.png) | ![帮助文档-深色](screenshots/help-dark.png) | 各镜像源均提供详细的使用帮助页面，包含配置命令示例和代理地址对照表 |
 
 ---
 
