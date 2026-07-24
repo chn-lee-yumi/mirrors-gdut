@@ -38,7 +38,7 @@ def du_dir_map(path, timeout=600):
     result = {}
     try:
         proc = subprocess.run(
-            ['du', '-b', '--max-depth=1', path],
+            ['du', '-bL', '--max-depth=1', path],
             capture_output=True, text=True, timeout=timeout
         )
         for line in proc.stdout.strip().split('\n'):
