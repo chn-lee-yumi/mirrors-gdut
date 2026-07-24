@@ -41,16 +41,15 @@ def du_dir_map(path, timeout=600):
             ['du', '-b', '--max-depth=1', path],
             capture_output=True, text=True, timeout=timeout
         )
-        if proc.returncode == 0:
-            for line in proc.stdout.strip().split('\n'):
-                parts = line.split('\t')
-                if len(parts) == 2:
-                    name = os.path.basename(parts[1])
-                    if name and name != os.path.basename(path):
-                        try:
-                            result[name] = int(parts[0])
-                        except ValueError:
-                            pass
+        for line in proc.stdout.strip().split('\n'):
+            parts = line.split('\t')
+            if len(parts) == 2:
+                name = os.path.basename(parts[1])
+                if name and name != os.path.basename(path):
+                    try:
+                        result[name] = int(parts[0])
+                    except ValueError:
+                        pass
     except subprocess.TimeoutExpired:
         pass
     return result
