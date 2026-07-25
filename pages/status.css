@@ -198,6 +198,7 @@
 .sync-text { display: inline-flex; align-items: center; gap: 4px; font-weight: 500; }
 .sync-ok { color: var(--color-success); }
 .sync-run { color: var(--color-syncing); }
+.sync-run .sync-icon { animation: spin 1s linear infinite; }
 .sync-cac { color: var(--color-info); }
 .sync-err { color: var(--color-error); }
 .mirror-name { font-family: 'Inter', sans-serif; font-weight: 600; color: var(--color-text); }

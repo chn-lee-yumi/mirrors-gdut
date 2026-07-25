@@ -546,6 +546,15 @@ html.js .navbar-brand.autohide.is-visible {
     background: rgba(139, 92, 246, 0.05) !important;
 }
 
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.status-icon.syncing {
+    animation: spin 1s linear infinite;
+}
+
 .even {
     background: transparent;
 }
