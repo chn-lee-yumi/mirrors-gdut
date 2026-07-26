@@ -427,6 +427,36 @@ html.js .navbar-brand.autohide.is-visible {
     opacity: 1;
 }
 
+/* ==========================================
+   Spotlight Effect (光斑跟随鼠标)
+   ========================================== */
+
+.navbar::after,
+.island::after,
+#footer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.12), transparent 70%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 0;
+}
+
+.navbar:hover::after,
+.island:hover::after,
+#footer:hover::after {
+    opacity: 1;
+}
+
+.dark-theme .navbar::after,
+.dark-theme .island::after,
+.dark-theme #footer::after {
+    background: radial-gradient(circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.08), transparent 70%);
+}
+
 .island-header {
     display: flex;
     align-items: center;
@@ -646,6 +676,8 @@ ul {
    ========================================== */
 
 #footer {
+    position: relative;
+    overflow: hidden;
     margin-top: var(--spacing-3xl);
     padding: var(--spacing-xl) var(--spacing-xl) var(--spacing-lg);
     text-align: center;
