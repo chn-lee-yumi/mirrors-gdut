@@ -863,7 +863,7 @@ p.answer {
     }
     
     /* Make table horizontally scrollable on mobile */
-    .island-main {
+    .bento-main .island {
         overflow-x: auto;
     }
     
