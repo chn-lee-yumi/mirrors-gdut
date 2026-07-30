@@ -397,7 +397,9 @@
     async function loadResourceTable() {
         const inst = instanceSelector();
         const iv = TIME_RANGES[state.range].interval;
-        tableSkeleton('resource-tbody', 13);
+        if (!document.querySelector('#resource-tbody tr[data-instance]')) {
+            tableSkeleton('resource-tbody', 13);
+        }
         const T = {
             uptime: 'sum(time() - node_boot_time_seconds{instance=~"{INSTANCE}"}) by (instance)/86400',
             memtotal: 'node_memory_MemTotal_bytes{instance=~"{INSTANCE}"} - 0',
@@ -422,8 +424,18 @@
             data[k] = m;
         });
         const instances = selectedInstances();
-        let html = '';
-        let any = false;
+        const tbody = document.getElementById('resource-tbody');
+        const existingRows = tbody.querySelectorAll('tr[data-instance]');
+        const expectedInstances = instances.filter(function (inst2) { return HOSTS[inst2]; });
+        var canUpdateInPlace = existingRows.length === expectedInstances.length;
+        if (canUpdateInPlace) {
+            for (var i = 0; i < expectedInstances.length; i++) {
+                if (existingRows[i].dataset.instance !== expectedInstances[i]) { canUpdateInPlace = false; break; }
+            }
+        }
+
+        var rowData = [];
+        var any = false;
         instances.forEach(function (inst2) {
             const host = HOSTS[inst2];
             if (!host) return;
@@ -432,24 +444,63 @@
             const mem = data.memusage[inst2];
             const disk = data.diskusage[inst2];
             const health = (isFinite(cpu) ? cpu : 0) * 0.5 + (isFinite(mem) ? mem : 0) * 0.3 + (isFinite(disk) ? disk : 0) * 0.2;
-            html += '<tr>'
-                + '<td class="col-site">' + host.name + '</td>'
-                + '<td>' + fmtUptime(data.uptime[inst2]) + '</td>'
-                + '<td>' + (isFinite(data.cpucount[inst2]) ? Math.round(data.cpucount[inst2]) : '-') + '</td>'
-                + '<td>' + fmtBytes(data.memtotal[inst2]) + '</td>'
-                + '<td class="pct-tag ' + pctClass(cpu) + '">' + fmtPct(cpu) + '</td>'
-                + '<td class="pct-tag ' + pctClass(mem) + '">' + fmtPct(mem) + '</td>'
-                + '<td class="pct-tag ' + pctClass(disk) + '">' + fmtPct(disk) + '</td>'
-                + '<td>' + (isFinite(data.load5[inst2]) ? data.load5[inst2].toFixed(2) : '-') + '</td>'
-                + '<td>' + (isFinite(data.diskread[inst2]) ? fmtBytes(data.diskread[inst2]) + '/s' : '-') + '</td>'
-                + '<td>' + (isFinite(data.diskwrite[inst2]) ? fmtBytes(data.diskwrite[inst2]) + '/s' : '-') + '</td>'
-                + '<td>' + fmtBps(data.netrx[inst2]) + '</td>'
-                + '<td>' + fmtBps(data.nettx[inst2]) + '</td>'
-                + '<td><span class="health-bar"><span class="health-track"><span class="health-fill" style="width:' + health.toFixed(1) + '%;background:' + healthColor(health) + ';"></span></span><span class="pct-tag ' + pctClass(health) + '">' + health.toFixed(1) + '</span></span></td>'
-                + '</tr>';
+            rowData.push({ inst2: inst2, host: host, cpu: cpu, mem: mem, disk: disk, health: health,
+                uptime: data.uptime[inst2], cpucount: data.cpucount[inst2], memtotal: data.memtotal[inst2],
+                load5: data.load5[inst2], diskread: data.diskread[inst2], diskwrite: data.diskwrite[inst2],
+                netrx: data.netrx[inst2], nettx: data.nettx[inst2] });
         });
         if (!any) { tableEmpty('resource-tbody', '暂无数据', 13); return; }
-        document.getElementById('resource-tbody').innerHTML = html;
+
+        if (canUpdateInPlace) {
+            rowData.forEach(function (r, idx) {
+                var tr = existingRows[idx];
+                var cells = tr.children;
+                cells[1].textContent = fmtUptime(r.uptime);
+                cells[2].textContent = isFinite(r.cpucount) ? Math.round(r.cpucount) : '-';
+                cells[3].textContent = fmtBytes(r.memtotal);
+                cells[4].textContent = fmtPct(r.cpu);
+                cells[4].className = 'pct-tag ' + pctClass(r.cpu);
+                cells[5].textContent = fmtPct(r.mem);
+                cells[5].className = 'pct-tag ' + pctClass(r.mem);
+                cells[6].textContent = fmtPct(r.disk);
+                cells[6].className = 'pct-tag ' + pctClass(r.disk);
+                cells[7].textContent = isFinite(r.load5) ? r.load5.toFixed(2) : '-';
+                cells[8].textContent = isFinite(r.diskread) ? fmtBytes(r.diskread) + '/s' : '-';
+                cells[9].textContent = isFinite(r.diskwrite) ? fmtBytes(r.diskwrite) + '/s' : '-';
+                cells[10].textContent = fmtBps(r.netrx);
+                cells[11].textContent = fmtBps(r.nettx);
+                var fill = cells[12].querySelector('.health-fill');
+                if (fill) {
+                    fill.style.width = r.health.toFixed(1) + '%';
+                    fill.style.background = healthColor(r.health);
+                }
+                var pctTag = cells[12].querySelector('.pct-tag');
+                if (pctTag) {
+                    pctTag.textContent = r.health.toFixed(1);
+                    pctTag.className = 'pct-tag ' + pctClass(r.health);
+                }
+            });
+        } else {
+            var html = '';
+            rowData.forEach(function (r) {
+                html += '<tr data-instance="' + r.inst2 + '">'
+                    + '<td class="col-site">' + r.host.name + '</td>'
+                    + '<td>' + fmtUptime(r.uptime) + '</td>'
+                    + '<td>' + (isFinite(r.cpucount) ? Math.round(r.cpucount) : '-') + '</td>'
+                    + '<td>' + fmtBytes(r.memtotal) + '</td>'
+                    + '<td class="pct-tag ' + pctClass(r.cpu) + '">' + fmtPct(r.cpu) + '</td>'
+                    + '<td class="pct-tag ' + pctClass(r.mem) + '">' + fmtPct(r.mem) + '</td>'
+                    + '<td class="pct-tag ' + pctClass(r.disk) + '">' + fmtPct(r.disk) + '</td>'
+                    + '<td>' + (isFinite(r.load5) ? r.load5.toFixed(2) : '-') + '</td>'
+                    + '<td>' + (isFinite(r.diskread) ? fmtBytes(r.diskread) + '/s' : '-') + '</td>'
+                    + '<td>' + (isFinite(r.diskwrite) ? fmtBytes(r.diskwrite) + '/s' : '-') + '</td>'
+                    + '<td>' + fmtBps(r.netrx) + '</td>'
+                    + '<td>' + fmtBps(r.nettx) + '</td>'
+                    + '<td><span class="health-bar"><span class="health-track"><span class="health-fill" style="width:' + r.health.toFixed(1) + '%;background:' + healthColor(r.health) + ';"></span></span><span class="pct-tag ' + pctClass(r.health) + '">' + r.health.toFixed(1) + '</span></span></td>'
+                    + '</tr>';
+            });
+            tbody.innerHTML = html;
+        }
     }
 
     /* ===== Panel 3: 7-day P99 table ===== */
@@ -488,7 +539,9 @@
     /* ===== Panel 4: Partition table ===== */
     async function loadPartitionTable() {
         const inst = instanceSelector();
-        tableSkeleton('partition-tbody', 5);
+        if (!document.querySelector('#partition-tbody .partition-row')) {
+            tableSkeleton('partition-tbody', 5);
+        }
         const T = {
             total: 'node_filesystem_size_bytes{instance=~"{INSTANCE}",fstype=~"ext.*|xfs",mountpoint=~"/|/home"}-0',
             avail: 'node_filesystem_avail_bytes{instance=~"{INSTANCE}",fstype=~"ext.*|xfs",mountpoint=~"/|/home"}-0',
@@ -528,7 +581,7 @@
                     const u = isFinite(r.usage) ? r.usage : NaN;
                     var uClamped = Math.max(0, Math.min(100, isFinite(u) ? u : 0));
                     var barColor = usageGradientColor(uClamped);
-                    html += '<tr class="partition-row" data-bar-w="' + uClamped.toFixed(1) + '" data-bar-c="' + barColor + '">'
+                    html += '<tr class="partition-row" data-key="' + r.instance + '|' + (r.mountpoint||'') + '" data-bar-w="' + uClamped.toFixed(1) + '" data-bar-c="' + barColor + '">'
                         + '<td class="col-site">' + host.name + '</td>'
                         + '<td>' + (r.mountpoint || '-') + '</td>'
                         + '<td>' + fmtBytes(r.total) + '</td>'
@@ -537,44 +590,72 @@
                         + '</tr>';
                 });
         });
+        var oldWidths = {};
+        document.querySelectorAll('#partition-tbody .partition-row').forEach(function (tr) {
+            var key = tr.dataset.key;
+            if (key) {
+                var match = tr.style.background.match(/([\d.]+)%/);
+                oldWidths[key] = match ? parseFloat(match[1]) : 0;
+            }
+        });
         document.getElementById('partition-tbody').innerHTML = html;
-        // Animate progress bars from left to right, but only after island is visible and fadeIn complete
         var island = document.getElementById('partition-tbody').closest('.island');
         var barRows = document.querySelectorAll('#partition-tbody .partition-row');
-        // Set initial 0% state immediately
-        barRows.forEach(function (tr) {
-            var color = tr.dataset.barC || 'transparent';
-            tr.style.background = 'linear-gradient(90deg, ' + color + ' 0%, transparent 0%)';
-        });
+        var isFirstLoad = !partitionTableLoaded;
+        partitionTableLoaded = true;
 
-        function runBarAnimation() {
+        if (isFirstLoad) {
+            barRows.forEach(function (tr) {
+                var color = tr.dataset.barC || 'transparent';
+                tr.style.background = 'linear-gradient(90deg, ' + color + ' 0%, transparent 0%)';
+            });
+            function runBarAnimation() {
+                barRows.forEach(function (tr, idx) {
+                    var targetW = parseFloat(tr.dataset.barW) || 0;
+                    var color = tr.dataset.barC || 'transparent';
+                    setTimeout(function () {
+                        var startTime = null;
+                        function step(ts) {
+                            if (!startTime) startTime = ts;
+                            var progress = Math.min((ts - startTime) / 1200, 1);
+                            var eased = 1 - Math.pow(1 - progress, 3);
+                            var curW = targetW * eased;
+                            tr.style.background = 'linear-gradient(90deg, ' + color + ' ' + curW.toFixed(1) + '%, transparent ' + curW.toFixed(1) + '%)';
+                            if (progress < 1) requestAnimationFrame(step);
+                        }
+                        requestAnimationFrame(step);
+                    }, idx * 150);
+                });
+            }
+            if (island) {
+                var visObs = new IntersectionObserver(function (entries) {
+                    if (entries[0].isIntersecting) {
+                        visObs.disconnect();
+                        setTimeout(runBarAnimation, 700);
+                    }
+                }, { threshold: 0.15 });
+                visObs.observe(island);
+            }
+        } else {
             barRows.forEach(function (tr, idx) {
                 var targetW = parseFloat(tr.dataset.barW) || 0;
                 var color = tr.dataset.barC || 'transparent';
+                var key = tr.dataset.key;
+                var startW = oldWidths[key] !== undefined ? oldWidths[key] : 0;
+                tr.style.background = 'linear-gradient(90deg, ' + color + ' ' + startW.toFixed(1) + '%, transparent ' + startW.toFixed(1) + '%)';
                 setTimeout(function () {
                     var startTime = null;
                     function step(ts) {
                         if (!startTime) startTime = ts;
-                        var progress = Math.min((ts - startTime) / 1200, 1);
+                        var progress = Math.min((ts - startTime) / 600, 1);
                         var eased = 1 - Math.pow(1 - progress, 3);
-                        var curW = targetW * eased;
+                        var curW = startW + (targetW - startW) * eased;
                         tr.style.background = 'linear-gradient(90deg, ' + color + ' ' + curW.toFixed(1) + '%, transparent ' + curW.toFixed(1) + '%)';
                         if (progress < 1) requestAnimationFrame(step);
                     }
                     requestAnimationFrame(step);
-                }, idx * 150);
+                }, idx * 30);
             });
-        }
-
-        if (island) {
-            var visObs = new IntersectionObserver(function (entries) {
-                if (entries[0].isIntersecting) {
-                    visObs.disconnect();
-                    // Wait for island fadeIn animation to finish before starting bar animation
-                    setTimeout(runBarAnimation, 700);
-                }
-            }, { threshold: 0.15 });
-            visObs.observe(island);
         }
     }
 
@@ -778,7 +859,9 @@
             renderChart('chart-bargauge', {
                 backgroundColor: 'transparent',
                 animationDuration: 1200,
+                animationDurationUpdate: 600,
                 animationEasing: 'cubicOut',
+                animationEasingUpdate: 'cubicOut',
                 animationDelay: function (idx) { return idx * 150; },
                 tooltip: Object.assign(baseTooltip(), { trigger: 'item', valueFormatter: function (v) { return fmtPct(v); } }),
                 legend: { top: 0, textStyle: { color: themeColors().text } },
@@ -923,6 +1006,7 @@
     var mirrorStatsSort = { key: 'disk_usage_gb', dir: 'desc' };
     var mirrorStatsData = [];
     var mirrorStatsLoaded = false;
+    var partitionTableLoaded = false;
 
     function fmtMirrorType(type) {
         var map = { full: '全量', cache: '缓存', proxy: '代理' };
@@ -955,19 +1039,61 @@
         });
         var maxDisk = 0;
         mirrors.forEach(function (m) { if (m.disk_usage_gb && m.disk_usage_gb > maxDisk) maxDisk = m.disk_usage_gb; });
-        var html = '';
-        mirrors.forEach(function (m) {
-            html += '<tr>'
-                + '<td class="mirror-name">' + m.name + '</td>'
-                + '<td>' + fmtMirrorType(m.type) + '</td>'
-                + '<td>' + fmtSyncStatus(m.sync_status) + '</td>'
-                + '<td>' + (m.sync_time || '—') + '</td>'
-                + '<td>' + fmtDiskUsage(m.disk_usage_gb, maxDisk) + '</td>'
-                + '<td>' + (m.total_requests > 0 ? m.total_requests.toLocaleString() : '—') + '</td>'
-                + '<td>' + (m.daily_requests > 0 ? m.daily_requests.toLocaleString() : '—') + '</td>'
-                + '</tr>';
-        });
-        document.getElementById('mirror-stats-tbody').innerHTML = html;
+        var tbody = document.getElementById('mirror-stats-tbody');
+        var existingRows = tbody.querySelectorAll('tr[data-name]');
+        var sortedNames = mirrors.map(function (m) { return m.name; });
+        var canUpdateInPlace = existingRows.length === sortedNames.length;
+        if (canUpdateInPlace) {
+            for (var i = 0; i < sortedNames.length; i++) {
+                if (existingRows[i].dataset.name !== sortedNames[i]) { canUpdateInPlace = false; break; }
+            }
+        }
+        if (canUpdateInPlace) {
+            mirrors.forEach(function (m, idx) {
+                var tr = existingRows[idx];
+                var cells = tr.children;
+                cells[1].innerHTML = fmtMirrorType(m.type);
+                cells[2].innerHTML = fmtSyncStatus(m.sync_status);
+                cells[3].textContent = m.sync_time || '—';
+                var fill = cells[4].querySelector('.disk-bar-fill');
+                if (fill) {
+                    if (m.disk_usage_gb === null || m.disk_usage_gb === undefined) {
+                        fill.style.width = '0%';
+                    } else {
+                        var pct = maxDisk > 0 ? Math.min(100, (m.disk_usage_gb / maxDisk) * 100) : 0;
+                        fill.style.width = pct.toFixed(1) + '%';
+                    }
+                    var barSpan = cells[4].querySelector('.disk-bar');
+                    if (barSpan) {
+                        var textNode = null;
+                        for (var j = 0; j < barSpan.childNodes.length; j++) {
+                            if (barSpan.childNodes[j].nodeType === 3) { textNode = barSpan.childNodes[j]; break; }
+                        }
+                        if (textNode) {
+                            textNode.textContent = (m.disk_usage_gb === null || m.disk_usage_gb === undefined) ? '—' : ' ' + m.disk_usage_gb.toFixed(1) + ' GB';
+                        }
+                    }
+                } else {
+                    cells[4].innerHTML = fmtDiskUsage(m.disk_usage_gb, maxDisk);
+                }
+                cells[5].textContent = m.total_requests > 0 ? m.total_requests.toLocaleString() : '—';
+                cells[6].textContent = m.daily_requests > 0 ? m.daily_requests.toLocaleString() : '—';
+            });
+        } else {
+            var html = '';
+            mirrors.forEach(function (m) {
+                html += '<tr data-name="' + m.name + '">'
+                    + '<td class="mirror-name">' + m.name + '</td>'
+                    + '<td>' + fmtMirrorType(m.type) + '</td>'
+                    + '<td>' + fmtSyncStatus(m.sync_status) + '</td>'
+                    + '<td>' + (m.sync_time || '—') + '</td>'
+                    + '<td>' + fmtDiskUsage(m.disk_usage_gb, maxDisk) + '</td>'
+                    + '<td>' + (m.total_requests > 0 ? m.total_requests.toLocaleString() : '—') + '</td>'
+                    + '<td>' + (m.daily_requests > 0 ? m.daily_requests.toLocaleString() : '—') + '</td>'
+                    + '</tr>';
+            });
+            tbody.innerHTML = html;
+        }
         document.querySelectorAll('.mirror-stats-table th.sortable').forEach(function (th) {
             th.classList.remove('sorted-asc', 'sorted-desc');
             if (th.dataset.sort === key) th.classList.add(mirrorStatsSort.dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
