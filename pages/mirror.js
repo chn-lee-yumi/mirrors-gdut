@@ -11,48 +11,55 @@
     // ==========================================
     
     const THEME_STORAGE_KEY = 'gdut-mirror-theme';
-    
+    const THEME_MODES = ['light', 'dark', 'auto'];
+    var systemDarkMedia = window.matchMedia('(prefers-color-scheme: dark)');
+    var systemThemeHandler = null;
+
+    function applyTheme(mode) {
+        var isDark = mode === 'dark' || (mode === 'auto' && systemDarkMedia.matches);
+        document.body.classList.toggle('dark-theme', isDark);
+        document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+        setTimeout(function () { document.body.style.transition = ''; }, 300);
+        updateThemeToggleIcon(document.querySelector('.theme-toggle'), mode);
+    }
+
     function initTheme() {
-        // Check stored preference or system preference
-        const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        
-        const isDark = storedTheme === 'dark' || (!storedTheme && prefersDark);
-        
-        if (isDark) {
-            document.body.classList.add('dark-theme');
-        }
-        
-        // Create theme toggle button if it exists
-        const themeToggle = document.querySelector('.theme-toggle');
+        var stored = localStorage.getItem(THEME_STORAGE_KEY);
+        var mode = THEME_MODES.indexOf(stored) >= 0 ? stored : 'auto';
+
+        applyTheme(mode);
+
+        var themeToggle = document.querySelector('.theme-toggle');
         if (themeToggle) {
-            updateThemeToggleIcon(themeToggle, isDark);
             themeToggle.addEventListener('click', toggleTheme);
         }
+
+        systemThemeHandler = function () {
+            var current = localStorage.getItem(THEME_STORAGE_KEY);
+            if (current === 'auto' || !current) applyTheme('auto');
+        };
+        systemDarkMedia.addEventListener('change', systemThemeHandler);
     }
-    
+
     function toggleTheme() {
-        const body = document.body;
-        const isDark = body.classList.toggle('dark-theme');
-        
-        localStorage.setItem(THEME_STORAGE_KEY, isDark ? 'dark' : 'light');
-        
-        const themeToggle = document.querySelector('.theme-toggle');
-        if (themeToggle) {
-            updateThemeToggleIcon(themeToggle, isDark);
-        }
-        
-        // Add smooth transition
-        body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
-        setTimeout(() => {
-            body.style.transition = '';
-        }, 300);
+        var current = localStorage.getItem(THEME_STORAGE_KEY);
+        var idx = THEME_MODES.indexOf(current);
+        if (idx < 0) idx = 2;
+        var next = THEME_MODES[(idx + 1) % THEME_MODES.length];
+        localStorage.setItem(THEME_STORAGE_KEY, next);
+        applyTheme(next);
     }
-    
-    function updateThemeToggleIcon(button, isDark) {
-        button.innerHTML = isDark 
-            ? '<svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/></svg>'
-            : '<svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>';
+
+    function updateThemeToggleIcon(button, mode) {
+        if (!button) return;
+        var icons = {
+            light: '<svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/></svg>',
+            dark: '<svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>',
+            auto: '<svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 2a6 6 0 010 12V4z"/></svg>'
+        };
+        var labels = { light: '浅色模式（点击切换到深色）', dark: '深色模式（点击切换到自动）', auto: '跟随系统（点击切换到浅色）' };
+        button.innerHTML = icons[mode] || icons.auto;
+        button.title = labels[mode] || labels.auto;
     }
 
     // ==========================================
