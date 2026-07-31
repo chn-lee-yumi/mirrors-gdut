@@ -208,8 +208,6 @@ a:hover {
 }
 
 .navbar-container {
-    max-width: 1400px;
-    margin: 0 auto;
     padding: var(--spacing-md) var(--spacing-xl);
     display: flex;
     align-items: center;
