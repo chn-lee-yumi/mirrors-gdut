@@ -24,7 +24,7 @@ CDN_MIRROR_LIST = {
     'rubygems'
 }
 
-PROXY_MIRRORS = {'docker', 'maven', 'npm', 'go', 'crates.io-index'}
+PROXY_MIRRORS = {'docker', 'maven', 'npm', 'go', 'crates.io-index', 'composer', 'nuget'}
 
 IGNORE_DIR = {
     'static', 'font', 'help', 'Nginx-Fancyindex-Theme',
