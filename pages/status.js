@@ -1083,13 +1083,13 @@
             var html = '';
             mirrors.forEach(function (m) {
                 html += '<tr data-name="' + m.name + '">'
-                    + '<td class="mirror-name">' + m.name + '</td>'
-                    + '<td>' + fmtMirrorType(m.type) + '</td>'
-                    + '<td>' + fmtSyncStatus(m.sync_status) + '</td>'
-                    + '<td>' + (m.sync_time || '—') + '</td>'
-                    + '<td>' + fmtDiskUsage(m.disk_usage_gb, maxDisk) + '</td>'
-                    + '<td>' + (m.total_requests > 0 ? m.total_requests.toLocaleString() : '—') + '</td>'
-                    + '<td>' + (m.daily_requests > 0 ? m.daily_requests.toLocaleString() : '—') + '</td>'
+                    + '<td class="mirror-name" data-label="镜像名称">' + m.name + '</td>'
+                    + '<td data-label="类型">' + fmtMirrorType(m.type) + '</td>'
+                    + '<td data-label="同步状态">' + fmtSyncStatus(m.sync_status) + '</td>'
+                    + '<td data-label="最近同步">' + (m.sync_time || '—') + '</td>'
+                    + '<td data-label="磁盘占用">' + fmtDiskUsage(m.disk_usage_gb, maxDisk) + '</td>'
+                    + '<td data-label="累计请求">' + (m.total_requests > 0 ? m.total_requests.toLocaleString() : '—') + '</td>'
+                    + '<td data-label="当日请求">' + (m.daily_requests > 0 ? m.daily_requests.toLocaleString() : '—') + '</td>'
                     + '</tr>';
             });
             tbody.innerHTML = html;
