@@ -863,13 +863,71 @@ p.answer {
     
     /* Make table horizontally scrollable on mobile */
     .bento-main .island {
-        overflow-x: auto;
+        overflow-x: visible;
     }
     
     #distro-table {
-        min-width: 600px;
+        min-width: 0;
     }
-    
+
+    #distro-table thead {
+        display: none;
+    }
+
+    #distro-table, #distro-table tbody, #distro-table tr, #distro-table td {
+        display: block;
+        width: 100%;
+    }
+
+    #distro-table tr {
+        margin-bottom: var(--spacing-sm);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-sm) var(--spacing-md);
+        background: var(--color-surface);
+    }
+
+    #distro-table tr:last-child {
+        margin-bottom: 0;
+    }
+
+    #distro-table tr:hover {
+        background: var(--color-surface);
+    }
+
+    #distro-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-xs) 0;
+        border-bottom: 1px solid var(--color-border);
+        white-space: normal;
+    }
+
+    #distro-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    #distro-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--color-text);
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    #distro-table td:first-child {
+        font-size: 1rem;
+        font-weight: 600;
+        padding-bottom: var(--spacing-sm);
+        border-bottom: 2px solid var(--color-border);
+    }
+
+    #distro-table td:first-child::before {
+        display: none;
+    }
+
     #distro-table th,
     #distro-table td {
         padding: var(--spacing-sm);

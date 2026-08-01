@@ -310,6 +310,45 @@
     .chart-grid { grid-template-columns: 1fr; }
     .full-width { grid-column: span 1; }
     .hero-controls { flex-direction: column; gap: var(--spacing-sm); }
+
+    .mirror-stats-table thead { display: none; }
+    .mirror-stats-table, .mirror-stats-table tbody,
+    .mirror-stats-table tr, .mirror-stats-table td {
+        display: block;
+        width: 100%;
+    }
+    .mirror-stats-table tr {
+        margin-bottom: var(--spacing-sm);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+    .mirror-stats-table tr:last-child { margin-bottom: 0; }
+    .mirror-stats-table tr:hover { background: var(--color-surface); }
+    .mirror-stats-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-xs) 0;
+        border-bottom: 1px solid var(--color-border);
+        white-space: normal;
+    }
+    .mirror-stats-table tr:last-child td { border-bottom: none; }
+    .mirror-stats-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--color-text);
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    .mirror-stats-table .mirror-name {
+        font-size: 1rem;
+        font-weight: 600;
+        padding-bottom: var(--spacing-sm);
+        border-bottom: 2px solid var(--color-border);
+    }
+    .mirror-stats-table .mirror-name::before { display: none; }
 }
 @media (max-width: 480px) {
     .stat-grid { grid-template-columns: 1fr; }
