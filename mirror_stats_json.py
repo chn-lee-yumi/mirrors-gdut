@@ -21,7 +21,7 @@ CDN_MIRROR_LIST = {
     'pypi', 'centos-stream', 'centos-vault', 'anaconda', 'anolis',
     'crates.io-index', 'maven', 'npm', 'kali', 'ubuntu-ports',
     'freebsd-pkg', 'docker', 'go', 'openwrt', 'opensuse', 'fedora',
-    'rubygems'
+    'rubygems', 'composer', 'nuget'
 }
 
 PROXY_MIRRORS = {'docker', 'maven', 'npm', 'go', 'crates.io-index', 'composer', 'nuget'}
