@@ -493,7 +493,7 @@ html.js .navbar-brand.autohide.is-visible {
 #distro-table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0;
+    border-spacing: 0 6px;
 }
 
 #distro-table thead {
@@ -518,23 +518,40 @@ html.js .navbar-brand.autohide.is-visible {
     border-top-right-radius: var(--radius-md);
 }
 
-#distro-table td {
+#distro-table tbody td {
     padding: var(--spacing-md);
+    border-top: 1px solid var(--color-border);
     border-bottom: 1px solid var(--color-border);
     color: var(--color-text-secondary);
+    background: var(--color-surface);
+    transition: background var(--transition-fast);
+}
+
+#distro-table tbody td:first-child {
+    border-left: 1px solid var(--color-border);
+    border-radius: var(--radius-md) 0 0 var(--radius-md);
+}
+
+#distro-table tbody td:last-child {
+    border-right: 1px solid var(--color-border);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
 }
 
 #distro-table tbody tr {
-    transition: all var(--transition-fast);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
 }
 
 #distro-table tbody tr:hover {
-    background: var(--color-hover);
+    transform: scale(1.02);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    z-index: 1;
 }
 
-#distro-table tbody tr:last-child td {
-    border-bottom: none;
+#distro-table tbody tr:hover td {
+    background: var(--color-hover);
 }
 
 /* Status Badges */
@@ -895,13 +912,15 @@ p.answer {
         background: var(--color-surface);
     }
 
-    #distro-table td {
+    #distro-table tbody td {
         display: flex;
         justify-content: space-between;
         align-items: center;
         gap: var(--spacing-sm);
         padding: var(--spacing-xs) 0;
+        border: none;
         border-bottom: 1px solid var(--color-border);
+        border-radius: 0;
         white-space: normal;
     }
 
@@ -917,7 +936,7 @@ p.answer {
         flex-shrink: 0;
     }
 
-    #distro-table td:first-child {
+    #distro-table tbody td:first-child {
         font-size: 1rem;
         font-weight: 600;
         padding-bottom: var(--spacing-sm);
