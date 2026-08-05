@@ -530,60 +530,52 @@ html.js .navbar-brand.autohide.is-visible {
 
 #distro-table tbody td {
     padding: var(--spacing-md);
-    border-top: 1px solid var(--color-border);
-    border-bottom: 1px solid var(--color-border);
     color: var(--color-text-secondary);
-    background: var(--color-surface);
+    background: transparent;
+    border: none;
     position: relative;
-    transition: background var(--transition-fast);
-}
-
-#distro-table tbody td:first-child {
-    border-left: 1px solid var(--color-border);
-    border-radius: var(--radius-md) 0 0 var(--radius-md);
-}
-
-#distro-table tbody td:last-child {
-    border-right: 1px solid var(--color-border);
-    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    z-index: 2;
 }
 
 #distro-table tbody tr {
+    position: relative;
     cursor: pointer;
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #distro-table tbody tr:hover {
     transform: scale(1.02);
-    position: relative;
     z-index: 1;
 }
 
-#distro-table tbody tr:hover td {
-    background: var(--color-hover);
-    box-shadow: var(--shadow-md);
-}
-
-/* 光晕层：整行一个，跟随鼠标位置 */
+/* 卡片背景 + 边框 + 光晕 + 阴影，整行一个伪元素，td 透明无暗条 */
 #distro-table tbody tr::after {
     content: '';
     display: block;
     position: absolute;
     inset: 0;
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    background: radial-gradient(circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.12), transparent 70%);
-    opacity: 0;
+    background:
+        radial-gradient(circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0), transparent 70%),
+        var(--color-surface);
+    box-shadow: none;
     pointer-events: none;
-    transition: opacity 0.2s;
-    z-index: 1;
+    transition: background var(--transition-fast), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 0;
 }
 
 #distro-table tbody tr:hover::after {
-    opacity: 1;
+    background:
+        radial-gradient(circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.12), transparent 70%),
+        var(--color-hover);
+    box-shadow: var(--shadow-md);
 }
 
-.dark-theme #distro-table tbody tr::after {
-    background: radial-gradient(circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.08), transparent 70%);
+.dark-theme #distro-table tbody tr:hover::after {
+    background:
+        radial-gradient(circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.08), transparent 70%),
+        var(--color-hover);
 }
 
 /* Status Badges */
@@ -621,12 +613,16 @@ html.js .navbar-brand.autohide.is-visible {
 }
 
 /* Row States */
-#distro-table tbody tr.syncing-row td {
-    background: rgba(139, 92, 246, 0.05);
+#distro-table tbody tr.syncing-row::after {
+    background:
+        radial-gradient(circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0), transparent 70%),
+        rgba(139, 92, 246, 0.05);
 }
 
-#distro-table tbody tr.syncing-row:hover td {
-    background: rgba(139, 92, 246, 0.08);
+#distro-table tbody tr.syncing-row:hover::after {
+    background:
+        radial-gradient(circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.12), transparent 70%),
+        rgba(139, 92, 246, 0.08);
 }
 
 @keyframes spin {
