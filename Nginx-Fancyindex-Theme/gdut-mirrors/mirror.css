@@ -518,6 +518,16 @@ html.js .navbar-brand.autohide.is-visible {
     border-top-right-radius: var(--radius-md);
 }
 
+/* 匿名单元格：thead 和 tbody 的 tr::before 各自创建一个，
+   使两者偏移一致；宽度 0 不影响布局 */
+#distro-table tr::before {
+    content: '';
+    display: block;
+    width: 0;
+    padding: 0;
+    border: none;
+}
+
 #distro-table tbody td {
     padding: var(--spacing-md);
     border-top: 1px solid var(--color-border);
@@ -525,8 +535,7 @@ html.js .navbar-brand.autohide.is-visible {
     color: var(--color-text-secondary);
     background: var(--color-surface);
     position: relative;
-    overflow: hidden;
-    transition: background var(--transition-fast), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: background var(--transition-fast);
 }
 
 #distro-table tbody td:first-child {
@@ -555,21 +564,25 @@ html.js .navbar-brand.autohide.is-visible {
     box-shadow: var(--shadow-md);
 }
 
-#distro-table tbody td::after {
+/* 光晕层：整行一个，跟随鼠标位置 */
+#distro-table tbody tr::after {
     content: '';
+    display: block;
     position: absolute;
     inset: 0;
+    border-radius: var(--radius-md);
     background: radial-gradient(circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.12), transparent 70%);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s;
+    z-index: 1;
 }
 
-#distro-table tbody tr:hover td::after {
+#distro-table tbody tr:hover::after {
     opacity: 1;
 }
 
-.dark-theme #distro-table tbody td::after {
+.dark-theme #distro-table tbody tr::after {
     background: radial-gradient(circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.08), transparent 70%);
 }
 
@@ -919,6 +932,11 @@ p.answer {
         width: 100%;
     }
 
+    #distro-table tr::before,
+    #distro-table tbody tr::after {
+        display: none;
+    }
+
     #distro-table tr {
         margin-bottom: var(--spacing-sm);
         border: 1px solid var(--color-border);
@@ -948,10 +966,6 @@ p.answer {
         overflow: visible;
         box-shadow: none;
         white-space: normal;
-    }
-
-    #distro-table tbody td::after {
-        display: none;
     }
 
     #distro-table tr:last-child td {
