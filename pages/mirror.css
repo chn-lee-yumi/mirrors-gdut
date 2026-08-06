@@ -117,7 +117,7 @@ code {
     font-family: "Fira Code", Consolas, Menlo, Monaco, monospace;
     font-size: 0.875em;
     padding: 2px 6px;
-    background-color: var(--color-hover);
+    background-color: transparent;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
 }
@@ -497,7 +497,7 @@ html.js .navbar-brand.autohide.is-visible {
 }
 
 #distro-table thead {
-    background: var(--color-hover);
+    background: transparent;
     border-radius: var(--radius-md);
 }
 
@@ -508,6 +508,7 @@ html.js .navbar-brand.autohide.is-visible {
     color: var(--color-text);
     border-bottom: 2px solid var(--color-border);
     white-space: nowrap;
+    background: transparent;
 }
 
 #distro-table th:first-child {
@@ -548,7 +549,7 @@ html.js .navbar-brand.autohide.is-visible {
     z-index: 1;
 }
 
-/* 卡片背景 + 边框 + 光晕 + 阴影，整行一个伪元素，td 透明无暗条 */
+/* 卡片边框 + 阴影，整行一个伪元素，背景透明让 Island 光晕透过 */
 #distro-table tbody tr::after {
     content: '';
     display: block;
@@ -556,26 +557,16 @@ html.js .navbar-brand.autohide.is-visible {
     inset: 0;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    background:
-        radial-gradient(circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0), transparent 70%),
-        var(--color-surface);
+    background: transparent;
     box-shadow: none;
     pointer-events: none;
-    transition: background var(--transition-fast), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color var(--transition-fast);
     z-index: 0;
 }
 
 #distro-table tbody tr:hover::after {
-    background:
-        radial-gradient(circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.12), transparent 70%),
-        var(--color-hover);
+    background: transparent;
     box-shadow: var(--shadow-md);
-}
-
-.dark-theme #distro-table tbody tr:hover::after {
-    background:
-        radial-gradient(circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.08), transparent 70%),
-        var(--color-hover);
 }
 
 /* Status Badges */
@@ -614,15 +605,7 @@ html.js .navbar-brand.autohide.is-visible {
 
 /* Row States */
 #distro-table tbody tr.syncing-row::after {
-    background:
-        radial-gradient(circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0), transparent 70%),
-        rgba(139, 92, 246, 0.05);
-}
-
-#distro-table tbody tr.syncing-row:hover::after {
-    background:
-        radial-gradient(circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.12), transparent 70%),
-        rgba(139, 92, 246, 0.08);
+    background: rgba(139, 92, 246, 0.05);
 }
 
 @keyframes spin {
@@ -938,7 +921,7 @@ p.answer {
         border: 1px solid var(--color-border);
         border-radius: var(--radius-md);
         padding: var(--spacing-sm) var(--spacing-md);
-        background: var(--color-surface);
+        background: transparent;
     }
 
     #distro-table tr:last-child {
@@ -946,7 +929,7 @@ p.answer {
     }
 
     #distro-table tr:hover {
-        background: var(--color-surface);
+        background: transparent;
     }
 
     #distro-table tbody td {
