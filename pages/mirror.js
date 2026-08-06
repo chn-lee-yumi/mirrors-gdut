@@ -270,7 +270,7 @@
 
     function initSpotlight() {
         function onMouseMove(e) {
-            const el = e.target.closest('.navbar, .island, #footer, #distro-table tbody tr');
+            const el = e.target.closest('.navbar, .island, #footer');
             if (!el) return;
             const rect = el.getBoundingClientRect();
             const x = (e.clientX - rect.left) / rect.width * 100;
