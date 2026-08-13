@@ -283,6 +283,139 @@
     }
 
     // ==========================================
+    // News Feed (RSS)
+    // ==========================================
+
+    function initNews() {
+        var RSS_URL = 'https://mirrors.gdut.edu.cn/help/news/rss.xml';
+        var CACHE_KEY = 'gdut-mirror-news-rss';
+        var CACHE_TTL = 30 * 60 * 1000;
+        var FETCH_TIMEOUT = 5000;
+        var NEWS_BASE_URL = 'https://mirrors.gdut.edu.cn/help/news/';
+        var MAX_ITEMS = 3;
+
+        var container = document.getElementById('news-content');
+        if (!container) return;
+
+        function escapeHtml(text) {
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function renderEmpty() {
+            container.innerHTML = '<p class="news-placeholder">暂无公告</p>';
+        }
+
+        function renderItems(items) {
+            if (!items || items.length === 0) {
+                renderEmpty();
+                return;
+            }
+            var html = '';
+            for (var i = 0; i < Math.min(items.length, MAX_ITEMS); i++) {
+                var item = items[i];
+                var dateStr = '';
+                if (item.date) {
+                    var d = new Date(item.date);
+                    if (!isNaN(d.getTime())) {
+                        var yr = d.getFullYear();
+                        var mo = String(d.getMonth() + 1).padStart(2, '0');
+                        var dy = String(d.getDate()).padStart(2, '0');
+                        dateStr = yr + '-' + mo + '-' + dy;
+                    }
+                }
+                html += '<div class="news-item">';
+                html += '<a href="' + item.link + '" target="_blank" rel="noopener" class="news-title">' + escapeHtml(item.title) + '</a>';
+                if (dateStr) {
+                    html += '<span class="news-date">' + dateStr + '</span>';
+                }
+                html += '</div>';
+            }
+            html += '<a href="' + NEWS_BASE_URL + '" target="_blank" rel="noopener" class="news-more">查看全部公告 →</a>';
+            container.innerHTML = html;
+        }
+
+        function getCachedData(freshOnly) {
+            try {
+                var cached = localStorage.getItem(CACHE_KEY);
+                if (!cached) return null;
+                var data = JSON.parse(cached);
+                if (freshOnly && Date.now() - data.timestamp > CACHE_TTL) return null;
+                return data.items;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function setCachedData(items) {
+            try {
+                localStorage.setItem(CACHE_KEY, JSON.stringify({
+                    timestamp: Date.now(),
+                    items: items
+                }));
+            } catch (e) { /* ignore quota errors */ }
+        }
+
+        function parseRssXml(xmlText) {
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(xmlText, 'text/xml');
+            if (doc.querySelector('parsererror')) return null;
+
+            var items = [];
+            var itemNodes = doc.querySelectorAll('item');
+            for (var i = 0; i < itemNodes.length; i++) {
+                var node = itemNodes[i];
+                var titleEl = node.querySelector('title');
+                var linkEl = node.querySelector('link');
+                var pubDateEl = node.querySelector('pubDate');
+
+                var title = titleEl ? titleEl.textContent.trim() : '';
+                var link = linkEl ? linkEl.textContent.trim() : '';
+                var date = pubDateEl ? pubDateEl.textContent.trim() : '';
+
+                if (title && link) {
+                    items.push({title: title, link: link, date: date});
+                }
+            }
+            return items;
+        }
+
+        var freshCache = getCachedData(true);
+        if (freshCache) {
+            renderItems(freshCache);
+            return;
+        }
+
+        var controller = new AbortController();
+        var timeoutId = setTimeout(function () {
+            controller.abort();
+        }, FETCH_TIMEOUT);
+
+        fetch(RSS_URL, {signal: controller.signal})
+            .then(function (response) {
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                return response.text();
+            })
+            .then(function (xmlText) {
+                clearTimeout(timeoutId);
+                var items = parseRssXml(xmlText);
+                if (items === null) throw new Error('RSS parse failed');
+                setCachedData(items);
+                renderItems(items);
+            })
+            .catch(function () {
+                clearTimeout(timeoutId);
+                var staleCache = getCachedData(false);
+                if (staleCache) {
+                    renderItems(staleCache);
+                } else {
+                    renderEmpty();
+                }
+            });
+    }
+
+    // ==========================================
     // Initialize Everything
     // ==========================================
     
@@ -294,6 +427,7 @@
         initSmoothScroll();
         initNavbarBrandVisibility();
         initSpotlight();
+        initNews();
 
         const yearSpan = document.getElementById('copyright-year');
         if (yearSpan) yearSpan.textContent = new Date().getFullYear();

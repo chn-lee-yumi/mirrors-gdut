@@ -1042,6 +1042,69 @@ input::-moz-focus-inner {
 }
 
 /* ==========================================
+   News Feed (Sidebar Card)
+   ========================================== */
+
+.news-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.news-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.news-item:last-of-type {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.news-title {
+    color: var(--color-text);
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    transition: all var(--transition-fast);
+}
+
+.news-title:hover {
+    color: var(--color-primary);
+    padding-left: 4px;
+}
+
+.news-date {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+}
+
+.news-more {
+    display: block;
+    text-align: right;
+    font-size: 0.75rem;
+    color: var(--color-primary);
+    font-weight: 600;
+    margin-top: var(--spacing-xs);
+    transition: all var(--transition-fast);
+}
+
+.news-more:hover {
+    color: var(--color-primary-light);
+    padding-right: 4px;
+}
+
+.news-placeholder {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    padding: var(--spacing-sm) 0;
+}
+
+/* ==========================================
    Print Styles
    ========================================== */
 
