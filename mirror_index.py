@@ -146,20 +146,17 @@ FOOTER = """
         </div>
         
         <aside class="bento-sidebar">
-            <div class="island island-compact">
+            <div class="island island-compact" id="news-island">
                 <div class="island-header">
                     <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                        <path d="M3 11l18-5v12L3 14v-3z"></path>
+                        <path d="M11.6 16.8a3 3 0 11-5.8-1.6"></path>
                     </svg>
-                    <h2 class="island-title">快速下载</h2>
+                    <h2 class="island-title">最新公告</h2>
                 </div>
-                <ul>
-                    <li><a href="https://mirrors.gdut.edu.cn/centos-stream/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso">CentOS 9 安装盘</a></li>
-                    <li><a href="https://mirrors.gdut.edu.cn/debian-cd/current/amd64/iso-cd/debian-12.8.0-amd64-netinst.iso">Debian 12 网络安装盘</a></li>
-                    <li><a href="https://mirrors.gdut.edu.cn/ubuntu-releases/oracular/ubuntu-24.10-desktop-amd64.iso">Ubuntu 24.10 桌面版</a></li>
-                </ul>
+                <div id="news-content" class="news-content">
+                    <p class="news-placeholder">加载中...</p>
+                </div>
             </div>
             
             <div class="island island-compact">
@@ -175,6 +172,22 @@ FOOTER = """
                     <li><a href="https://mirrors.gdut.edu.cn">mirrors.gdut.edu.cn</a> <small style="color: var(--color-text-muted);">自动选择</small></li>
                     <li><a href="https://mirrors4.gdut.edu.cn">mirrors4.gdut.edu.cn</a> <small style="color: var(--color-text-muted);">IPv4 线路</small></li>
                     <li><a href="https://mirrors6.gdut.edu.cn">mirrors6.gdut.edu.cn</a> <small style="color: var(--color-text-muted);">IPv6 线路</small></li>
+                </ul>
+            </div>
+            
+            <div class="island island-compact">
+                <div class="island-header">
+                    <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <h2 class="island-title">快速下载</h2>
+                </div>
+                <ul>
+                    <li><a href="https://mirrors.gdut.edu.cn/centos-stream/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso">CentOS 9 安装盘</a></li>
+                    <li><a href="https://mirrors.gdut.edu.cn/debian-cd/current/amd64/iso-cd/debian-12.8.0-amd64-netinst.iso">Debian 12 网络安装盘</a></li>
+                    <li><a href="https://mirrors.gdut.edu.cn/ubuntu-releases/oracular/ubuntu-24.10-desktop-amd64.iso">Ubuntu 24.10 桌面版</a></li>
                 </ul>
             </div>
             
