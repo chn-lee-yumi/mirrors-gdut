@@ -2,6 +2,8 @@
 
 > 网址：[https://mirrors.gdut.edu.cn](https://mirrors.gdut.edu.cn)（仅校园网可访问）
 >
+> 制品仓库：[https://repo.gdut.edu.cn](https://repo.gdut.edu.cn)（Maven / npm / nuget / composer / Go / crates.io 等包代理）
+>
 > 容器镜像库：[https://registry.gdut.edu.cn](https://registry.gdut.edu.cn)
 >
 > 由广东工业大学学生网管队建立与维护，致力于为校内用户提供高速、稳定的开源软件镜像服务。
@@ -23,25 +25,33 @@
 ## 架构概览
 
 ```
-                          ┌──────────────────────────────────────────┐
-                          │              Nginx (Web 服务)             │
-                          │  ┌────────────┐  ┌─────────────────────┐ │
-   校内用户 ──HTTP/HTTPS──▶│  │ 全量镜像    │  │ 缓存镜像 (proxy_cache)│ │
-                          │  │ /mnt/mirror │  │ /home/mirror/       │ │
-                          │  │            │  │   nginx_cache/      │ │
-                          │  └─────┬──────┘  └──────────┬──────────┘ │
-                          └────────┼────────────────────┼────────────┘
-                                   │                    │
-                          ┌────────▼────────┐  ┌────────▼────────┐
-                          │  Rsync 同步脚本  │  │  上游镜像站回源   │
-                          │  (mirror.sh +    │  │  (清华/中科大/   │
-                          │   crontab 定时)  │  │   北外/阿里云等) │
-                          └─────────────────┘  └─────────────────┘
+                         ┌──────────────────────────────────────────┐
+                         │           Nginx (mirrors.gdut.edu.cn)     │
+                         │  ┌────────────┐  ┌─────────────────────┐ │
+  校内用户 ──HTTP/HTTPS──▶│  │ 全量镜像    │  │ 缓存镜像 (proxy_cache)│ │
+                         │  │ /mnt/mirror │  │ /home/mirror/       │ │
+                         │  │            │  │   nginx_cache/      │ │
+                         │  └─────┬──────┘  └──────────┬──────────┘ │
+                         └────────┼────────────────────┼────────────┘
+                                  │                    │
+                         ┌────────▼────────┐  ┌────────▼────────┐
+                         │  Rsync 同步脚本  │  │  上游镜像站回源   │
+                         │  (mirror.sh +    │  │  (清华/中科大/   │
+                         │   crontab 定时)  │  │   北外/阿里云等) │
+                         └─────────────────┘  └─────────────────┘
+
+  ┌──────────────────────────────┐    ┌──────────────────────────────┐
+  │ Nginx (repo.gdut.edu.cn)      │    │ Nginx (registry.gdut.edu.cn) │
+  │  反代 → K8s Nexus              │    │  反代 → K8s Harbor            │
+  │  Maven/npm/nuget/composer/    │    │  Docker Hub/ghcr.io/quay.io  │
+  │  Go/crates.io 包代理           │    │  等容器镜像代理               │
+  └──────────────────────────────┘    └──────────────────────────────┘
 ```
 
 - **全量镜像**：通过 Rsync 从上游镜像站同步到本地磁盘 `/mnt/mirror/`，由 `mirror.sh` 脚本和 crontab 定时执行。
 - **缓存镜像**：利用 Nginx `proxy_cache` 模块按需回源缓存，适用于体积大但实际使用频率低的镜像（如 pypi、anaconda 等），节省磁盘空间。
-- **容器镜像库**：基于 Harbor 搭建，代理 Docker Hub / ghcr.io / quay.io 等容器镜像源，部署在 Kubernetes 集群上。
+- **制品仓库**：基于 Nexus 搭建，代理 Maven / npm / nuget / composer / Go / crates.io 等包仓库，部署在 Kubernetes 集群上，通过独立域名 `repo.gdut.edu.cn` 提供服务。
+- **容器镜像库**：基于 Harbor 搭建，代理 Docker Hub / ghcr.io / quay.io 等容器镜像源，部署在 Kubernetes 集群上，通过独立域名 `registry.gdut.edu.cn` 提供服务。
 - **状态监控**：原生 HTML + ECharts 页面，直接查询 Prometheus 数据源，实时展示服务器和容器镜像库的运行状态。
 
 ## 镜像列表
@@ -78,6 +88,17 @@
 ### 缓存镜像（Nginx proxy_cache）
 
 anaconda、anolis、centos-stream、centos-vault、crates.io-index、docker、fedora、freebsd-pkg、go、homebrew、kali、maven、npm、opensuse、openwrt、pypi、rubygems、ubuntu-ports
+
+### 制品仓库代理（Nexus）
+
+| 仓库 | 类型 | 说明 |
+|------|------|------|
+| maven | Maven | Maven 中央仓库代理 |
+| npm | npm | npm registry 代理 |
+| nuget | NuGet | NuGet Gallery 代理 |
+| composer | Composer | Packagist 代理 |
+| go | Go Module | Go Module Proxy 代理 |
+| crates.io-index | Rust | crates.io 索引代理 |
 
 ### 容器镜像库代理（Harbor）
 
@@ -118,6 +139,7 @@ mirrors-gdut/
 │   ├── nginx.conf             # Nginx 主配置
 │   └── conf/
 │       ├── registry.gdut.edu.cn.conf  # 容器镜像库 Nginx 配置
+│       ├── repo.gdut.edu.cn.conf      # 制品仓库 Nginx 配置
 │       └── mirror/
 │           ├── mirror.conf            # 镜像站主配置（全量 + 缓存 + 反代）
 │           ├── nginx_maintenance.conf # 维护页面备用镜像配置
@@ -174,7 +196,6 @@ mkdir /home/mirror/tmp
 mkdir /home/mirror/bin
 mkdir /home/mirror/etc
 mkdir /home/mirror/nginx_cache
-mkdir /home/mirror/nexus
 cp archvsync/bin/* bin
 cp mirrors-gdut/etc/ftpsync.conf etc
 cp mirrors-gdut/pages/* /mnt/mirror/
@@ -240,6 +261,8 @@ docker run --name nginx -p 80:80 --restart always \
 
 ### 部署 Nexus
 
+> Nexus 使用独立域名 `repo.gdut.edu.cn`，代理 Maven / npm / nuget / composer / Go / crates.io 等包仓库。Nginx 配置见 `nginx_conf/conf/repo.gdut.edu.cn.conf`，通过反向代理将请求转发至 Kubernetes 集群中的 Nexus 服务。
+
 **Docker：**
 
 ```bash
@@ -263,11 +286,11 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
   hostPath: /
-  hostRepo: pkg.gdut.edu.cn
+  hostRepo: repo.gdut.edu.cn
   tls:
     - secretName: nexus-tls
       hosts:
-        - pkg.gdut.edu.cn
+        - repo.gdut.edu.cn
 
 persistence:
   enabled: true
@@ -571,8 +594,8 @@ Prometheus 数据源：
 | 目录浏览 | Nginx Fancy Index + 自定义 Island UI 主题 |
 | 全量镜像同步 | Rsync + ftpsync (Debian) |
 | 缓存镜像 | Nginx proxy_cache |
+| 制品仓库 | Nexus (Kubernetes / Docker) |
 | 容器镜像库 | Harbor (Kubernetes / Docker) |
-| 包仓库 | Nexus (Kubernetes / Docker) |
 | 前端 | 原生 HTML + CSS + JavaScript（Island UI 设计系统） |
 | 图表 | ECharts 5 |
 | 状态监控 | Prometheus + ECharts |
