@@ -218,6 +218,7 @@ FOOTER = """
                     <li><a target="_blank" href="https://mirrors.gdut.edu.cn/help/">帮助文档</a></li>
                     <li><a target="_blank" href="status.html">当前状态</a></li>
                     <li><a target="_blank" rel="noopener noreferrer" href="https://registry.gdut.edu.cn">容器镜像库</a></li>
+                    <li><a target="_blank" rel="noopener noreferrer" href="https://repo.gdut.edu.cn">制品仓库</a></li>
                     <li><a target="_blank" href="https://speed.gdut.edu.cn">校内测速</a></li>
                 </ul>
             </div>
@@ -270,6 +271,14 @@ FOOTER = """
                 <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z"/>
             </svg>
             容器镜像库
+        </a>
+        &nbsp;|&nbsp;
+        <a target="_blank" rel="noopener noreferrer" href="https://repo.gdut.edu.cn">
+            <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"/>
+                <path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"/>
+            </svg>
+            制品仓库
         </a>
         &nbsp;|&nbsp;
         <a target="_blank" href="https://speed.gdut.edu.cn">
