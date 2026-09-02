@@ -168,10 +168,16 @@ FOOTER = """
                     </svg>
                     <h2 class="island-title">域名选择</h2>
                 </div>
-                <ul>
-                    <li><a href="https://mirrors.gdut.edu.cn">mirrors.gdut.edu.cn</a> <small style="color: var(--color-text-muted);">自动选择</small></li>
-                    <li><a href="https://mirrors4.gdut.edu.cn">mirrors4.gdut.edu.cn</a> <small style="color: var(--color-text-muted);">IPv4 线路</small></li>
-                    <li><a href="https://mirrors6.gdut.edu.cn">mirrors6.gdut.edu.cn</a> <small style="color: var(--color-text-muted);">IPv6 线路</small></li>
+                <div id="domain-slider" class="seg-control" role="tablist" aria-label="选择访问域名">
+                    <div id="domain-thumb" class="seg-thumb"></div>
+                    <a class="seg-item" role="tab" data-seg="auto" href="https://mirrors.gdut.edu.cn">自动</a>
+                    <a class="seg-item" role="tab" data-seg="ipv4" href="https://mirrors4.gdut.edu.cn">IPv4</a>
+                    <a class="seg-item" role="tab" data-seg="ipv6" href="https://mirrors6.gdut.edu.cn">IPv6</a>
+                </div>
+                <ul id="domain-list">
+                    <li data-domain="auto"><a href="https://mirrors.gdut.edu.cn">mirrors.gdut.edu.cn</a> <small class="domain-note" data-note="auto" style="color: var(--color-text-muted);">自动选择</small></li>
+                    <li data-domain="ipv4"><a href="https://mirrors4.gdut.edu.cn">mirrors4.gdut.edu.cn</a> <small class="domain-note" data-note="ipv4" style="color: var(--color-text-muted);">IPv4 线路</small></li>
+                    <li data-domain="ipv6"><a href="https://mirrors6.gdut.edu.cn">mirrors6.gdut.edu.cn</a> <small class="domain-note" data-note="ipv6" style="color: var(--color-text-muted);">IPv6 线路</small></li>
                 </ul>
             </div>
             

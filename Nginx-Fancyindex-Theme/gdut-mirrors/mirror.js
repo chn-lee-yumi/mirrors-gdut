@@ -416,6 +416,66 @@
     }
 
     // ==========================================
+    // Domain Selector (域名滑块 + IPv4/IPv6 检测)
+    // ==========================================
+
+    var DOMAIN_PROBE_TIMEOUT = 6000;
+
+    function initDomainSelector() {
+        var slider = document.getElementById('domain-slider');
+        var list = document.getElementById('domain-list');
+        if (!slider || !list) return;
+
+        var host = window.location.hostname;
+        var activeSeg = host.indexOf('mirrors4') !== -1 ? 'ipv4'
+                      : host.indexOf('mirrors6') !== -1 ? 'ipv6'
+                      : 'auto';
+
+        slider.setAttribute('data-active', activeSeg);
+
+        slider.querySelectorAll('.seg-item').forEach(function (item) {
+            if (item.getAttribute('data-seg') === activeSeg) {
+                item.addEventListener('click', function (e) { e.preventDefault(); });
+            }
+        });
+
+        slider.classList.add('detecting');
+
+        var onIPv4 = activeSeg === 'ipv4';
+        var onIPv6 = activeSeg === 'ipv6';
+        var probes = [];
+
+        function probeProtocol(version) {
+            var hostBySeg = { ipv4: 'mirrors4.gdut.edu.cn', ipv6: 'mirrors6.gdut.edu.cn' };
+            var url = 'https://' + hostBySeg[version] + '/favicon.ico?r=' + Math.random();
+            var controller = new AbortController();
+            var timeoutId = setTimeout(function () { controller.abort(); }, DOMAIN_PROBE_TIMEOUT);
+            return fetch(url, { mode: 'no-cors', signal: controller.signal })
+                .then(function () { clearTimeout(timeoutId); return true; })
+                .catch(function () { clearTimeout(timeoutId); return false; });
+        }
+
+        function disableSeg(version) {
+            var seg = slider.querySelector('.seg-item[data-seg="' + version + '"]');
+            var li = list.querySelector('li[data-domain="' + version + '"]');
+            var note = list.querySelector('.domain-note[data-note="' + version + '"]');
+            if (seg) {
+                seg.classList.add('seg-disabled');
+                seg.setAttribute('data-unsupported', '当前网络不支持 ' + version.toUpperCase());
+            }
+            if (li) li.classList.add('domain-list-disabled');
+            if (note) note.textContent = '不支持 ' + version.toUpperCase();
+        }
+
+        if (!onIPv6) probes.push(probeProtocol('ipv6').then(function (ok) { if (!ok) disableSeg('ipv6'); }));
+        if (!onIPv4) probes.push(probeProtocol('ipv4').then(function (ok) { if (!ok) disableSeg('ipv4'); }));
+
+        Promise.all(probes).then(function () {
+            slider.classList.remove('detecting');
+        });
+    }
+
+    // ==========================================
     // Initialize Everything
     // ==========================================
     
@@ -428,6 +488,7 @@
         initNavbarBrandVisibility();
         initSpotlight();
         initNews();
+        initDomainSelector();
 
         const yearSpan = document.getElementById('copyright-year');
         if (yearSpan) yearSpan.textContent = new Date().getFullYear();
