@@ -175,7 +175,7 @@ FOOTER = """
                     <a class="seg-item" role="tab" data-seg="ipv6" href="https://mirrors6.gdut.edu.cn">IPv6</a>
                 </div>
                 <ul id="domain-list">
-                    <li data-domain="auto"><a href="https://mirrors.gdut.edu.cn">mirrors.gdut.edu.cn</a> <small class="domain-note" style="color: var(--color-text-muted);">自动选择</small></li>
+                    <li data-domain="auto"><a href="https://mirrors.gdut.edu.cn">mirrors.gdut.edu.cn</a> <small class="domain-note" style="color: var(--color-text-muted);">自动选择</small><span class="domain-badge status-badge status-success"><svg class="status-icon" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>支持</span></li>
                     <li data-domain="ipv4"><a href="https://mirrors4.gdut.edu.cn">mirrors4.gdut.edu.cn</a> <small class="domain-note" style="color: var(--color-text-muted);">IPv4 线路</small><span class="domain-badge status-badge status-detecting">检测中</span></li>
                     <li data-domain="ipv6"><a href="https://mirrors6.gdut.edu.cn">mirrors6.gdut.edu.cn</a> <small class="domain-note" style="color: var(--color-text-muted);">IPv6 线路</small><span class="domain-badge status-badge status-detecting">检测中</span></li>
                 </ul>
