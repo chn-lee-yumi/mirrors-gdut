@@ -457,18 +457,32 @@
 
         function disableSeg(version) {
             var seg = slider.querySelector('.seg-item[data-seg="' + version + '"]');
-            var li = list.querySelector('li[data-domain="' + version + '"]');
-            var note = list.querySelector('.domain-note[data-note="' + version + '"]');
             if (seg) {
                 seg.classList.add('seg-disabled');
                 seg.setAttribute('data-unsupported', '当前网络不支持 ' + version.toUpperCase());
             }
-            if (li) li.classList.add('domain-list-disabled');
-            if (note) note.textContent = '不支持 ' + version.toUpperCase();
         }
 
-        if (!onIPv6) probes.push(probeProtocol('ipv6').then(function (ok) { if (!ok) disableSeg('ipv6'); }));
-        if (!onIPv4) probes.push(probeProtocol('ipv4').then(function (ok) { if (!ok) disableSeg('ipv4'); }));
+        function setBadge(version, supported) {
+            var li = list.querySelector('li[data-domain="' + version + '"]');
+            if (!li) return;
+            var badge = li.querySelector('.domain-badge');
+            if (!badge) return;
+            var checkSvg = '<svg class="status-icon" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+            var crossSvg = '<svg class="status-icon" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+            badge.classList.remove('status-detecting');
+            if (supported) {
+                badge.classList.add('status-success');
+                badge.innerHTML = checkSvg + '支持';
+            } else {
+                badge.classList.add('status-error');
+                badge.innerHTML = crossSvg + '不支持';
+                li.classList.add('domain-list-disabled');
+            }
+        }
+
+        if (!onIPv6) probes.push(probeProtocol('ipv6').then(function (ok) { setBadge('ipv6', ok); if (!ok) disableSeg('ipv6'); }));
+        if (!onIPv4) probes.push(probeProtocol('ipv4').then(function (ok) { setBadge('ipv4', ok); if (!ok) disableSeg('ipv4'); }));
 
         Promise.all(probes).then(function () {
             slider.classList.remove('detecting');
