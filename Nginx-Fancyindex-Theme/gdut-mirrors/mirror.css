@@ -739,13 +739,52 @@ ul {
     visibility: visible;
 }
 
+#domain-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#domain-list li {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding-left: var(--spacing-md);
+    position: relative;
+}
+
+#domain-list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
+#domain-list .domain-badge {
+    margin-left: auto;
+    padding: 2px 10px;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+}
+
+#domain-list .domain-badge .status-icon {
+    width: 12px;
+    height: 12px;
+}
+
+.status-detecting {
+    background: rgba(100, 116, 139, 0.1);
+    color: var(--color-text-muted);
+}
+
 .domain-list-disabled {
     opacity: 0.45;
     pointer-events: none;
-}
-
-.domain-list-disabled .domain-note {
-    color: var(--color-error) !important;
 }
 
 .island ul {
