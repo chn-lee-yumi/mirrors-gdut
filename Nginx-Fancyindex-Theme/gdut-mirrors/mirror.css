@@ -685,8 +685,10 @@ ul {
     transition: color var(--transition-fast), opacity var(--transition-fast);
 }
 
-.seg-item:hover {
+.seg-item:hover,
+.island a.seg-item:hover {
     color: var(--color-primary);
+    padding-left: 0;
 }
 
 .seg-control[data-active="auto"] .seg-item[data-seg="auto"],
