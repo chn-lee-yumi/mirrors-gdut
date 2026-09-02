@@ -287,11 +287,11 @@
     // ==========================================
 
     function initNews() {
-        var RSS_URL = 'https://mirrors.gdut.edu.cn/help/news/rss.xml';
+        var RSS_URL = '/help/news/rss.xml';
         var CACHE_KEY = 'gdut-mirror-news-rss';
         var CACHE_TTL = 30 * 60 * 1000;
         var FETCH_TIMEOUT = 5000;
-        var NEWS_BASE_URL = 'https://mirrors.gdut.edu.cn/help/news/';
+        var NEWS_BASE_URL = '/help/news/';
         var MAX_ITEMS = 3;
 
         var container = document.getElementById('news-content');
