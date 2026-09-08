@@ -4,11 +4,12 @@
 因为部分架构由缓存加速提供，磁盘扫描不完整）。
 
 字段说明:
-    name        左侧导航显示名
-    base        镜像根路径（URL 相对路径）
-    variants    变体列表，每项:
+    name            左侧导航显示名
+    base            镜像根路径（URL 相对路径）
+    versions_prefix {latest_dir} 匹配子目录的前缀（默认数字开头），如 openEuler 源用 'openEuler-'
+    variants        变体列表，每项:
         note    变体说明（副文本，如「桌面版 · x86_64」）
-        subdir  URL 子路径，支持 {latest_dir} 占位符（版本号数字开头的子目录按版本排序取最新）
+        subdir  URL 子路径，支持 {latest_dir} 占位符（按版本排序取最新子目录）
         glob    文件名匹配模式
 """
 
@@ -39,6 +40,44 @@ OS_ITEMS = [
         'variants': [
             {'note': 'DVD 安装盘 · x86_64', 'subdir': '10-stream/BaseOS/x86_64/iso', 'glob': 'CentOS-Stream-*latest-x86_64-dvd1.iso'},
             {'note': 'DVD 安装盘 · aarch64', 'subdir': '10-stream/BaseOS/aarch64/iso', 'glob': 'CentOS-Stream-*latest-aarch64-dvd1.iso'},
+        ],
+    },
+    {
+        'name': 'Anolis OS',
+        'base': 'anolis',
+        'variants': [
+            {'note': 'DVD 安装盘 · x86_64', 'subdir': '23/isos/GA/x86_64', 'glob': 'AnolisOS-*-x86_64-dvd.iso'},
+            {'note': 'DVD 安装盘 · aarch64', 'subdir': '23/isos/GA/aarch64', 'glob': 'AnolisOS-*-aarch64-dvd.iso'},
+        ],
+    },
+    {
+        'name': 'Fedora',
+        'base': 'fedora',
+        'variants': [
+            {'note': 'Workstation Live · x86_64', 'subdir': 'releases/{latest_dir}/Workstation/x86_64/iso', 'glob': 'Fedora-Workstation-Live-*.x86_64.iso'},
+            {'note': 'Server DVD · x86_64', 'subdir': 'releases/{latest_dir}/Server/x86_64/iso', 'glob': 'Fedora-Server-dvd-x86_64-*.iso'},
+            {'note': 'Server netinst · x86_64', 'subdir': 'releases/{latest_dir}/Server/x86_64/iso', 'glob': 'Fedora-Server-netinst-x86_64-*.iso'},
+            {'note': 'Server DVD · aarch64', 'subdir': 'releases/{latest_dir}/Server/aarch64/iso', 'glob': 'Fedora-Server-dvd-aarch64-*.iso'},
+        ],
+    },
+    {
+        'name': 'openSUSE',
+        'base': 'opensuse',
+        'variants': [
+            {'note': 'Leap 离线安装 · x86_64', 'subdir': 'distribution/leap/{latest_dir}/iso', 'glob': 'Leap-*-offline-installer-x86_64.install.iso'},
+            {'note': 'Leap 在线安装 · x86_64', 'subdir': 'distribution/leap/{latest_dir}/iso', 'glob': 'Leap-*-online-installer-x86_64.install.iso'},
+            {'note': 'Tumbleweed DVD · x86_64', 'subdir': 'tumbleweed/iso', 'glob': 'openSUSE-Tumbleweed-DVD-x86_64-Current.iso'},
+            {'note': 'Tumbleweed NET · x86_64', 'subdir': 'tumbleweed/iso', 'glob': 'openSUSE-Tumbleweed-NET-x86_64-Current.iso'},
+        ],
+    },
+    {
+        'name': 'openEuler',
+        'base': 'openeuler',
+        'versions_prefix': 'openEuler-',
+        'variants': [
+            {'note': '标准安装盘 · x86_64', 'subdir': '{latest_dir}/ISO/x86_64', 'glob': 'openEuler-*-x86_64-dvd.iso'},
+            {'note': '精简安装盘 · x86_64', 'subdir': '{latest_dir}/ISO/x86_64', 'glob': 'openEuler-*-netinst-x86_64-dvd.iso'},
+            {'note': '全量软件盘 · x86_64', 'subdir': '{latest_dir}/ISO/x86_64', 'glob': 'openEuler-*-everything-x86_64-dvd.iso'},
         ],
     },
     {

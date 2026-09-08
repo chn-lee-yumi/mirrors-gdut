@@ -455,7 +455,7 @@ def _match_glob(names, pattern):
 
 def _version_key(name):
     import re
-    return [int(p) if p.isdigit() else p for p in re.split(r'[.-]', name)]
+    return [(0, int(p), '') if p.isdigit() else (1, 0, p) for p in re.split(r'[.-]', name)]
 
 
 def _parse_html_links(html_text):
@@ -477,15 +477,25 @@ def _scan_http(item, variant):
     base_url = MIRROR_WEB_ROOT + '/' + item['base'] + '/'
     subdir = variant.get('subdir', '')
     if '{latest_dir}' in subdir:
-        links = _fetch_dir_links(base_url)
+        before, after = subdir.split('{latest_dir}', 1)
+        list_url = base_url + before if before else base_url
+        links = _fetch_dir_links(list_url)
         if links is None:
             return None
-        version_dirs = sorted({l.rstrip('/') for l in links
-                               if l.rstrip('/').startswith(('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'))})
-        if not version_dirs:
+        prefix = item.get('versions_prefix', '')
+        candidates = set()
+        for link in links:
+            name = link.rstrip('/')
+            if prefix:
+                if not name.startswith(prefix) or not name[len(prefix):len(prefix) + 1].isdigit():
+                    continue
+            elif not name[:1].isdigit():
+                continue
+            candidates.add(name)
+        if not candidates:
             return None
-        latest_dir = max(version_dirs, key=_version_key)
-        subdir = subdir.replace('{latest_dir}', latest_dir)
+        latest_dir = max(candidates, key=_version_key)
+        subdir = before + latest_dir + after
     url = base_url + subdir + '/' if subdir else base_url
     links = _fetch_dir_links(url)
     if links is None:
