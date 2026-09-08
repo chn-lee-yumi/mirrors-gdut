@@ -1322,8 +1322,8 @@ input::-moz-focus-inner {
     position: relative;
     display: flex;
     flex-direction: column;
-    width: min(680px, 100%);
-    max-height: min(80vh, 640px);
+    width: min(840px, 100%);
+    max-height: min(80vh, 720px);
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
@@ -1391,7 +1391,7 @@ input::-moz-focus-inner {
     border-right: 1px solid var(--color-border);
     overflow-y: auto;
     flex-shrink: 0;
-    width: 168px;
+    width: 180px;
 }
 
 .download-nav-item {
