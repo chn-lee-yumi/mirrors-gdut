@@ -1470,24 +1470,22 @@ input::-moz-focus-inner {
 
 .variant-info {
     display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
+    flex-direction: column;
+    gap: 2px;
     min-width: 0;
 }
 
 .variant-label {
+    font-family: "Fira Code", Consolas, Menlo, Monaco, monospace;
+    font-size: 0.875rem;
     font-weight: 500;
-    white-space: nowrap;
+    color: var(--color-text);
+    overflow-wrap: anywhere;
 }
 
-.variant-tag {
-    display: inline-flex;
-    align-items: center;
-    padding: 2px 8px;
-    border-radius: var(--radius-xl);
-    background: rgba(100, 116, 139, 0.1);
-    color: var(--color-text-muted);
+.variant-note {
     font-size: 0.75rem;
+    color: var(--color-text-muted);
     white-space: nowrap;
 }
 
