@@ -351,8 +351,8 @@ DOWNLOAD_VARIANT_PANEL_TEMPLATE = """
 DOWNLOAD_VARIANT_ROW_TEMPLATE = """
 <a class="download-variant-row" href="{download_url}"{available}>
     <div class="variant-info">
-        <span class="variant-label">{variant_label}</span>
-        <span class="variant-tag">{variant_tag}</span>
+        <span class="variant-label">{filename}</span>
+        <span class="variant-note">{variant_note}</span>
     </div>
     <div class="variant-meta">
         {file_size_html}
@@ -458,55 +458,37 @@ def _version_key(name):
     return [int(p) if p.isdigit() else p for p in re.split(r'[.-]', name)]
 
 
-def _latest_subdir(path):
-    try:
-        subdirs = [d for d in os.listdir(path)
-                   if os.path.isdir(os.path.join(path, d)) and d[0].isdigit()]
-        if not subdirs:
-            return None
-        return max(subdirs, key=_version_key)
-    except OSError:
-        return None
-
-
-def _scan_disk(item, variant):
-    base = os.path.join('/mnt/mirror', item['base'])
-    subdir = variant.get('subdir', '')
-    if '{latest_dir}' in subdir:
-        latest = _latest_subdir(base)
-        if not latest:
-            return None
-        subdir = subdir.replace('{latest_dir}', latest)
-    scan_dir = os.path.join(base, subdir) if subdir else base
-    try:
-        filename = _match_glob(os.listdir(scan_dir), variant['glob'])
-    except OSError:
-        return None
-    if not filename:
-        return None
-    filepath = os.path.join(scan_dir, filename)
-    try:
-        size = os.path.getsize(filepath)
-    except OSError:
-        size = None
-    rel_path = os.path.join(item['base'], subdir, filename) if subdir else os.path.join(item['base'], filename)
-    return {'url': MIRROR_WEB_ROOT + '/' + rel_path, 'size': size, 'browse': MIRROR_WEB_ROOT + '/' + item['base'] + '/'}
-
-
 def _parse_html_links(html_text):
     import re
     return re.findall(r'href="([^"]+)"', html_text)
 
 
+def _fetch_dir_links(url):
+    try:
+        resp = urlopen(url, timeout=HTTP_DIR_TIMEOUT)
+        return _parse_html_links(resp.read().decode('utf-8', errors='replace'))
+    except (URLError, OSError):
+        return None
+
+
 def _scan_http(item, variant):
     if urlopen is None:
         return None
+    base_url = MIRROR_WEB_ROOT + '/' + item['base'] + '/'
     subdir = variant.get('subdir', '')
-    url = MIRROR_WEB_ROOT + '/' + item['base'] + '/' + subdir + '/'
-    try:
-        resp = urlopen(url, timeout=HTTP_DIR_TIMEOUT)
-        links = _parse_html_links(resp.read().decode('utf-8', errors='replace'))
-    except (URLError, OSError):
+    if '{latest_dir}' in subdir:
+        links = _fetch_dir_links(base_url)
+        if links is None:
+            return None
+        version_dirs = sorted({l.rstrip('/') for l in links
+                               if l.rstrip('/').startswith(('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'))})
+        if not version_dirs:
+            return None
+        latest_dir = max(version_dirs, key=_version_key)
+        subdir = subdir.replace('{latest_dir}', latest_dir)
+    url = base_url + subdir + '/' if subdir else base_url
+    links = _fetch_dir_links(url)
+    if links is None:
         return None
     filenames = [l.rstrip('/') for l in links if '/' not in l.rstrip('/')]
     filename = _match_glob(filenames, variant['glob'])
@@ -518,7 +500,7 @@ def _scan_http(item, variant):
         size = int(head_resp.headers.get('Content-Length') or 0) or None
     except (URLError, OSError, ValueError):
         pass
-    return {'url': url + filename, 'size': size, 'browse': MIRROR_WEB_ROOT + '/' + item['base'] + '/'}
+    return {'url': url + filename, 'size': size, 'filename': filename, 'browse': base_url}
 
 
 def _format_size(size):
@@ -540,19 +522,18 @@ def _build_download_modal(modal_id, modal_title, items, footer_html=''):
             active_class=active_class, modal_id=modal_id, item_index=idx, item_name=item['name'])
         rows_html = ''
         for variant in item['variants']:
-            scanner = _scan_disk if item['source'] == 'disk' else _scan_http
-            result = scanner(item, variant)
+            result = _scan_http(item, variant)
             if result:
                 size_html = '<span class="variant-size">{}</span>'.format(_format_size(result['size']))
                 rows_html += DOWNLOAD_VARIANT_ROW_TEMPLATE.format(
-                    download_url=result['url'], available='', variant_label=variant['label'],
-                    variant_tag=variant['tag'], file_size_html=size_html)
+                    download_url=result['url'], available='', filename=result['filename'],
+                    variant_note=variant['note'], file_size_html=size_html)
             else:
                 browse_url = MIRROR_WEB_ROOT + '/' + item['base'] + '/'
                 size_html = '<span class="variant-size variant-unavailable">暂不可用</span>'
                 rows_html += DOWNLOAD_VARIANT_ROW_TEMPLATE.format(
                     download_url=browse_url, available=' data-unavailable',
-                    variant_label=variant['label'], variant_tag=variant['tag'], file_size_html=size_html)
+                    filename=variant['glob'], variant_note=variant['note'], file_size_html=size_html)
         variant_panels_html += DOWNLOAD_VARIANT_PANEL_TEMPLATE.format(
             active_class=active_class, modal_id=modal_id, item_index=idx, variant_rows=rows_html)
     return DOWNLOAD_MODAL_TEMPLATE.format(
