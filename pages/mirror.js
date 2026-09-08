@@ -490,9 +490,90 @@
     }
 
     // ==========================================
+    // Download Modal (快速下载弹窗)
+    // ==========================================
+
+    function initDownloadModal() {
+        var modals = document.querySelectorAll('.download-modal');
+        if (modals.length === 0) return;
+
+        var openModal = null;
+
+        function focusablesIn(modal) {
+            return modal.querySelectorAll('button, a[href], [tabindex]:not([tabindex="-1"])');
+        }
+
+        function open(modal) {
+            if (openModal) close();
+            openModal = modal;
+            modal.hidden = false;
+            document.body.style.overflow = 'hidden';
+            var first = modal.querySelector('.download-modal-close');
+            if (first) first.focus();
+        }
+
+        function close() {
+            if (!openModal) return;
+            openModal.hidden = true;
+            openModal = null;
+            document.body.style.overflow = '';
+        }
+
+        modals.forEach(function (modal) {
+            modal.addEventListener('click', function (e) {
+                if (e.target.closest('[data-close]')) {
+                    close();
+                    return;
+                }
+                var navBtn = e.target.closest('.download-nav-item');
+                if (navBtn) {
+                    var targetId = navBtn.getAttribute('data-target');
+                    modal.querySelectorAll('.download-nav-item').forEach(function (b) {
+                        b.classList.toggle('active', b === navBtn);
+                    });
+                    modal.querySelectorAll('.download-variant-panel').forEach(function (p) {
+                        p.classList.toggle('active', p.getAttribute('data-panel') === targetId);
+                    });
+                }
+            });
+
+            modal.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    close();
+                    return;
+                }
+                if (e.key === 'Tab') {
+                    var focusables = Array.prototype.slice.call(focusablesIn(modal));
+                    if (focusables.length === 0) return;
+                    var first = focusables[0];
+                    var last = focusables[focusables.length - 1];
+                    if (e.shiftKey && document.activeElement === first) {
+                        e.preventDefault();
+                        last.focus();
+                    } else if (!e.shiftKey && document.activeElement === last) {
+                        e.preventDefault();
+                        first.focus();
+                    }
+                }
+            });
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && openModal) close();
+        });
+
+        document.querySelectorAll('.download-entry-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var modal = document.getElementById('download-modal-' + btn.getAttribute('data-modal'));
+                if (modal) open(modal);
+            });
+        });
+    }
+
+    // ==========================================
     // Initialize Everything
     // ==========================================
-    
+
     function init() {
         initTheme();
         initSearch();
@@ -503,6 +584,7 @@
         initSpotlight();
         initNews();
         initDomainSelector();
+        initDownloadModal();
 
         const yearSpan = document.getElementById('copyright-year');
         if (yearSpan) yearSpan.textContent = new Date().getFullYear();

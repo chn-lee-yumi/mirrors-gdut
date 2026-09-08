@@ -190,11 +190,26 @@ FOOTER = """
                     </svg>
                     <h2 class="island-title">快速下载</h2>
                 </div>
-                <ul>
-                    <li><a href="https://mirrors.gdut.edu.cn/centos-stream/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso">CentOS 9 安装盘</a></li>
-                    <li><a href="https://mirrors.gdut.edu.cn/debian-cd/current/amd64/iso-cd/debian-12.8.0-amd64-netinst.iso">Debian 12 网络安装盘</a></li>
-                    <li><a href="https://mirrors.gdut.edu.cn/ubuntu-releases/oracular/ubuntu-24.10-desktop-amd64.iso">Ubuntu 24.10 桌面版</a></li>
-                </ul>
+                <div class="quick-download-buttons">
+                    <button type="button" class="download-entry-btn" data-modal="os">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <rect x="2" y="4" width="20" height="8" rx="2"></rect>
+                            <rect x="2" y="14" width="20" height="6" rx="2"></rect>
+                            <line x1="6" y1="8" x2="6.01" y2="8"></line>
+                            <line x1="6" y1="17" x2="6.01" y2="17"></line>
+                        </svg>
+                        <span>获取操作系统镜像</span>
+                    </button>
+                    <button type="button" class="download-entry-btn" data-modal="software">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M16.5 9.4l-9-5.19"></path>
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                        <span>获取开源软件</span>
+                    </button>
+                </div>
             </div>
             
             <div class="island island-compact">
@@ -304,6 +319,48 @@ FOOTER = """
 </html>
 """
 
+DOWNLOAD_MODAL_TEMPLATE = """
+<div id="download-modal-{modal_id}" class="download-modal" data-modal="{modal_id}" role="dialog" aria-modal="true" aria-label="{modal_title}" hidden>
+    <div class="download-modal-backdrop" data-close></div>
+    <div class="download-modal-panel">
+        <div class="download-modal-header">
+            <h3 class="download-modal-title">{modal_title}</h3>
+            <button type="button" class="download-modal-close" data-close aria-label="关闭">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="download-modal-body">
+            <nav class="download-modal-nav">{nav_items}</nav>
+            <div class="download-modal-content">{variant_panels}</div>
+        </div>
+        {modal_footer}
+    </div>
+</div>
+"""
+
+DOWNLOAD_NAV_ITEM_TEMPLATE = """
+<button type="button" class="download-nav-item{active_class}" data-target="{modal_id}-{item_index}">{item_name}</button>
+"""
+
+DOWNLOAD_VARIANT_PANEL_TEMPLATE = """
+<div class="download-variant-panel{active_class}" data-panel="{modal_id}-{item_index}">
+    {variant_rows}
+</div>
+"""
+
+DOWNLOAD_VARIANT_ROW_TEMPLATE = """
+<a class="download-variant-row" href="{download_url}"{available}>
+    <div class="variant-info">
+        <span class="variant-label">{variant_label}</span>
+        <span class="variant-tag">{variant_tag}</span>
+    </div>
+    <div class="variant-meta">
+        {file_size_html}
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </div>
+</a>
+"""
+
 # 读取下载次数统计
 download_stats = {}
 try:
@@ -372,6 +429,142 @@ for mirror in mirror_list:
                                             sync_status=sync_status, download_count=download_count)
 
 html += FOOTER
+
+
+# ==========================================
+# 快速下载弹窗生成（读取 download_items.py 配置）
+# ==========================================
+
+from download_items import OS_ITEMS, SOFTWARE_ITEMS
+
+try:
+    from urllib.request import urlopen
+    from urllib.error import URLError
+except ImportError:
+    urlopen = None
+
+MIRROR_WEB_ROOT = 'https://mirrors.gdut.edu.cn'
+HTTP_DIR_TIMEOUT = 5
+
+
+def _match_glob(names, pattern):
+    import fnmatch
+    matched = fnmatch.filter(names, pattern)
+    return sorted(matched)[-1] if matched else None
+
+
+def _version_key(name):
+    import re
+    return [int(p) if p.isdigit() else p for p in re.split(r'[.-]', name)]
+
+
+def _latest_subdir(path):
+    try:
+        subdirs = [d for d in os.listdir(path)
+                   if os.path.isdir(os.path.join(path, d)) and d[0].isdigit()]
+        if not subdirs:
+            return None
+        return max(subdirs, key=_version_key)
+    except OSError:
+        return None
+
+
+def _scan_disk(item, variant):
+    base = os.path.join('/mnt/mirror', item['base'])
+    subdir = variant.get('subdir', '')
+    if '{latest_dir}' in subdir:
+        latest = _latest_subdir(base)
+        if not latest:
+            return None
+        subdir = subdir.replace('{latest_dir}', latest)
+    scan_dir = os.path.join(base, subdir) if subdir else base
+    try:
+        filename = _match_glob(os.listdir(scan_dir), variant['glob'])
+    except OSError:
+        return None
+    if not filename:
+        return None
+    filepath = os.path.join(scan_dir, filename)
+    try:
+        size = os.path.getsize(filepath)
+    except OSError:
+        size = None
+    rel_path = os.path.join(item['base'], subdir, filename) if subdir else os.path.join(item['base'], filename)
+    return {'url': MIRROR_WEB_ROOT + '/' + rel_path, 'size': size, 'browse': MIRROR_WEB_ROOT + '/' + item['base'] + '/'}
+
+
+def _parse_html_links(html_text):
+    import re
+    return re.findall(r'href="([^"]+)"', html_text)
+
+
+def _scan_http(item, variant):
+    if urlopen is None:
+        return None
+    subdir = variant.get('subdir', '')
+    url = MIRROR_WEB_ROOT + '/' + item['base'] + '/' + subdir + '/'
+    try:
+        resp = urlopen(url, timeout=HTTP_DIR_TIMEOUT)
+        links = _parse_html_links(resp.read().decode('utf-8', errors='replace'))
+    except (URLError, OSError):
+        return None
+    filenames = [l.rstrip('/') for l in links if '/' not in l.rstrip('/')]
+    filename = _match_glob(filenames, variant['glob'])
+    if not filename:
+        return None
+    size = None
+    try:
+        head_resp = urlopen(url + filename, timeout=HTTP_DIR_TIMEOUT)
+        size = int(head_resp.headers.get('Content-Length') or 0) or None
+    except (URLError, OSError, ValueError):
+        pass
+    return {'url': url + filename, 'size': size, 'browse': MIRROR_WEB_ROOT + '/' + item['base'] + '/'}
+
+
+def _format_size(size):
+    if size is None:
+        return '未知大小'
+    if size >= 1024 ** 3:
+        return '{:.2f} GB'.format(size / 1024 ** 3)
+    if size >= 1024 ** 2:
+        return '{:.1f} MB'.format(size / 1024 ** 2)
+    return '{:.1f} KB'.format(size / 1024)
+
+
+def _build_download_modal(modal_id, modal_title, items, footer_html=''):
+    nav_items_html = ''
+    variant_panels_html = ''
+    for idx, item in enumerate(items):
+        active_class = ' active' if idx == 0 else ''
+        nav_items_html += DOWNLOAD_NAV_ITEM_TEMPLATE.format(
+            active_class=active_class, modal_id=modal_id, item_index=idx, item_name=item['name'])
+        rows_html = ''
+        for variant in item['variants']:
+            scanner = _scan_disk if item['source'] == 'disk' else _scan_http
+            result = scanner(item, variant)
+            if result:
+                size_html = '<span class="variant-size">{}</span>'.format(_format_size(result['size']))
+                rows_html += DOWNLOAD_VARIANT_ROW_TEMPLATE.format(
+                    download_url=result['url'], available='', variant_label=variant['label'],
+                    variant_tag=variant['tag'], file_size_html=size_html)
+            else:
+                browse_url = MIRROR_WEB_ROOT + '/' + item['base'] + '/'
+                size_html = '<span class="variant-size variant-unavailable">暂不可用</span>'
+                rows_html += DOWNLOAD_VARIANT_ROW_TEMPLATE.format(
+                    download_url=browse_url, available=' data-unavailable',
+                    variant_label=variant['label'], variant_tag=variant['tag'], file_size_html=size_html)
+        variant_panels_html += DOWNLOAD_VARIANT_PANEL_TEMPLATE.format(
+            active_class=active_class, modal_id=modal_id, item_index=idx, variant_rows=rows_html)
+    return DOWNLOAD_MODAL_TEMPLATE.format(
+        modal_id=modal_id, modal_title=modal_title,
+        nav_items=nav_items_html, variant_panels=variant_panels_html, modal_footer=footer_html)
+
+
+os_modal_footer = ('<div class="download-modal-footer"><a href="' + MIRROR_WEB_ROOT + '/" target="_blank" rel="noopener noreferrer">'
+                   '浏览全部镜像目录 →</a></div>')
+
+html += _build_download_modal('os', '获取操作系统镜像', OS_ITEMS, os_modal_footer)
+html += _build_download_modal('software', '获取开源软件', SOFTWARE_ITEMS)
 
 with open('/mnt/mirror/index.html', 'w') as f:
     f.write(html)
