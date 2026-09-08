@@ -678,7 +678,7 @@
                 backgroundColor: 'transparent',
                 tooltip: Object.assign(baseTooltip(), { valueFormatter: function (v) { return fmtPct(v); } }),
                 legend: { top: 0, textStyle: { color: themeColors().text } },
-                grid: { left: 50, right: 20, top: 36, bottom: 30 },
+                grid: { containLabel: true, left: 50, right: 20, top: 36, bottom: 30 },
                 xAxis: timeXAxis(),
                 yAxis: baseAxis({ type: 'value', axisLabel: { color: themeColors().text, formatter: '{value}%' }, max: 100 }),
                 series: series
@@ -718,7 +718,7 @@
                 backgroundColor: 'transparent',
                 tooltip: Object.assign(baseTooltip(), { valueFormatter: function (v) { return fmtBytes(v); } }),
                 legend: { top: 0, textStyle: { color: themeColors().text } },
-                grid: { left: 60, right: 20, top: 36, bottom: 30 },
+                grid: { containLabel: true, left: 60, right: 20, top: 36, bottom: 30 },
                 xAxis: timeXAxis(),
                 yAxis: baseAxis({ type: 'value', axisLabel: { color: themeColors().text, formatter: function (v) { return fmtBytes(v); } } }),
                 series: usedSeries.concat(totalSeries)
@@ -752,7 +752,7 @@
                 backgroundColor: 'transparent',
                 tooltip: Object.assign(baseTooltip(), { valueFormatter: function (v) { return fmtPct(v); } }),
                 legend: { top: 0, textStyle: { color: themeColors().text } },
-                grid: { left: 50, right: 20, top: 36, bottom: 30 },
+                grid: { containLabel: true, left: 50, right: 20, top: 36, bottom: 30 },
                 xAxis: timeXAxis(),
                 yAxis: baseAxis({ type: 'value', axisLabel: { color: themeColors().text, formatter: '{value}%' }, max: 100 }),
                 series: series
@@ -778,7 +778,7 @@
                 backgroundColor: 'transparent',
                 tooltip: baseTooltip(),
                 legend: { top: 0, textStyle: { color: themeColors().text } },
-                grid: { left: 50, right: 20, top: 36, bottom: 30 },
+                grid: { containLabel: true, left: 50, right: 20, top: 36, bottom: 30 },
                 xAxis: timeXAxis(),
                 yAxis: baseAxis({ type: 'value' }),
                 series: series
@@ -815,7 +815,7 @@
                 backgroundColor: 'transparent',
                 tooltip: Object.assign(baseTooltip(), { valueFormatter: function (v) { return fmtBps(v); } }),
                 legend: { top: 0, textStyle: { color: themeColors().text } },
-                grid: { left: 60, right: 20, top: 36, bottom: 30 },
+                grid: { containLabel: true, left: 60, right: 20, top: 36, bottom: 30 },
                 xAxis: timeXAxis(),
                 yAxis: baseAxis({ type: 'value', axisLabel: { color: themeColors().text, formatter: function (v) { return fmtBps(v); } } }),
                 series: rxSeries.concat(txSeries)
@@ -865,7 +865,7 @@
                 animationDelay: function (idx) { return idx * 150; },
                 tooltip: Object.assign(baseTooltip(), { trigger: 'item', valueFormatter: function (v) { return fmtPct(v); } }),
                 legend: { top: 0, textStyle: { color: themeColors().text } },
-                grid: { left: 60, right: 20, top: 36, bottom: 30 },
+                grid: { containLabel: true, left: 60, right: 20, top: 36, bottom: 30 },
                 xAxis: baseAxis({ type: 'value', max: 100, axisLabel: { color: themeColors().text, formatter: '{value}%' } }),
                 yAxis: baseAxis({ type: 'category', data: cats, splitLine: { show: false } }),
                 series: series
@@ -907,7 +907,7 @@
                 backgroundColor: 'transparent',
                 tooltip: Object.assign(baseTooltip(), { formatter: aggTooltipFormatter(false) }),
                 legend: { top: 0, textStyle: { color: tc.text } },
-                grid: { left: 60, right: 60, top: 36, bottom: 30 },
+                grid: { containLabel: true, left: 60, right: 60, top: 36, bottom: 30 },
                 xAxis: timeXAxis(),
                 yAxis: [
                     baseAxis({ type: 'value', name: '负载/核数', nameTextStyle: { color: tc.text }, position: 'left' }),
@@ -949,7 +949,7 @@
                 backgroundColor: 'transparent',
                 tooltip: Object.assign(baseTooltip(), { formatter: aggTooltipFormatter(true) }),
                 legend: { top: 0, textStyle: { color: tc.text } },
-                grid: { left: 70, right: 50, top: 36, bottom: 30 },
+                grid: { containLabel: true, left: 70, right: 50, top: 36, bottom: 30 },
                 xAxis: timeXAxis(),
                 yAxis: [
                     baseAxis({ type: 'value', name: '内存', nameTextStyle: { color: tc.text }, axisLabel: { color: tc.text, formatter: function (v) { return fmtBytes(v); } } }),
@@ -991,7 +991,7 @@
                 backgroundColor: 'transparent',
                 tooltip: Object.assign(baseTooltip(), { formatter: aggTooltipFormatter(true) }),
                 legend: { top: 0, textStyle: { color: tc.text } },
-                grid: { left: 70, right: 50, top: 36, bottom: 30 },
+                grid: { containLabel: true, left: 70, right: 50, top: 36, bottom: 30 },
                 xAxis: timeXAxis(),
                 yAxis: [
                     baseAxis({ type: 'value', name: '磁盘', nameTextStyle: { color: tc.text }, axisLabel: { color: tc.text, formatter: function (v) { return fmtBytes(v); } } }),
@@ -1266,7 +1266,7 @@
                 backgroundColor: 'transparent',
                 tooltip: Object.assign(baseTooltip(), { valueFormatter: function (v) { return v.toFixed(2) + ' req/s'; } }),
                 legend: { top: 0, textStyle: { color: themeColors().text } },
-                grid: { left: 60, right: 20, top: 36, bottom: 30 },
+                grid: { containLabel: true, left: 60, right: 20, top: 36, bottom: 30 },
                 xAxis: timeXAxis(),
                 yAxis: baseAxis({ type: 'value', axisLabel: { color: themeColors().text, formatter: '{value}' } }),
                 series: series
@@ -1301,7 +1301,7 @@
                 backgroundColor: 'transparent',
                 tooltip: baseTooltip(),
                 legend: { top: 0, textStyle: { color: themeColors().text } },
-                grid: { left: 50, right: 20, top: 36, bottom: 30 },
+                grid: { containLabel: true, left: 50, right: 20, top: 36, bottom: 30 },
                 xAxis: timeXAxis(),
                 yAxis: baseAxis({ type: 'value', axisLabel: { color: themeColors().text } }),
                 series: series
@@ -1339,7 +1339,7 @@
                 backgroundColor: 'transparent',
                 tooltip: baseTooltip(),
                 legend: { top: 0, textStyle: { color: themeColors().text }, type: 'scroll' },
-                grid: { left: 50, right: 20, top: 36, bottom: 30 },
+                grid: { containLabel: true, left: 50, right: 20, top: 36, bottom: 30 },
                 xAxis: timeXAxis(),
                 yAxis: baseAxis({ type: 'value', axisLabel: { color: themeColors().text } }),
                 series: series
@@ -1375,7 +1375,7 @@
                 backgroundColor: 'transparent',
                 tooltip: Object.assign(baseTooltip(), { valueFormatter: function (v) { return v.toFixed(2) + ' s'; } }),
                 legend: { top: 0, textStyle: { color: themeColors().text }, type: 'scroll' },
-                grid: { left: 60, right: 20, top: 36, bottom: 30 },
+                grid: { containLabel: true, left: 60, right: 20, top: 36, bottom: 30 },
                 xAxis: timeXAxis(),
                 yAxis: baseAxis({ type: 'value', axisLabel: { color: themeColors().text, formatter: '{value}s' } }),
                 series: series
