@@ -481,6 +481,8 @@
             }
         }
 
+        if (onIPv4) setBadge('ipv4', true);
+        if (onIPv6) setBadge('ipv6', true);
         if (!onIPv6) probes.push(probeProtocol('ipv6').then(function (ok) { setBadge('ipv6', ok); if (!ok) disableSeg('ipv6'); }));
         if (!onIPv4) probes.push(probeProtocol('ipv4').then(function (ok) { setBadge('ipv4', ok); if (!ok) disableSeg('ipv4'); }));
 
