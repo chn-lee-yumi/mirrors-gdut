@@ -472,17 +472,26 @@ def _fetch_dir_links(url):
 
 
 def _normalize_links(links):
-    """剥 ./ 前缀与尾斜杠、去查询串、滤掉外部/上级/带路径的链接，返回纯文件名或目录名。"""
+    """剥 ./ 或站内绝对路径前缀与尾斜杠、去查询串、滤掉外部链接，返回纯文件名或目录名。
+
+    上游目录页格式不一：自建 FancyIndex 用裸文件名，中山大学用 ./xxx，
+    中科大用 /centos-stream/... 站内绝对路径（含完整子路径）。
+    站内绝对路径取其最后一段，与裸文件名统一。
+    """
     names = set()
     for link in links:
         name = link.split('?', 1)[0].split('#', 1)[0]
         if name.startswith('./'):
             name = name[2:]
         name = name.rstrip('/')
-        if not name or name.startswith(('../', '/', 'http://', 'https://', 'mailto:', 'javascript:')):
+        if not name or name.startswith(('http://', 'https://', 'mailto:', 'javascript:')):
             continue
         if name in ('..', '.'):
             continue
+        if name.startswith('/'):
+            name = name.rsplit('/', 1)[-1]
+            if not name:
+                continue
         names.add(name)
     return names
 

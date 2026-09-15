@@ -38,8 +38,8 @@ OS_ITEMS = [
         'name': 'CentOS Stream',
         'base': 'centos-stream',
         'variants': [
-            {'note': 'DVD 安装盘 · x86_64', 'subdir': '10-stream/BaseOS/x86_64/iso', 'glob': 'CentOS-Stream-*latest-x86_64-dvd1.iso'},
-            {'note': 'DVD 安装盘 · aarch64', 'subdir': '10-stream/BaseOS/aarch64/iso', 'glob': 'CentOS-Stream-*latest-aarch64-dvd1.iso'},
+            {'note': 'DVD 安装盘 · x86_64', 'subdir': '10-stream/BaseOS/x86_64/iso', 'glob': 'CentOS-Stream-10-[0-9]*-x86_64-dvd1.iso'},
+            {'note': 'DVD 安装盘 · aarch64', 'subdir': '10-stream/BaseOS/aarch64/iso', 'glob': 'CentOS-Stream-10-[0-9]*-aarch64-dvd1.iso'},
         ],
     },
     {
