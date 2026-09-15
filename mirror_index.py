@@ -471,6 +471,22 @@ def _fetch_dir_links(url):
         return None
 
 
+def _normalize_links(links):
+    """剥 ./ 前缀与尾斜杠、去查询串、滤掉外部/上级/带路径的链接，返回纯文件名或目录名。"""
+    names = set()
+    for link in links:
+        name = link.split('?', 1)[0].split('#', 1)[0]
+        if name.startswith('./'):
+            name = name[2:]
+        name = name.rstrip('/')
+        if not name or name.startswith(('../', '/', 'http://', 'https://', 'mailto:', 'javascript:')):
+            continue
+        if name in ('..', '.'):
+            continue
+        names.add(name)
+    return names
+
+
 def _scan_http(item, variant):
     if urlopen is None:
         return None
@@ -484,8 +500,7 @@ def _scan_http(item, variant):
             return None
         prefix = item.get('versions_prefix', '')
         candidates = set()
-        for link in links:
-            name = link.rstrip('/')
+        for name in _normalize_links(links):
             if prefix:
                 if not name.startswith(prefix) or not name[len(prefix):len(prefix) + 1].isdigit():
                     continue
@@ -500,7 +515,7 @@ def _scan_http(item, variant):
     links = _fetch_dir_links(url)
     if links is None:
         return None
-    filenames = [l.rstrip('/') for l in links if '/' not in l.rstrip('/')]
+    filenames = [n for n in _normalize_links(links) if '.' in n or '-' in n]
     filename = _match_glob(filenames, variant['glob'])
     if not filename:
         return None
