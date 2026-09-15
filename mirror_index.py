@@ -438,13 +438,14 @@ html += FOOTER
 from download_items import OS_ITEMS, SOFTWARE_ITEMS
 
 try:
-    from urllib.request import urlopen
+    from urllib.request import urlopen, Request
     from urllib.error import URLError
 except ImportError:
     urlopen = None
 
 MIRROR_WEB_ROOT = 'https://mirrors.gdut.edu.cn'
 HTTP_DIR_TIMEOUT = 5
+HTTP_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) gdut-mirror-index/1.0'
 
 
 def _match_glob(names, pattern):
@@ -458,15 +459,14 @@ def _version_key(name):
     return [(0, int(p), '') if p.isdigit() else (1, 0, p) for p in re.split(r'[.-]', name)]
 
 
-def _parse_html_links(html_text):
-    import re
-    return re.findall(r'href="([^"]+)"', html_text)
-
-
 def _fetch_dir_links(url):
+    import re
     try:
-        resp = urlopen(url, timeout=HTTP_DIR_TIMEOUT)
-        return _parse_html_links(resp.read().decode('utf-8', errors='replace'))
+        req = Request(url, headers={'User-Agent': HTTP_USER_AGENT})
+        resp = urlopen(req, timeout=HTTP_DIR_TIMEOUT)
+        html_text = resp.read().decode('utf-8', errors='replace')
+        resp.close()
+        return re.findall(r'href="([^"]+)"', html_text)
     except (URLError, OSError):
         return None
 
@@ -506,8 +506,10 @@ def _scan_http(item, variant):
         return None
     size = None
     try:
-        head_resp = urlopen(url + filename, timeout=HTTP_DIR_TIMEOUT)
+        req = Request(url + filename, method='HEAD', headers={'User-Agent': HTTP_USER_AGENT})
+        head_resp = urlopen(req, timeout=HTTP_DIR_TIMEOUT)
         size = int(head_resp.headers.get('Content-Length') or 0) or None
+        head_resp.close()
     except (URLError, OSError, ValueError):
         pass
     return {'url': url + filename, 'size': size, 'filename': filename, 'browse': base_url}
