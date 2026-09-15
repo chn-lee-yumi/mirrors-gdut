@@ -29,5 +29,7 @@
 30 23 * * 0  /bin/python3 /home/mirror/mirror_disk_summary.py
 # 每两小时生成镜像统计数据JSON（供status.html前端消费）
 0 */2 * * * /bin/python3 /home/mirror/mirrors-gdut/mirror_stats_json.py
+# 每日4:30全量扫描快速下载弹窗条目（HTTP目录页+HEAD，约75请求/25KB），结果写入缓存供mirror_index.py复用
+30 4 * * * /bin/python3 /home/mirror/mirrors-gdut/mirror_index.py > /home/mirror/tmp/mirror_scan.log 2>&1
 # 缓存预热
 # 0 4 * * *  cd /home/mirror/tmp; python3 /home/mirror/mirrors-gdut/mirror_auto_cache.py > /tmp/mirror_auto_cache.log

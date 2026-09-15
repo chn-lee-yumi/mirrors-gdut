@@ -48,7 +48,7 @@ fi
 touch ${LOCK_FILE}
 
 # 更新主页同步状态
-python3 /home/mirror/mirrors-gdut/mirror_index.py
+python3 /home/mirror/mirrors-gdut/mirror_index.py --skip-scan
 
 # 判断log目录是否存在，不存在则创建
 if [[ ! -d ${LOG_DIR} ]]; then
@@ -185,7 +185,7 @@ date "+%Y-%m-%d %T" >${SYNC_TIME_FILE}
 rm -f ${LOCK_FILE}
 
 # 更新主页同步状态
-python3 /home/mirror/mirrors-gdut/mirror_index.py
+python3 /home/mirror/mirrors-gdut/mirror_index.py --skip-scan
 
 # 清空LOG_TIME*24小时前的日志
 find ${LOG_DIR}/* -mtime +${LOG_TIME} -name '*log*' -delete

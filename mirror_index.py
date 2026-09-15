@@ -1,5 +1,6 @@
 import glob
 import os
+import sys
 import csv
 from string import Template
 
@@ -549,27 +550,67 @@ def _format_size(size):
     return '{:.1f} KB'.format(size / 1024)
 
 
-def _build_download_modal(modal_id, modal_title, items, footer_html=''):
+os_modal_footer = ('<div class="download-modal-footer"><a href="' + MIRROR_WEB_ROOT + '/" target="_blank" rel="noopener noreferrer">'
+                   '浏览全部镜像目录 →</a></div>')
+
+SCAN_CACHE_PATH = '/home/mirror/tmp/download_scan_cache.json'
+
+
+def _scan_all_items():
+    """全量扫描所有条目，返回可 JSON 序列化的结构。"""
+    import json
+    scanned = {}
+    for modal_id, items in (('os', OS_ITEMS), ('software', SOFTWARE_ITEMS)):
+        entries = []
+        for item in items:
+            rows = []
+            for variant in item['variants']:
+                result = _scan_http(item, variant)
+                if result:
+                    rows.append({'filename': result['filename'], 'note': variant['note'],
+                                 'url': result['url'], 'size': result['size']})
+                else:
+                    rows.append({'filename': variant['glob'], 'note': variant['note'],
+                                 'url': MIRROR_WEB_ROOT + '/' + item['base'] + '/',
+                                 'size': None, 'unavailable': True})
+            entries.append({'name': item['name'], 'rows': rows})
+        scanned[modal_id] = entries
+    try:
+        with open(SCAN_CACHE_PATH, 'w') as f:
+            json.dump(scanned, f, ensure_ascii=False)
+    except OSError:
+        pass
+    return scanned
+
+
+def _load_scan_cache():
+    import json
+    try:
+        with open(SCAN_CACHE_PATH, 'r') as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return None
+
+
+def _render_download_modal(modal_id, modal_title, entries, footer_html=''):
     nav_items_html = ''
     variant_panels_html = ''
-    for idx, item in enumerate(items):
+    for idx, entry in enumerate(entries):
         active_class = ' active' if idx == 0 else ''
         nav_items_html += DOWNLOAD_NAV_ITEM_TEMPLATE.format(
-            active_class=active_class, modal_id=modal_id, item_index=idx, item_name=item['name'])
+            active_class=active_class, modal_id=modal_id, item_index=idx, item_name=entry['name'])
         rows_html = ''
-        for variant in item['variants']:
-            result = _scan_http(item, variant)
-            if result:
-                size_html = '<span class="variant-size">{}</span>'.format(_format_size(result['size']))
-                rows_html += DOWNLOAD_VARIANT_ROW_TEMPLATE.format(
-                    download_url=result['url'], available='', filename=result['filename'],
-                    variant_note=variant['note'], file_size_html=size_html)
-            else:
-                browse_url = MIRROR_WEB_ROOT + '/' + item['base'] + '/'
+        for row in entry['rows']:
+            if row.get('unavailable'):
                 size_html = '<span class="variant-size variant-unavailable">暂不可用</span>'
                 rows_html += DOWNLOAD_VARIANT_ROW_TEMPLATE.format(
-                    download_url=browse_url, available=' data-unavailable',
-                    filename=variant['glob'], variant_note=variant['note'], file_size_html=size_html)
+                    download_url=row['url'], available=' data-unavailable',
+                    filename=row['filename'], variant_note=row['note'], file_size_html=size_html)
+            else:
+                size_html = '<span class="variant-size">{}</span>'.format(_format_size(row.get('size')))
+                rows_html += DOWNLOAD_VARIANT_ROW_TEMPLATE.format(
+                    download_url=row['url'], available='',
+                    filename=row['filename'], variant_note=row['note'], file_size_html=size_html)
         variant_panels_html += DOWNLOAD_VARIANT_PANEL_TEMPLATE.format(
             active_class=active_class, modal_id=modal_id, item_index=idx, variant_rows=rows_html)
     return DOWNLOAD_MODAL_TEMPLATE.format(
@@ -577,11 +618,17 @@ def _build_download_modal(modal_id, modal_title, items, footer_html=''):
         nav_items=nav_items_html, variant_panels=variant_panels_html, modal_footer=footer_html)
 
 
-os_modal_footer = ('<div class="download-modal-footer"><a href="' + MIRROR_WEB_ROOT + '/" target="_blank" rel="noopener noreferrer">'
-                   '浏览全部镜像目录 →</a></div>')
+SKIP_SCAN = '--skip-scan' in sys.argv
 
-html += _build_download_modal('os', '获取操作系统镜像', OS_ITEMS, os_modal_footer)
-html += _build_download_modal('software', '获取开源软件', SOFTWARE_ITEMS)
+if SKIP_SCAN:
+    scanned = _load_scan_cache()
+    if scanned is None:
+        scanned = _scan_all_items()
+else:
+    scanned = _scan_all_items()
+
+html += _render_download_modal('os', '获取操作系统镜像', scanned.get('os', []), os_modal_footer)
+html += _render_download_modal('software', '获取开源软件', scanned.get('software', []))
 
 with open('/mnt/mirror/index.html', 'w') as f:
     f.write(html)
