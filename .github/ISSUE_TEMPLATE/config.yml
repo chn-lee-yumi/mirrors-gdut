@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 交流群
+    url: https://mirrors.gdut.edu.cn/
+    about: 使用问题请优先到主页公布的交流群讨论（入群口令见主页）。
+  - name: 📖 使用帮助文档
+    url: https://mirrors.gdut.edu.cn/help/
+    about: 各镜像源的配置方法与使用帮助。

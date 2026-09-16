@@ -1,0 +1,33 @@
+name: 🖥️ 网页问题
+description: 主页 / 状态页 / 目录浏览 / 帮助页面的显示或交互问题
+labels: ["web-issue"]
+body:
+  - type: dropdown
+    id: page
+    attributes:
+      label: 出问题的页面
+      options:
+        - 主页（镜像列表 / 域名选择 / 快速下载）
+        - 目录浏览页（FancyIndex）
+        - 状态监控页（status.html）
+        - 帮助文档页（help/）
+        - 其他页面
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题描述
+      description: 具体什么显示/交互不对？有截图最好直接粘贴。
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: 页面地址
+      placeholder: 如 https://mirrors.gdut.edu.cn/status.html
+  - type: input
+    id: environment
+    attributes:
+      label: 浏览器与环境
+      placeholder: 如 Chrome 131 / macOS，或 Safari / iOS 18
