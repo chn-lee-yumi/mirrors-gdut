@@ -1,0 +1,11 @@
+name: 📝 其他问题
+description: 不属于以上分类的反馈与建议
+labels: []
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题描述
+      description: 请尽量具体地描述你的反馈或建议
+    validations:
+      required: true

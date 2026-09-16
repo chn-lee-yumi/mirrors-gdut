@@ -1,0 +1,55 @@
+name: 🪞 新增镜像请求
+description: 希望镜像站新增某个镜像源
+labels: ["mirror-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢提出新镜像请求！请先在 [镜像列表](https://mirrors.gdut.edu.cn/) 和历史 Issue 中确认该镜像未被收录。
+  - type: input
+    id: mirror-name
+    attributes:
+      label: 镜像名称
+      description: 希望收录的镜像源名称
+      placeholder: 如 Ubuntu Kylin
+    validations:
+      required: true
+  - type: input
+    id: upstream
+    attributes:
+      label: 上游地址
+      description: 镜像的官方或上游同步地址（rsync / http(s)）
+      placeholder: 如 rsync://rsync.archive.ubuntu.com/ubuntu/
+    validations:
+      required: true
+  - type: textarea
+    id: reason
+    attributes:
+      label: 收录理由与预期用途
+      description: 为什么需要它？预计哪些场景/课程/人群使用？
+      placeholder: 如操作系统课程实验需要，校内无其他可用源……
+    validations:
+      required: true
+  - type: dropdown
+    id: mirror-type
+    attributes:
+      label: 期望的镜像方式
+      options:
+        - 全量镜像（rsync 同步到本地盘）
+        - 缓存镜像（Nginx proxy_cache 按需回源）
+        - 不确定 / 由维护者评估
+    validations:
+      required: true
+  - type: textarea
+    id: size
+    attributes:
+      label: 预估体积
+      description: 全量同步大约占多少磁盘空间？（不确定可留空）
+      placeholder: 如约 800GB
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 确认
+      options:
+        - label: 我已确认该镜像目前未被收录，且没有重复的 Issue
+          required: true

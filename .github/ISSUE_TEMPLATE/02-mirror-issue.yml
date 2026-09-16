@@ -1,0 +1,57 @@
+name: ⚠️ 镜像异常反馈
+description: 同步失败、文件缺失、速度慢、证书错误等镜像使用问题
+labels: ["mirror-issue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        反馈镜像异常前，建议先查看 [镜像站状态页](https://mirrors.gdut.edu.cn/status.html) 确认是否正在同步或已有故障。
+  - type: input
+    id: mirror-name
+    attributes:
+      label: 镜像名称
+      placeholder: 如 archlinux / pypi / docker-ce
+    validations:
+      required: true
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: 异常类型
+      options:
+        - 同步失败 / 长期未同步
+        - 文件缺失（404）
+        - 下载速度慢 / 不稳定
+        - 校验失败（SHA256 不符）
+        - 证书 / HTTPS 错误
+        - 其他
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题描述
+      description: 发生了什么？预期是什么？请尽量给出具体报错信息。
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 复现方式
+      description: 命令、配置或操作步骤
+      render: shell
+      placeholder: |
+        # 例如
+        curl -O https://mirrors.gdut.edu.cn/archlinux/iso/latest/archlinux-x86_64.iso
+  - type: input
+    id: environment
+    attributes:
+      label: 访问环境
+      description: 校园网 / VPN？访问域名（mirrors / mirrors4 / mirrors6）？你的系统与工具版本
+      placeholder: 如 校园网，mirrors6，Debian 13 + apt 2.9
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 确认
+      options:
+        - label: 我已查看状态页，确认该问题未被 ongoing 的同步任务解释
+          required: true
