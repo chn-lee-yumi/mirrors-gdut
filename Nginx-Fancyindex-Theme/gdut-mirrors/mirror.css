@@ -1465,7 +1465,12 @@ input::-moz-focus-inner {
 }
 
 .download-variant-row[data-unavailable] {
-    opacity: 0.6;
+    border-style: dashed;
+}
+
+.download-variant-row[data-unavailable] .variant-label {
+    color: var(--color-text-muted);
+    font-style: italic;
 }
 
 .variant-info {
