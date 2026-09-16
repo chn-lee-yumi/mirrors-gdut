@@ -556,6 +556,16 @@ os_modal_footer = ('<div class="download-modal-footer"><a href="' + MIRROR_WEB_R
 SCAN_CACHE_PATH = '/home/mirror/tmp/download_scan_cache.json'
 
 
+def _fallback_url(item, variant):
+    """自动获取失败时的手动浏览路径：显式 fallback，或扫描目录本身（{latest_dir} 用其父目录）。"""
+    path = variant.get('fallback')
+    if not path:
+        path = variant.get('subdir', '')
+        if '{latest_dir}' in path:
+            path = path.split('{latest_dir}')[0]
+    return MIRROR_WEB_ROOT + '/' + item['base'] + '/' + path
+
+
 def _scan_all_items():
     """全量扫描所有条目，返回可 JSON 序列化的结构。"""
     import json
@@ -570,8 +580,8 @@ def _scan_all_items():
                     rows.append({'filename': result['filename'], 'note': variant['note'],
                                  'url': result['url'], 'size': result['size']})
                 else:
-                    rows.append({'filename': variant['glob'], 'note': variant['note'],
-                                 'url': MIRROR_WEB_ROOT + '/' + item['base'] + '/',
+                    rows.append({'filename': variant['note'], 'note': '自动获取失败，点击浏览目录手动选择',
+                                 'url': _fallback_url(item, variant),
                                  'size': None, 'unavailable': True})
             entries.append({'name': item['name'], 'rows': rows})
         scanned[modal_id] = entries
@@ -602,7 +612,7 @@ def _render_download_modal(modal_id, modal_title, entries, footer_html=''):
         rows_html = ''
         for row in entry['rows']:
             if row.get('unavailable'):
-                size_html = '<span class="variant-size variant-unavailable">暂不可用</span>'
+                size_html = '<span class="variant-size variant-unavailable">浏览目录 →</span>'
                 rows_html += DOWNLOAD_VARIANT_ROW_TEMPLATE.format(
                     download_url=row['url'], available=' data-unavailable',
                     filename=row['filename'], variant_note=row['note'], file_size_html=size_html)

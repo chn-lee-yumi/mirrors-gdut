@@ -8,9 +8,11 @@
     base            镜像根路径（URL 相对路径）
     versions_prefix {latest_dir} 匹配子目录的前缀（默认数字开头），如 openEuler 源用 'openEuler-'
     variants        变体列表，每项:
-        note    变体说明（副文本，如「桌面版 · x86_64」）
-        subdir  URL 子路径，支持 {latest_dir} 占位符（按版本排序取最新子目录）
-        glob    文件名匹配模式
+        note        变体说明（副文本，如「桌面版 · x86_64」）
+        subdir      URL 子路径，支持 {latest_dir} 占位符（按版本排序取最新子目录）
+        glob        文件名匹配模式
+        fallback    自动获取失败（上游拦截等）时的手动浏览路径；
+                    缺省用扫描目录本身（含 {latest_dir} 时用其父目录）
 """
 
 OS_ITEMS = [
@@ -38,8 +40,8 @@ OS_ITEMS = [
         'name': 'CentOS Stream',
         'base': 'centos-stream',
         'variants': [
-            {'note': 'DVD 安装盘 · x86_64', 'subdir': '10-stream/BaseOS/x86_64/iso', 'glob': 'CentOS-Stream-10-[0-9]*-x86_64-dvd1.iso'},
-            {'note': 'DVD 安装盘 · aarch64', 'subdir': '10-stream/BaseOS/aarch64/iso', 'glob': 'CentOS-Stream-10-[0-9]*-aarch64-dvd1.iso'},
+            {'note': 'DVD 安装盘 · x86_64', 'subdir': '10-stream/BaseOS/x86_64/iso', 'glob': 'CentOS-Stream-10-[0-9]*-x86_64-dvd1.iso', 'fallback': '10-stream/BaseOS/x86_64/iso/'},
+            {'note': 'DVD 安装盘 · aarch64', 'subdir': '10-stream/BaseOS/aarch64/iso', 'glob': 'CentOS-Stream-10-[0-9]*-aarch64-dvd1.iso', 'fallback': '10-stream/BaseOS/aarch64/iso/'},
         ],
     },
     {
@@ -64,10 +66,10 @@ OS_ITEMS = [
         'name': 'openSUSE',
         'base': 'opensuse',
         'variants': [
-            {'note': 'Leap 离线安装 · x86_64', 'subdir': 'distribution/leap/{latest_dir}/iso', 'glob': 'Leap-*-offline-installer-x86_64.install.iso'},
-            {'note': 'Leap 在线安装 · x86_64', 'subdir': 'distribution/leap/{latest_dir}/iso', 'glob': 'Leap-*-online-installer-x86_64.install.iso'},
-            {'note': 'Tumbleweed DVD · x86_64', 'subdir': 'tumbleweed/iso', 'glob': 'openSUSE-Tumbleweed-DVD-x86_64-Current.iso'},
-            {'note': 'Tumbleweed NET · x86_64', 'subdir': 'tumbleweed/iso', 'glob': 'openSUSE-Tumbleweed-NET-x86_64-Current.iso'},
+            {'note': 'Leap 离线安装 · x86_64', 'subdir': 'distribution/leap/{latest_dir}/iso', 'glob': 'Leap-*-offline-installer-x86_64.install.iso', 'fallback': 'distribution/leap/'},
+            {'note': 'Leap 在线安装 · x86_64', 'subdir': 'distribution/leap/{latest_dir}/iso', 'glob': 'Leap-*-online-installer-x86_64.install.iso', 'fallback': 'distribution/leap/'},
+            {'note': 'Tumbleweed DVD · x86_64', 'subdir': 'tumbleweed/iso', 'glob': 'openSUSE-Tumbleweed-DVD-x86_64-Current.iso', 'fallback': 'tumbleweed/iso/'},
+            {'note': 'Tumbleweed NET · x86_64', 'subdir': 'tumbleweed/iso', 'glob': 'openSUSE-Tumbleweed-NET-x86_64-Current.iso', 'fallback': 'tumbleweed/iso/'},
         ],
     },
     {
