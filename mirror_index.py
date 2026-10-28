@@ -256,14 +256,14 @@ FOOTER = """
             </svg>
             广东工业大学首页
         </a>
-        &nbsp;|&nbsp;
+        <span class="footer-sep">&nbsp;|&nbsp;</span>
         <a target="_blank" href="about.html">
             <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
             </svg>
             关于我们
         </a>
-        &nbsp;|&nbsp;
+        <span class="footer-sep">&nbsp;|&nbsp;</span>
         <a href="mailto:stunic@gdut.edu.cn">
             <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
@@ -271,21 +271,21 @@ FOOTER = """
             </svg>
             联系我们
         </a>
-        &nbsp;|&nbsp;
+        <span class="footer-sep">&nbsp;|&nbsp;</span>
         <a target="_blank" href="https://mirrors.gdut.edu.cn/help/">
             <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
             </svg>
             帮助文档
         </a>
-        &nbsp;|&nbsp;
+        <span class="footer-sep">&nbsp;|&nbsp;</span>
         <a target="_blank" href="status.html">
             <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
             当前状态
         </a>
-        &nbsp;|&nbsp;
+        <span class="footer-sep">&nbsp;|&nbsp;</span>
         <a target="_blank" rel="noopener noreferrer" href="https://registry.gdut.edu.cn">
             <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z"/>
@@ -294,7 +294,7 @@ FOOTER = """
             </svg>
             容器镜像库
         </a>
-        &nbsp;|&nbsp;
+        <span class="footer-sep">&nbsp;|&nbsp;</span>
         <a target="_blank" rel="noopener noreferrer" href="https://repo.gdut.edu.cn">
             <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"/>
@@ -302,7 +302,7 @@ FOOTER = """
             </svg>
             制品仓库
         </a>
-        &nbsp;|&nbsp;
+        <span class="footer-sep">&nbsp;|&nbsp;</span>
         <a target="_blank" href="https://speed.gdut.edu.cn">
             <svg width="16" height="16" style="vertical-align: middle;" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>

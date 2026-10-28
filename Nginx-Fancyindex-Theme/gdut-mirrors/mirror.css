@@ -883,6 +883,11 @@ ul {
     color: var(--color-primary);
 }
 
+#footer .footer-sep {
+    color: var(--color-text-muted);
+    user-select: none;
+}
+
 /* ==========================================
    Utility Classes
    ========================================== */
@@ -1151,6 +1156,10 @@ p.answer {
     #footer a {
         display: block;
         margin: var(--spacing-xs) 0;
+    }
+
+    #footer .footer-sep {
+        display: none;
     }
 }
 
