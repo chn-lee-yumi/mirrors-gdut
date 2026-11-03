@@ -544,6 +544,12 @@ html.js .navbar-brand.autohide.is-visible {
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* [hidden] 的 UA 规则会被移动端 tr{display:block} 覆盖，
+   这里显式声明，保证搜索过滤在任何断点都能把行移出布局 */
+#distro-table tbody tr[hidden] {
+    display: none;
+}
+
 #distro-table tbody tr:hover {
     transform: scale(1.02);
     z-index: 1;
