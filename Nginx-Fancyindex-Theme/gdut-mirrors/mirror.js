@@ -66,6 +66,28 @@
     // Search Functionality
     // ==========================================
     
+    // 列表动画参数：退场 150ms、FLIP 位移 220ms、入场 180ms
+    const MOTION = {
+        exit: 150,
+        move: 220,
+        enter: 180,
+        easeExit: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        easeMove: 'cubic-bezier(0.22, 1, 0.36, 1)'
+    };
+
+    const reducedMotionQuery = window.matchMedia
+        ? window.matchMedia('(prefers-reduced-motion: reduce)')
+        : null;
+
+    // 行 -> 正在播放的 Animation 列表，下一次过滤时统一打断
+    const rowAnimations = new Map();
+    // 过滤轮次：丢弃被新一轮取代的旧动画回调
+    let searchGeneration = 0;
+
+    function prefersReducedMotion() {
+        return !!(reducedMotionQuery && reducedMotionQuery.matches);
+    }
+
     function initSearch() {
         const searchInput = document.getElementById('search');
         if (!searchInput) return;
@@ -89,22 +111,197 @@
         }
     }
     
-    function performSearch(query, rows) {
-        const searchTerms = query.trim().toLowerCase().split(/\s+/);
-        
-        rows.forEach(row => {
-            const text = row.textContent.toLowerCase().replace(/\s+/g, ' ');
-            const matches = searchTerms.every(term => text.includes(term));
-            
-            if (matches || query.trim() === '') {
-                row.removeAttribute('hidden');
-                row.style.animation = 'fadeIn 0.3s ease';
-            } else {
-                row.setAttribute('hidden', '');
-            }
+    function trackAnimation(row, animation) {
+        let list = rowAnimations.get(row);
+        if (!list) {
+            list = [];
+            rowAnimations.set(row, list);
+        }
+        list.push(animation);
+        // cancel 会让 finished reject，这里吞掉避免未处理的拒绝。
+        // 注意不要在这里把已完成的动画移出列表：fill: forwards 的动画
+        // 演完后仍会持续施加效果，必须留在列表里等下一轮统一 cancel。
+        animation.finished.catch(function() {});
+    }
+
+    function cancelRowAnimations() {
+        rowAnimations.forEach(function(list) {
+            list.forEach(function(animation) {
+                animation.cancel();
+            });
         });
-        
-        // Show "no results" message if needed
+        rowAnimations.clear();
+    }
+
+    // 把当前视觉状态固化成内联样式，之后再取消动画，
+    // 这样打断时行不会从半路位置/半透明状态突然跳回。
+    function freezeRowVisual(row) {
+        const computed = window.getComputedStyle(row);
+        const frozen = { opacity: 1, scale: 1 };
+
+        const opacity = parseFloat(computed.opacity);
+        if (!isNaN(opacity) && opacity < 1) {
+            frozen.opacity = opacity;
+            row.style.opacity = String(opacity);
+        }
+
+        const scale = parseFloat(computed.scale);
+        if (!isNaN(scale) && scale < 1) {
+            frozen.scale = scale;
+            row.style.scale = String(scale);
+        }
+
+        if (computed.translate && computed.translate !== 'none') {
+            row.style.translate = computed.translate;
+        }
+
+        return frozen;
+    }
+
+    function clearRowVisual(row) {
+        row.style.opacity = '';
+        row.style.scale = '';
+        row.style.translate = '';
+    }
+
+    function applyRowVisibility(toHide, toShow) {
+        toHide.forEach(function(row) {
+            row.setAttribute('hidden', '');
+        });
+        toShow.forEach(function(row) {
+            row.removeAttribute('hidden');
+        });
+    }
+    
+    function performSearch(query, rows) {
+        const generation = ++searchGeneration;
+        const termText = query.trim().toLowerCase();
+        const searchTerms = termText === '' ? [] : termText.split(/\s+/);
+
+        // 旧的无结果提示先撤掉，等本轮退场结束再按需重新插入
+        const staleMessage = document.querySelector('.no-results');
+        if (staleMessage) staleMessage.remove();
+
+        // 1. 先冻结视觉状态，再打断上一轮动画
+        const frozen = new Map();
+        rows.forEach(function(row) {
+            frozen.set(row, freezeRowVisual(row));
+        });
+        cancelRowAnimations();
+
+        // 2. 计算新的可见集合
+        const wasVisible = new Map();
+        const toHide = [];
+        const toShow = [];
+
+        rows.forEach(function(row) {
+            const text = row.textContent.toLowerCase().replace(/\s+/g, ' ');
+            const matches = searchTerms.every(function(term) {
+                return text.indexOf(term) !== -1;
+            });
+            const visible = !row.hasAttribute('hidden');
+            wasVisible.set(row, visible);
+
+            if (visible && !matches) toHide.push(row);
+            if (!visible && matches) toShow.push(row);
+        });
+
+        // 3. 记录过滤前的位置（文档坐标，页面滚动后仍可比）
+        const scrollBefore = window.scrollY || window.pageYOffset || 0;
+        const beforeTop = new Map();
+        rows.forEach(function(row) {
+            beforeTop.set(row, wasVisible.get(row)
+                ? row.getBoundingClientRect().top + scrollBefore
+                : null);
+        });
+
+        // 减少动态偏好的用户直接瞬时切换
+        if (prefersReducedMotion()) {
+            applyRowVisibility(toHide, toShow);
+            rows.forEach(clearRowVisual);
+            updateSearchResults(rows);
+            return;
+        }
+
+        // 4. 退场：被过滤的行原地淡出收拢，演完才让出空间
+        if (toHide.length === 0) {
+            finishSearch(generation, rows, toHide, toShow, frozen, beforeTop);
+            return;
+        }
+
+        const exits = toHide.map(function(row) {
+            const state = frozen.get(row) || { opacity: 1, scale: 1 };
+            const animation = row.animate(
+                [
+                    { opacity: state.opacity, scale: state.scale },
+                    { opacity: 0, scale: 0.96 }
+                ],
+                { duration: MOTION.exit, easing: MOTION.easeExit, fill: 'forwards' }
+            );
+            trackAnimation(row, animation);
+            return animation.finished.catch(function() {});
+        });
+
+        Promise.all(exits).then(function() {
+            if (generation !== searchGeneration) return;
+            finishSearch(generation, rows, toHide, toShow, frozen, beforeTop);
+        });
+    }
+
+    // 退场结束后：切换显隐、测量新位置，并对剩余行做 FLIP
+    function finishSearch(generation, rows, toHide, toShow, frozen, beforeTop) {
+        if (generation !== searchGeneration) return;
+
+        // 先清掉退场动画（fill: forwards 会残留 opacity: 0，
+        // 行再次显示时会被这个残留值压住），再切显隐
+        cancelRowAnimations();
+        applyRowVisibility(toHide, toShow);
+        // 冻结态已记录进 beforeTop，统一清掉，避免残留内联位移
+        rows.forEach(clearRowVisual);
+
+        const scrollAfter = window.scrollY || window.pageYOffset || 0;
+
+        rows.forEach(function(row) {
+            if (row.hasAttribute('hidden')) return;
+
+            const state = frozen.get(row) || { opacity: 1, scale: 1 };
+            const visibleBefore = beforeTop.get(row) !== null;
+            const from = {};
+            const to = {};
+            let duration = MOTION.move;
+
+            if (!visibleBefore) {
+                // 新出现的行没有历史位置，做淡入 + 小幅上移
+                from.opacity = 0;
+                from.translate = '8px';
+                to.opacity = 1;
+                to.translate = '0px';
+                duration = MOTION.enter;
+            } else {
+                const afterTop = row.getBoundingClientRect().top + scrollAfter;
+                const delta = beforeTop.get(row) - afterTop;
+                if (Math.abs(delta) > 0.5) {
+                    from.translate = delta + 'px';
+                    to.translate = '0px';
+                }
+                // 上一轮被打断在淡出途中，这里平滑恢复
+                if (state.opacity < 1) {
+                    from.opacity = state.opacity;
+                    to.opacity = 1;
+                }
+                if (state.scale < 1) {
+                    from.scale = state.scale;
+                    to.scale = 1;
+                }
+            }
+
+            if (Object.keys(from).length === 0) return;
+            trackAnimation(row, row.animate([from, to], {
+                duration: duration,
+                easing: MOTION.easeMove
+            }));
+        });
+
         updateSearchResults(rows);
     }
     
