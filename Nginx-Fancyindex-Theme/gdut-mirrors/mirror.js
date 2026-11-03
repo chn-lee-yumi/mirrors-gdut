@@ -272,17 +272,18 @@
 
             if (!visibleBefore) {
                 // 新出现的行没有历史位置，做淡入 + 小幅上移
+                // 注意：translate 属性单值表示 X 轴，垂直方向必须写 "0 <y>"
                 from.opacity = 0;
-                from.translate = '8px';
+                from.translate = '0 8px';
                 to.opacity = 1;
-                to.translate = '0px';
+                to.translate = '0 0px';
                 duration = MOTION.enter;
             } else {
                 const afterTop = row.getBoundingClientRect().top + scrollAfter;
                 const delta = beforeTop.get(row) - afterTop;
                 if (Math.abs(delta) > 0.5) {
-                    from.translate = delta + 'px';
-                    to.translate = '0px';
+                    from.translate = '0 ' + delta + 'px';
+                    to.translate = '0 0px';
                 }
                 // 上一轮被打断在淡出途中，这里平滑恢复
                 if (state.opacity < 1) {
