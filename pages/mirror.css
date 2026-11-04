@@ -4,6 +4,29 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&display=swap');
 
+/* ==========================================
+   标题字体（子集内联）
+   系统自带中文字体都没有 800 字重：PingFang SC 最粗只到 Semibold(600)，
+   Microsoft YaHei 只有 Regular/Bold(700)。所以 font-weight: 800 在
+   Chrome/Edge 上会落到系统 Bold 且不再加粗，而 Safari 会在 System 字面
+   上再叠一层伪粗体，看起来明显更粗。
+   这里内联一个 Noto Sans SC Black 子集（只含标题出现的字），让各端一致。
+   重新生成（需要 Noto Sans CJK 与 fonttools）：
+     pyftsubset /usr/share/fonts/opentype/noto/NotoSansCJK-Black.ttc \
+       --font-number=2 --text='广东工业大学开源镜像站状态' \
+       --flavor=woff2 --layout-features='' --no-hinting --desubroutinize \
+       -o hero.woff2
+     base64 -w0 hero.woff2
+   （--font-number=2 是 SC 面在 ttc 里的序号；标题文案变更时需重新子集化）
+   ========================================== */
+@font-face {
+    font-family: 'GDUT Display';
+    src: url(data:font/woff2;base64,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) format('woff2');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
 :root {
     /* School Theme Colors */
     --color-primary: #971943;
@@ -297,6 +320,7 @@ html.js .navbar-brand.autohide.is-visible {
 }
 
 .hero-title {
+    font-family: 'GDUT Display', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 3rem;
     font-weight: 800;
     margin-bottom: var(--spacing-md);
