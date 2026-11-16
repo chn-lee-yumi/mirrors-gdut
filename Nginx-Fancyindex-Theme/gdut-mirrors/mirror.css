@@ -295,6 +295,35 @@ html.js .navbar-brand.autohide.is-visible {
 }
 
 /* ==========================================
+   Theme Switch — 以按钮为中心的圆形扩散（View Transition）
+   ========================================== */
+
+/* 关掉 root 快照默认的淡入淡出，扩散完全交给 JS 动画的 clip-path */
+::view-transition-group(root),
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+/* 旧主题垫底，新主题在上层按圆形逐渐露出 */
+::view-transition-old(root) {
+    z-index: 1;
+}
+
+::view-transition-new(root) {
+    z-index: 2;
+}
+
+/* 拍快照期间禁用颜色过渡，避免新快照拍到「半深半浅」的中间色 */
+html.theme-switching,
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after {
+    transition: none !important;
+}
+
+/* ==========================================
    Hero Section
    ========================================== */
 
