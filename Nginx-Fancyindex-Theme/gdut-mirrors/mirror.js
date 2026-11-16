@@ -15,12 +15,107 @@
     var systemDarkMedia = window.matchMedia('(prefers-color-scheme: dark)');
     var systemThemeHandler = null;
 
-    function applyTheme(mode) {
-        var isDark = mode === 'dark' || (mode === 'auto' && systemDarkMedia.matches);
-        document.body.classList.toggle('dark-theme', isDark);
-        document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
-        setTimeout(function () { document.body.style.transition = ''; }, 300);
+    // 主题切换动画时长（圆形扩散）
+    var THEME_REVEAL_DURATION = 480;
+
+    // 期望的明暗状态。View Transition 的切换回调要等下一帧才执行，
+    // 期间 body 上还是旧状态，所以判断「明暗有没有变」不能看 DOM，
+    // 得看这个变量，否则连续点击会算错。
+    var currentThemeIsDark = null;
+
+    function resolveIsDark(mode) {
+        return mode === 'dark' || (mode === 'auto' && systemDarkMedia.matches);
+    }
+
+    // 切换按钮的圆心，作为圆形扩散的原点
+    function themeToggleOrigin() {
+        var button = document.querySelector('.theme-toggle');
+        if (!button || !button.getBoundingClientRect) return null;
+        var rect = button.getBoundingClientRect();
+        if (!rect.width && !rect.height) return null;
+        return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    }
+
+    /**
+     * 应用主题。
+     * origin 为空或环境不支持时直接切换，不做动画。
+     * 注意：「跟随系统」与显式明/暗模式互切时，实际明暗可能根本没变
+     * （例如系统是浅色时从 auto 切到 light），此时不应该播动画。
+     */
+    function applyTheme(mode, origin) {
+        var isDark = resolveIsDark(mode);
+        var wasDark = currentThemeIsDark === null
+            ? document.body.classList.contains('dark-theme')
+            : currentThemeIsDark;
+
+        currentThemeIsDark = isDark;
         updateThemeToggleIcon(document.querySelector('.theme-toggle'), mode);
+
+        if (isDark === wasDark) {
+            // 明暗没变，只同步状态
+            document.body.classList.toggle('dark-theme', isDark);
+            return;
+        }
+
+        if (!origin || prefersReducedMotion() ||
+            typeof document.startViewTransition !== 'function') {
+            document.body.classList.toggle('dark-theme', isDark);
+            return;
+        }
+
+        startThemeReveal(origin);
+    }
+
+    // 用 View Transition 的 root 快照做圆形扩散：
+    // 旧主题垫底，新主题以按钮为圆心从 0 半径放大到覆盖整个视口。
+    function startThemeReveal(origin) {
+        var root = document.documentElement;
+        var reveal;
+
+        // 关掉元素自身的颜色过渡，否则新快照会拍到过渡中间态的颜色
+        root.classList.add('theme-switching');
+
+        try {
+            reveal = document.startViewTransition(function () {
+                // 读最新的期望状态，连续点击时以最后一次为准
+                document.body.classList.toggle('dark-theme', currentThemeIsDark);
+            });
+        } catch (err) {
+            root.classList.remove('theme-switching');
+            document.body.classList.toggle('dark-theme', currentThemeIsDark);
+            return;
+        }
+
+        function cleanup() {
+            root.classList.remove('theme-switching');
+        }
+
+        reveal.ready.then(function () {
+            // 快照已拍完，可以恢复常规过渡了
+            cleanup();
+
+            var x = origin.x;
+            var y = origin.y;
+            // 需要覆盖到最远的视口角
+            var radius = Math.hypot(
+                Math.max(x, window.innerWidth - x),
+                Math.max(y, window.innerHeight - y)
+            );
+
+            root.animate({
+                clipPath: [
+                    'circle(0px at ' + x + 'px ' + y + 'px)',
+                    'circle(' + radius + 'px at ' + x + 'px ' + y + 'px)'
+                ]
+            }, {
+                duration: THEME_REVEAL_DURATION,
+                easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                pseudoElement: '::view-transition-new(root)'
+            });
+        }).catch(cleanup);
+
+        // 连续点击时旧过渡会被跳过，这里兜底恢复过渡
+        reveal.finished.catch(cleanup);
     }
 
     function initTheme() {
@@ -36,18 +131,29 @@
 
         systemThemeHandler = function () {
             var current = localStorage.getItem(THEME_STORAGE_KEY);
-            if (current === 'auto' || !current) applyTheme('auto');
+            if (current === 'auto' || !current) applyTheme('auto', themeToggleOrigin());
         };
         systemDarkMedia.addEventListener('change', systemThemeHandler);
     }
 
-    function toggleTheme() {
+    function toggleTheme(event) {
         var current = localStorage.getItem(THEME_STORAGE_KEY);
         var idx = THEME_MODES.indexOf(current);
         if (idx < 0) idx = 2;
         var next = THEME_MODES[(idx + 1) % THEME_MODES.length];
         localStorage.setItem(THEME_STORAGE_KEY, next);
-        applyTheme(next);
+
+        // 用被点击的按钮中心做扩散原点
+        var button = event && event.currentTarget;
+        var origin = null;
+        if (button && button.getBoundingClientRect) {
+            var rect = button.getBoundingClientRect();
+            if (rect.width || rect.height) {
+                origin = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+            }
+        }
+
+        applyTheme(next, origin);
     }
 
     function updateThemeToggleIcon(button, mode) {
@@ -799,15 +905,7 @@
         init();
     }
     
-    // Listen for system theme changes
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-        if (!localStorage.getItem(THEME_STORAGE_KEY)) {
-            document.body.classList.toggle('dark-theme', e.matches);
-            const themeToggle = document.querySelector('.theme-toggle');
-            if (themeToggle) {
-                updateThemeToggleIcon(themeToggle, e.matches);
-            }
-        }
-    });
+    // 系统主题变化由 initTheme 里的 systemThemeHandler 统一处理，
+    // 这里不再重复监听，否则会绕过切换动画直接改 class。
 
 })();
