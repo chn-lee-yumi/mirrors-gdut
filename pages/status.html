@@ -62,6 +62,7 @@
             <div class="slide-indicator"></div>
             <a class="tab-link active" href="#mirrors" data-tab="mirrors">镜像站服务器</a>
             <a class="tab-link" href="#harbor" data-tab="harbor">容器镜像库</a>
+            <a class="tab-link" href="#nexus" data-tab="nexus">制品仓库</a>
         </nav>
     </div>
 </section>
@@ -365,6 +366,104 @@
         </div>
     </div>
   </div><!-- /panel-harbor -->
+
+  <div id="panel-nexus" class="tab-panel" hidden>
+    <div class="bento-grid">
+        <div class="bento-main" style="grid-column: span 12;">
+
+            <div class="stat-grid" id="nexus-stat-grid">
+                <div class="island stat-card">
+                    <div class="island-header"><span class="stat-label">服务状态</span></div>
+                    <div class="stat-value" id="nx-up">--</div>
+                    <div class="stat-sub"><a href="https://repo.gdut.edu.cn/" target="_blank" rel="noopener">repo.gdut.edu.cn ↗</a></div>
+                </div>
+                <div class="island stat-card">
+                    <div class="island-header"><span class="stat-label">运行时长</span></div>
+                    <div class="stat-value" id="nx-uptime">--</div>
+                    <div class="stat-sub" id="nx-uptime-sub"></div>
+                </div>
+                <div class="island stat-card">
+                    <div class="island-header"><span class="stat-label">仓库数</span></div>
+                    <div class="stat-value" id="nx-repos">--</div>
+                    <div class="stat-sub" id="nx-repos-sub"></div>
+                </div>
+                <div class="island stat-card">
+                    <div class="island-header"><span class="stat-label">组件数</span></div>
+                    <div class="stat-value" id="nx-components">--</div>
+                    <div class="stat-sub" id="nx-components-sub"></div>
+                </div>
+                <div class="island stat-card">
+                    <div class="island-header"><span class="stat-label">JVM 堆内存</span></div>
+                    <div class="stat-value" id="nx-heap">--</div>
+                    <div class="stat-sub" id="nx-heap-sub"></div>
+                </div>
+                <div class="island stat-card">
+                    <div class="island-header"><span class="stat-label">请求速率</span></div>
+                    <div class="stat-value" id="nx-rps">--</div>
+                    <div class="stat-sub" id="nx-rps-sub"></div>
+                </div>
+            </div>
+
+            <div class="chart-grid">
+                <div class="island">
+                    <div class="island-header">
+                        <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/>
+                        </svg>
+                        <h2 class="island-title">请求速率（按响应码）</h2>
+                    </div>
+                    <div class="chart-wrap" id="wrap-nx-codes"><div class="chart-loading">加载中…</div><div class="chart" id="chart-nx-codes"></div></div>
+                </div>
+                <div class="island">
+                    <div class="island-header">
+                        <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                        </svg>
+                        <h2 class="island-title">请求延迟</h2>
+                    </div>
+                    <div class="chart-wrap" id="wrap-nx-latency"><div class="chart-loading">加载中…</div><div class="chart" id="chart-nx-latency"></div></div>
+                </div>
+                <div class="island">
+                    <div class="island-header">
+                        <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M3 12h4l3-9 4 18 3-9h4"/>
+                        </svg>
+                        <h2 class="island-title">并发请求</h2>
+                    </div>
+                    <div class="chart-wrap" id="wrap-nx-active"><div class="chart-loading">加载中…</div><div class="chart" id="chart-nx-active"></div></div>
+                </div>
+                <div class="island">
+                    <div class="island-header">
+                        <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/>
+                        </svg>
+                        <h2 class="island-title">JVM 内存</h2>
+                    </div>
+                    <div class="chart-wrap" id="wrap-nx-mem"><div class="chart-loading">加载中…</div><div class="chart" id="chart-nx-mem"></div></div>
+                </div>
+                <div class="island">
+                    <div class="island-header">
+                        <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                        <h2 class="island-title">JVM 线程</h2>
+                    </div>
+                    <div class="chart-wrap" id="wrap-nx-threads"><div class="chart-loading">加载中…</div><div class="chart" id="chart-nx-threads"></div></div>
+                </div>
+                <div class="island">
+                    <div class="island-header">
+                        <svg class="island-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/>
+                        </svg>
+                        <h2 class="island-title">GC 耗时</h2>
+                    </div>
+                    <div class="chart-wrap" id="wrap-nx-gc"><div class="chart-loading">加载中…</div><div class="chart" id="chart-nx-gc"></div></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+  </div><!-- /panel-nexus -->
 </main>
 
 <!-- Footer -->

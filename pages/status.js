@@ -5,6 +5,7 @@
     const PROM_URL = 'https://prometheus.gdutnic.com/api/v1';
     const PROM_K8S_URL = 'https://prometheus-k8s.gdutnic.com/api/v1';
     const HARBOR_JOB = 'job="harbor",namespace="gdut-mirrors"';
+    const NEXUS_JOB = 'job="gdut-nexus",namespace="gdut-mirrors"';
     const IPV4 = '202.116.132.67:9101';
     const IPV6 = '10.0.8.83:9101';
     const HOSTS = {
@@ -1408,6 +1409,174 @@
         countdown = REFRESH_INTERVAL;
     }
 
+    /* ===== Nexus ===== */
+    function fmtDurationMs(ms) {
+        ms = Number(ms);
+        if (!isFinite(ms) || ms < 0) return '-';
+        var m = Math.floor(ms / 60000);
+        var d = Math.floor(m / 1440), h = Math.floor((m % 1440) / 60), mm = m % 60;
+        if (d > 0) return d + ' 天 ' + h + ' 时';
+        if (h > 0) return h + ' 时 ' + mm + ' 分';
+        return mm + ' 分';
+    }
+
+    async function loadNexusOverview() {
+        var sel = '{' + NEXUS_JOB + '}';
+        var queries = [
+            { key: 'up', q: 'up' + sel },
+            { key: 'uptime', q: 'jvm_vm_uptime' + sel },
+            { key: 'repos', q: 'nexus_analytics_repository_total_count' + sel },
+            { key: 'proxy', q: 'nexus_analytics_repository_proxy_count' + sel },
+            { key: 'components', q: 'nexus_analytics_component_total_count' + sel },
+            { key: 'heapUsed', q: 'jvm_memory_heap_used' + sel },
+            { key: 'heapMax', q: 'jvm_memory_heap_max' + sel },
+            { key: 'rps', q: 'sum(rate(org_sonatype_nexus_metrics_InstrumentedFilter_requests_count' + sel + '[5m]))' },
+            { key: 'active', q: 'org_sonatype_nexus_metrics_InstrumentedFilter_activeRequests' + sel }
+        ];
+        var results = await Promise.all(queries.map(function (q) { return k8sInstant(q.q).catch(function () { return []; }); }));
+        var map = {};
+        queries.forEach(function (q, i) { map[q.key] = results[i]; });
+        function val(arr) { return arr && arr[0] ? parseFloat(arr[0].value[1]) : NaN; }
+        function setText(id, text) { document.getElementById(id).textContent = text; }
+
+        var up = val(map.up);
+        var elUp = document.getElementById('nx-up');
+        if (isFinite(up)) {
+            elUp.textContent = up === 1 ? '在线' : '离线';
+            elUp.className = 'stat-value ' + (up === 1 ? 'ok' : 'err');
+        } else { elUp.textContent = '--'; elUp.className = 'stat-value'; }
+
+        var uptime = val(map.uptime);
+        setText('nx-uptime', isFinite(uptime) ? fmtDurationMs(uptime) : '--');
+        if (isFinite(uptime)) {
+            var since = new Date(Date.now() - uptime);
+            setText('nx-uptime-sub', '启动于 ' + String(since.getMonth() + 1).padStart(2, '0') + '-' +
+                String(since.getDate()).padStart(2, '0') + ' ' +
+                String(since.getHours()).padStart(2, '0') + ':' + String(since.getMinutes()).padStart(2, '0'));
+        } else setText('nx-uptime-sub', '');
+
+        var repos = val(map.repos), proxy = val(map.proxy);
+        setText('nx-repos', isFinite(repos) ? String(repos) : '--');
+        setText('nx-repos-sub', isFinite(proxy) ? '其中代理 ' + proxy + ' 个' : '');
+
+        var comps = val(map.components);
+        setText('nx-components', isFinite(comps) ? comps.toLocaleString() : '--');
+        setText('nx-components-sub', isFinite(comps) ? '托管与缓存的组件' : '');
+
+        var hu = val(map.heapUsed), hm = val(map.heapMax);
+        setText('nx-heap', isFinite(hu) ? fmtBytes(hu) : '--');
+        setText('nx-heap-sub', isFinite(hu) && hm > 0 ? '上限 ' + fmtBytes(hm) + '（' + fmtPct(hu / hm * 100) + '）' : '');
+
+        var rps = val(map.rps), active = val(map.active);
+        setText('nx-rps', isFinite(rps) ? rps.toFixed(2) + ' req/s' : '--');
+        setText('nx-rps-sub', isFinite(active) ? '当前并发 ' + active : '');
+    }
+
+    // series: [{ name, q, color, area }]
+    async function loadNexusChart(id, series, valueFmt, axisFmt) {
+        showChartLoading(id);
+        var step = TIME_RANGES[state.range].step;
+        var end = Math.floor(Date.now() / 1000);
+        var start = end - TIME_RANGES[state.range].seconds;
+        try {
+            var results = await Promise.all(series.map(function (s) {
+                return k8sRange(s.q, start, end, step).catch(function () { return []; });
+            }));
+            var out = [];
+            series.forEach(function (s, i) {
+                var item = results[i][0];
+                if (!item) return;
+                out.push({
+                    name: s.name,
+                    type: 'line',
+                    showSymbol: false,
+                    smooth: true,
+                    lineStyle: { width: 2, type: s.dashed ? 'dashed' : 'solid' },
+                    itemStyle: { color: s.color },
+                    areaStyle: s.area ? { color: hexToRgba(s.color, 0.15) } : undefined,
+                    data: item.values.map(function (v) { return [v[0] * 1000, parseFloat(v[1])]; })
+                });
+            });
+            if (!out.length) { showChartEmpty(id, '暂无数据'); return; }
+            renderChart(id, {
+                backgroundColor: 'transparent',
+                tooltip: Object.assign(baseTooltip(), { valueFormatter: valueFmt }),
+                legend: { top: 0, textStyle: { color: themeColors().text }, type: 'scroll' },
+                grid: { containLabel: true, left: 12, right: 12, top: 36, bottom: 30 },
+                xAxis: timeXAxis(),
+                yAxis: baseAxis({ type: 'value', minInterval: axisFmt === 'int' ? 1 : 0,
+                    axisLabel: { color: themeColors().text, formatter: typeof axisFmt === 'function' ? axisFmt : '{value}' } }),
+                series: out
+            });
+        } catch (e) { showChartEmpty(id, '加载失败'); }
+    }
+
+    function loadNexusCharts() {
+        var sel = '{' + NEXUS_JOB + '}';
+        var rc = 'org_sonatype_nexus_metrics_InstrumentedFilter_responseCodes_';
+        var lat = 'org_sonatype_nexus_metrics_InstrumentedFilter_requests{' + NEXUS_JOB + ',quantile=';
+        var gc = 'jvm_garbage_collectors_G1_';
+        function rate(m) { return 'rate(' + m + sel + '[5m])'; }
+        function reqFmt(v) { return v.toFixed(3) + ' req/s'; }
+        function msFmt(v) { return v.toFixed(1) + ' ms'; }
+        function intFmt(v) { return String(Math.round(v)); }
+        return Promise.all([
+            loadNexusChart('chart-nx-codes', [
+                { name: '2xx', q: rate(rc + 'ok_total') + ' + ' + rate(rc + 'created_total') + ' + ' + rate(rc + 'noContent_total'), color: '#10b981' },
+                { name: '404', q: rate(rc + 'notFound_total'), color: '#f59e0b' },
+                { name: '400', q: rate(rc + 'badRequest_total'), color: '#8b5cf6' },
+                { name: '5xx', q: rate(rc + 'serverError_total'), color: '#ef4444' },
+                { name: '其他', q: rate(rc + 'other_total'), color: '#3b82f6' }
+            ], reqFmt),
+            loadNexusChart('chart-nx-latency', [
+                { name: 'P50', q: lat + '"0.5"} * 1000', color: '#10b981' },
+                { name: 'P95', q: lat + '"0.95"} * 1000', color: '#f59e0b' },
+                { name: 'P99', q: lat + '"0.99"} * 1000', color: '#ef4444' }
+            ], msFmt, function (v) { return v + ' ms'; }),
+            loadNexusChart('chart-nx-active', [
+                { name: '并发请求', q: 'org_sonatype_nexus_metrics_InstrumentedFilter_activeRequests' + sel, color: '#3b82f6', area: true }
+            ], intFmt, 'int'),
+            loadNexusChart('chart-nx-mem', [
+                { name: '堆已用', q: 'jvm_memory_heap_used' + sel, color: '#3b82f6', area: true },
+                { name: '堆上限', q: 'jvm_memory_heap_max' + sel, color: '#ef4444', dashed: true },
+                { name: '非堆已用', q: 'jvm_memory_non_heap_used' + sel, color: '#10b981' }
+            ], fmtBytes, function (v) { return fmtBytes(v); }),
+            loadNexusChart('chart-nx-threads', [
+                { name: '线程总数', q: 'jvm_thread_states_count' + sel, color: '#3b82f6' },
+                { name: '阻塞', q: 'jvm_thread_states_blocked_count' + sel, color: '#f59e0b' },
+                { name: '死锁', q: 'jvm_thread_states_deadlock_count' + sel, color: '#ef4444' }
+            ], intFmt, 'int'),
+            loadNexusChart('chart-nx-gc', [
+                { name: '新生代', q: rate(gc + 'Young_Generation_time'), color: '#3b82f6', area: true },
+                { name: '老年代', q: rate(gc + 'Old_Generation_time'), color: '#ef4444' }
+            ], function (v) { return v.toFixed(2) + ' ms/s'; }, function (v) { return v + ' ms/s'; })
+        ]);
+    }
+
+    async function refreshNexus() {
+        var banner = document.getElementById('error-banner');
+        try {
+            await loadNexusOverview();
+            banner.hidden = true;
+        } catch (e) {
+            banner.hidden = false;
+            return;
+        }
+        await loadNexusCharts().catch(function () {});
+        var now = new Date();
+        document.getElementById('last-refresh').textContent = '上次刷新: ' +
+            String(now.getHours()).padStart(2, '0') + ':' +
+            String(now.getMinutes()).padStart(2, '0') + ':' +
+            String(now.getSeconds()).padStart(2, '0');
+        countdown = REFRESH_INTERVAL;
+    }
+
+    function refreshActiveTab() {
+        if (state.activeTab === 'harbor') return refreshHarbor();
+        if (state.activeTab === 'nexus') return refreshNexus();
+        return refreshAll();
+    }
+
     /* ===== Theme re-apply for all charts ===== */
     function rethemeCharts() {
         Object.keys(chartOpts).forEach(function (id) {
@@ -1485,10 +1654,7 @@
         refreshTimer = setInterval(function () {
             countdown--;
             document.getElementById('next-refresh').textContent = '下次刷新: ' + countdown + 's';
-            if (countdown <= 0) {
-                if (state.activeTab === 'harbor') { refreshHarbor(); }
-                else { refreshAll(); }
-            }
+            if (countdown <= 0) refreshActiveTab();
         }, 1000);
     }
 
@@ -1511,11 +1677,7 @@
             btn.classList.add('active');
             moveIndicator(document.getElementById('time-selector'));
             state.range = btn.dataset.range;
-            if (state.activeTab === 'harbor') {
-                refreshHarbor();
-            } else {
-                refreshAll();
-            }
+            refreshActiveTab();
         });
         document.querySelectorAll('.tab-link').forEach(function (link) {
             link.addEventListener('click', function (e) {
@@ -1549,27 +1711,22 @@
 
     /* ===== Tab routing ===== */
     function switchTab(tab) {
-        if (tab !== 'mirrors' && tab !== 'harbor') tab = 'mirrors';
+        if (tab !== 'mirrors' && tab !== 'harbor' && tab !== 'nexus') tab = 'mirrors';
         state.activeTab = tab;
         document.querySelectorAll('.tab-link').forEach(function (link) {
             link.classList.toggle('active', link.dataset.tab === tab);
         });
         moveIndicator(document.getElementById('tab-nav'));
-        var panelMirrors = document.getElementById('panel-mirrors');
-        var panelHarbor = document.getElementById('panel-harbor');
-        var siteSel = document.getElementById('site-selector');
-        if (tab === 'harbor') {
-            panelMirrors.hidden = true;
-            panelHarbor.hidden = false;
-            siteSel.style.display = 'none';
-        } else {
-            panelMirrors.hidden = false;
-            panelHarbor.hidden = true;
-            siteSel.style.display = '';
-        }
+        var panels = {
+            mirrors: document.getElementById('panel-mirrors'),
+            harbor: document.getElementById('panel-harbor'),
+            nexus: document.getElementById('panel-nexus')
+        };
+        Object.keys(panels).forEach(function (k) { panels[k].hidden = k !== tab; });
+        document.getElementById('site-selector').style.display = tab === 'mirrors' ? '' : 'none';
         if (refreshTimer) clearInterval(refreshTimer);
         document.getElementById('next-refresh').textContent = '下次刷新: ' + REFRESH_INTERVAL + 's';
-        var panel = tab === 'harbor' ? panelHarbor : panelMirrors;
+        var panel = panels[tab];
         var panelCharts = panel.querySelectorAll('.chart');
         setTimeout(function () {
             panelCharts.forEach(function (el) {
@@ -1577,11 +1734,7 @@
                 if (inst) inst.resize();
             });
         }, 50);
-        if (tab === 'harbor') {
-            refreshHarbor();
-        } else {
-            refreshAll();
-        }
+        refreshActiveTab();
         startRefreshTimer();
     }
 
@@ -1608,7 +1761,8 @@
     function init() {
         document.getElementById('copyright-year').textContent = new Date().getFullYear();
         var chartIds = ['chart-cpu','chart-mem','chart-disk','chart-load','chart-net','chart-bargauge','chart-agg-load','chart-agg-mem','chart-agg-disk',
-                        'chart-hb-api','chart-hb-inflight','chart-hb-queue','chart-hb-latency'];
+                        'chart-hb-api','chart-hb-inflight','chart-hb-queue','chart-hb-latency',
+                        'chart-nx-codes','chart-nx-latency','chart-nx-active','chart-nx-mem','chart-nx-threads','chart-nx-gc'];
         chartIds.forEach(function (id) { chartFirstLoad.add(id); });
         bindControls();
         bindMirrorStatsSort();
@@ -1619,8 +1773,8 @@
             switchTab(hash);
         });
         var initialTab = (window.location.hash || '#mirrors').slice(1);
-        if (initialTab === 'harbor') {
-            switchTab('harbor');
+        if (initialTab === 'harbor' || initialTab === 'nexus') {
+            switchTab(initialTab);
         } else {
             if (window.location.hash && initialTab !== 'mirrors') {
                 window.location.hash = '#mirrors';
