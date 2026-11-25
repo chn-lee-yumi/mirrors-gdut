@@ -119,6 +119,9 @@
 .stat-value.ok { color: var(--color-success); }
 .stat-value.err { color: var(--color-error); }
 .stat-sub { font-size: 0.8125rem; color: var(--color-text-muted); margin-top: 2px; }
+.stat-sub a { color: var(--color-primary); text-decoration: none; }
+.stat-sub a:hover { text-decoration: underline; }
+.dark-theme .stat-sub a { color: #f0739b; }
 
 /* Data tables */
 .data-table-wrap { overflow-x: auto; }
@@ -351,6 +354,7 @@
     .mirror-stats-table .mirror-name::before { display: none; }
 }
 @media (max-width: 480px) {
+    .tab-link { padding: 8px 14px; white-space: nowrap; }
     .stat-grid { grid-template-columns: 1fr; }
     .stat-value { font-size: 1.5rem; }
 }
