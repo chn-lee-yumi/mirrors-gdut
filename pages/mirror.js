@@ -439,9 +439,12 @@
     function initIslandAnimations() {
         const islands = document.querySelectorAll('.island');
         
+        // 延迟按同一批进入视口的卡片错开，而非全局序号（隐藏 tab 里的卡片会把延迟拉长到数秒）
         const observer = new IntersectionObserver((entries) => {
+            let batchIndex = 0;
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
+                    entry.target.style.transitionDelay = `${batchIndex++ * 0.08}s`;
                     entry.target.style.opacity = '1';
                     entry.target.style.transform = 'translateY(0)';
                     entry.target.addEventListener('transitionend', function handler() {
@@ -457,10 +460,10 @@
             rootMargin: '0px'
         });
         
-        islands.forEach((island, index) => {
+        islands.forEach(island => {
             island.style.opacity = '0';
             island.style.transform = 'translateY(20px)';
-            island.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+            island.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             observer.observe(island);
         });
     }
